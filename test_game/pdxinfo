@@ -1,0 +1,6 @@
+name=Achievement Test
+author=You, Inc
+description=Testing grounds for adding achievements.
+bundleID=com.yourcompany.AchievementTest
+version=0.1
+buildNumber=1
