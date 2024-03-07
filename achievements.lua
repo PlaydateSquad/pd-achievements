@@ -102,8 +102,8 @@ local function load_data()
 	achievements.localData = data
 end
 
-local function save_data()
-	json.encodeToFile(local_achievement_file, false, module.localData)
+function achievements.save()
+	json.encodeToFile(local_achievement_file, false, achievements.localData)
 end
 
 --[[ Final Initialization Function ]]--
