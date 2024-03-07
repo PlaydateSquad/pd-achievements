@@ -1,30 +1,74 @@
 
--- TODO Note: Writing files to/reading files from /Shared isn't working. Start with the basics.
-
 --[[
 	==prototype achievements library==
-	This is still just an experiment to satisfy my own curiosity and lay some groundwork.
-	The /Shared folder is still experimental and details may change in the future,
-	  so filepaths are currently being written as if they were constants.
+	This is an initial prototype implementation in order to help effect a standard.
+	This prototype will have no strong error checks and be small in scope. Any
+	  wider-scope implementation of the standard will be separate.
 
-	==usage==
-	Still working on this, here's what I have so far:
-	Achievement data for a game is coded in by defining the `module.achivements` table.
-	This should be checked during a manual initialization step.
-	Current data format is as follows:
-		module.achievements = {
-			{
-				id = "test_achievement", -- any unique string
-				name = "Achievement Name",
-				description = "Achievement Description",
-				is_secret = false,
-				icon = "filepath" -- to be iterated on
-				[more to be determined]
-			},
-			[...]
+	At the time of writing /Shared is slightly non-functional, so a temporary
+	test folder is being used.
+
+	== planned usage ==
+
+	Import the library using `import "achievements"
+	The library has now created a global variable named "achievements".
+	I hate this approach, but it's a prototype and this is how the playdate
+	  does things because y'all are crazy.
+
+	The user now needs to configure the library. Make a config table as so:
+
+		local achievementConfig = {
+			-- Technically, any string. We need to spell it out explicitly
+			--   instead of using metadata.bundleID so that it won't get 
+			--   mangled by online sideloading. Plus, this way multi-pdx
+			--   games or demos can share achievements.
+			gameID = "com.yourcompany.yourgame",
+			-- These are optional, and will be auto-filled with metadata
+			--   values if not specified here. This is also for multi-pdx
+			--   games.
+			name = "My Awesome Game",
+			author = "You, Inc",
+			description = "The next evolution in cranking technology.",
+			-- And finally, a table of achievements.
+			achievements = {
+				{
+					id = "test_achievement",
+					name = "Achievement Name",
+					description = "Achievement Description",
+					is_secret = false,
+					icon = "filepath" -- to be iterated on
+					[more to be determined]
+				},
+			}
 		}
-	No validation is currently being performed.
-	The library should then be initialized using `module.ready()`.
+
+	This table makes up the top-level data structure being saved to the shared
+	json file. The gameID field determines the name of the folder it will
+	be written to, rather than bundleID, to keep things consistent.
+
+	The only thing that is truly required is the gameID field, because this is
+	  necessary for identification. Everything else can be left blank, and it
+	  will be auto-filled or simply absent in the case of achievement data.
+
+	The user passes the config table to the library like so:
+		achievements.initialize(achievementConfig)
+	This function finishes populating the configuration table with metadata
+	  if necessary, merges the achievement data with the saved list of granted
+	  achievements, creates the shared folder and .json file with the new data,
+	  and iterates over the achievement data in order to copy images given to
+	  the shared folder.
+
+	In order to grant an achievement to the player, run `achievements.grant(id)`
+	  If this is a valid achievement id, it will key the id to the current epoch
+	  second in the achievement save data.
+	In order to revoke an achievement, run `achievements.revoke(id)`
+	  If this is a valid achievement id, it will remove the id from the save
+	  data keys.
+	
+	To save achievement data, run `achievements.save()`. This will perfom a merge
+	  with the configuration data and write it to the shared .json file. Run this
+	  function alongside other game-save functions when the game exits. Of course,
+	  unfortunately, achievements don't respect save slots.
 
 	==details==
 	The achievements file in the game's save directory is the prime authority on active achievements.
