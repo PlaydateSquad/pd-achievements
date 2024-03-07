@@ -80,13 +80,12 @@
 
 print("Achievements library initializing...")
 
-local root_folder = "/Shared/Achievements/"
-local achievement_folder = root_folder .. playdate.metadata.bundleID .. "/"
+-- local root_folder = "/Shared/Achievements/" -- can't make the directory right now
+local root_folder = "/Test/Achievements/"
 local datafile_name = "info.json"
 local local_achievement_file = "Achievements.json"
 
--- If we wanted to ensure the game's "marker" folder was created on first run even if the developer
---   only imports the file, this is where it would go. But file.mkdir isn't working for me. -D
+-- local achievement_folder = root_folder .. playdate.metadata.bundleID .. "/"
 
 local metadata <const> = playdate.metadata
 
