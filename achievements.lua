@@ -88,16 +88,19 @@ local local_achievement_file = "Achievements.json"
 -- If we wanted to ensure the game's "marker" folder was created on first run even if the developer
 --   only imports the file, this is where it would go. But file.mkdir isn't working for me. -D
 
-local module = {}
+local metadata <const> = playdate.metadata
 
-module.achievements = {}
+---@diagnostic disable-next-line: lowercase-global
+achievements = {
+	version = "prototype 0.1"
+}
 
 local function load_data()
 	local data = json.decodeFile(local_achievement_file)
 	if not data then
 		data = {}
 	end
-	module.localData = data
+	achievements.localData = data
 end
 
 local function save_data()
@@ -112,8 +115,8 @@ end
 
 --[[ Achievement Management Functions ]]--
 
-module.getInfo = function(achievement_id)
-	for _, achievement in ipairs(module.achievements) do
+achievements.getInfo = function(achievement_id)
+	for _, achievement in ipairs(achievements.achievements) do
 		if achievement.id == achievement_id then
 			return achievement
 		end
@@ -121,38 +124,36 @@ module.getInfo = function(achievement_id)
 	return false
 end
 
-module.grant = function(achievment_id, display_style)
-	local info =  module.getInfo(achievment_id)
+achievements.grant = function(achievment_id, display_style)
+	local info =  achievements.getInfo(achievment_id)
 	if not info then
 		error("attempt to grant unconfigured achevement '" .. achievment_id .. "'", 2)
 	end
-	module.localData[achievment_id] = ( playdate.getSecondsSinceEpoch() )
-	save_data()
+	achievements.localData[achievment_id] = ( playdate.getSecondsSinceEpoch() )
 	-- Drawing to come later...
 	
 end
 
-module.revoke = function(achievment_id)
-	local info =  module.getInfo(achievment_id)
+achievements.revoke = function(achievment_id)
+	local info =  achievements.getInfo(achievment_id)
 	if not info then
 		error("attempt to revoke unconfigured achevement '" .. achievment_id .. "'", 2)
 	end
-	module.localData[achievment_id] = nil
-	save_data()
+	achievements.localData[achievment_id] = nil
 end
 
 --[[ External Game Functions ]]--
 
-module.gamePlayed = function(game_id)
+achievements.gamePlayed = function(game_id)
 	return playdate.file.isdir(root_folder .. game_id)
 end
 
-module.gameData = function(game_id)
-	if not module.gamePlayed(game_id) then
+achievements.gameData = function(game_id)
+	if not achievements.gamePlayed(game_id) then
 		error("No game with ID '" .. game_id .. "' was found", 2)
 	end
 	return playdate.datastore.read(root_folder .. game_id .. datafile_name)
 end
 
 
-return module
+return achievements
