@@ -106,11 +106,32 @@ function achievements.save()
 	json.encodeToFile(local_achievement_file, false, achievements.localData)
 end
 
---[[ Final Initialization Function ]]--
-module.ready = function()
-
-	load_data()
+local function merge_and_export_data()
 end
+local function copy_images_to_data()
+end
+
+function achievements.initialize(configuration)
+	if configuration.gameID == nil then
+		error("gameID not configured", 2)
+	elseif type(configuration.gameID) ~= "string" then
+		error("gameID must be a string", 2)
+	end
+	for _, field in ipairs{"name", "author", "description"} do
+		if configuration[field] == nil then
+			configuration[field] = playdate.metadata[field]
+		elseif type(configuration[field]) ~= "string" then
+			error(field .. " must be a string", 2)
+		end
+	end
+	configuration.version = metadata.version
+	configuration.libversion = achievements.version
+	achievements.configuration = configuration
+
+	merge_and_export_data()
+	copy_images_to_data()
+end
+
 
 --[[ Achievement Management Functions ]]--
 
