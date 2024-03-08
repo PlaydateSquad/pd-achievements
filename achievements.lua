@@ -168,7 +168,6 @@ achievements.getInfo = function(achievement_id)
 end
 
 achievements.grant = function(achievement_id, display_style)
-	-- local info =  achievements.getInfo(achievment_id)
 	if not achievements.keyedAchievements[achievement_id] then
 		error("attempt to grant unconfigured achevement '" .. achievement_id .. "'", 2)
 	end
