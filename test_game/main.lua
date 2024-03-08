@@ -4,34 +4,24 @@ import "../achievements"
 
 -- Copied from the comments in the other file...
 local achievementData = {
-    -- Technically, any string. We need to spell it out explicitly
-    --   instead of using metadata.bundleID so that it won't get 
-    --   mangled by online sideloading. Plus, this way multi-pdx
-    --   games or demos can share achievements.
     gameID = "com.yourcompany.yourgame",
-    -- These are optional, and will be auto-filled with metadata
-    --   values if not specified here. This is also for multi-pdx
-    --   games.
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next evolution in cranking technology.",
-    -- And finally, a table of achievements.
     achievements = {
         {
             id = "test_achievement",
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "filepath" -- to be iterated on
-            --[more to be determined]
+            icon = "filepath"
         },
         {
             id = "test_achievement_2",
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "filepath" -- to be iterated on
-            --[more to be determined]
+            icon = "filepath"
         },
     }
 }
