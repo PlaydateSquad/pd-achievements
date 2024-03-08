@@ -162,6 +162,7 @@ function achievements.initialize(gamedata)
 		ach.granted_at = achievements.granted[ach.id] or false
 	end
 
+	playdate.file.mkdir(get_achievement_folder_root_path(gamedata.gameID))
 	export_data()
 	copy_images_to_shared()
 end
