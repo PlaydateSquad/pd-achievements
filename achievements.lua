@@ -97,7 +97,7 @@ local function get_achievement_data_file_path(gameID)
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
 	local root = get_achievement_folder_root_path(gameID)
-	return root .. "/Achievements.json"
+	return root .. "Achievements.json"
 end
 
 -- local achievement_folder = root_folder .. playdate.metadata.bundleID .. "/"
