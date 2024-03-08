@@ -127,6 +127,11 @@ local function copy_images_to_data()
 end
 
 function achievements.initialize(configuration)
+	if configuration.achievements == nil then
+		error("achievements not configured", 2)
+	elseif type(configuration.achievements) ~= "table" then
+		error("achievements must be a table", 2)
+	end
 	if configuration.gameID == nil then
 		error("gameID not configured", 2)
 	elseif type(configuration.gameID) ~= "string" then
@@ -143,6 +148,14 @@ function achievements.initialize(configuration)
 	configuration.libversion = achievements.version
 	achievements.configuration = configuration
 
+	achievements.keyedAchievements = {}
+	for _, ach in ipairs(configuration.achievements) do
+		if achievements.keyedAchievements[ach.id] then
+			error("achievement id '" .. ach.id .. "' defined multiple times", 2)
+		end
+		achievements.keyedAchievements[ach.id] = ach
+	end
+
 	merge_and_export_data()
 	copy_images_to_data()
 end
@@ -151,30 +164,24 @@ end
 --[[ Achievement Management Functions ]]--
 
 achievements.getInfo = function(achievement_id)
-	for _, achievement in ipairs(achievements.achievements) do
-		if achievement.id == achievement_id then
-			return achievement
-		end
-	end
-	return false
+	return achievements.keyedAchievements[achievement_id] or false
 end
 
-achievements.grant = function(achievment_id, display_style)
-	local info =  achievements.getInfo(achievment_id)
-	if not info then
-		error("attempt to grant unconfigured achevement '" .. achievment_id .. "'", 2)
+achievements.grant = function(achievement_id, display_style)
+	-- local info =  achievements.getInfo(achievment_id)
+	if not achievements.keyedAchievements[achievement_id] then
+		error("attempt to grant unconfigured achevement '" .. achievement_id .. "'", 2)
 	end
-	achievements.localData[achievment_id] = ( playdate.getSecondsSinceEpoch() )
+	achievements.localData[achievement_id] = ( playdate.getSecondsSinceEpoch() )
 	-- Drawing to come later...
 	
 end
 
-achievements.revoke = function(achievment_id)
-	local info =  achievements.getInfo(achievment_id)
-	if not info then
-		error("attempt to revoke unconfigured achevement '" .. achievment_id .. "'", 2)
+achievements.revoke = function(achievement_id)
+	if not achievements.keyedAchievements[achievement_id] then
+		error("attempt to revoke unconfigured achevement '" .. achievement_id .. "'", 2)
 	end
-	achievements.localData[achievment_id] = nil
+	achievements.localData[achievement_id] = nil
 end
 
 --[[ External Game Functions ]]--
