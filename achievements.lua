@@ -65,8 +65,8 @@
 	  If this is a valid achievement id, it will remove the id from the save
 	  data keys.
 	
-	To save achievement data, run `achievements.save()`. This will perfom a merge
-	  with the configuration data and write it to the shared .json file. Run this
+	To save achievement data, run `achievements.save()`. This will save granted
+	  achievements to disk and save the game data to the shared json file. Run this
 	  function alongside other game-save functions when the game exits. Of course,
 	  unfortunately, achievements don't respect save slots.
 
@@ -118,9 +118,12 @@ local function load_granted_data()
 end
 
 local function export_data()
+	local data = achievements.gameData
+	json.encodeToFile(get_achievement_data_file_path(data.gameID), true, data)
 end
 function achievements.save()
-	json.encodeToFile(local_achievement_file, false, achievements.localData)
+	export_data()
+	json.encodeToFile(local_achievement_file, false, achievements.granted)
 end
 
 local function copy_images_to_shared()
