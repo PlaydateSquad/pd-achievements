@@ -5,9 +5,6 @@
 	This prototype will have no strong error checks and be small in scope. Any
 	  wider-scope implementation of the standard will be separate.
 
-	At the time of writing /Shared is slightly non-functional, so a temporary
-	test folder is being used.
-
 	== planned usage ==
 
 	Import the library using `import "achievements"
