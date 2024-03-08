@@ -80,10 +80,25 @@
 
 print("Achievements library initializing...")
 
--- local root_folder = "/Shared/Achievements/" -- can't make the directory right now
-local root_folder = "/Test/Achievements/"
-local datafile_name = "info.json"
 local local_achievement_file = "Achievements.json"
+
+-- Right, we're gonna make this easier to change in the future.
+-- Another note: changing the data directory to `/Shared/gameID`
+--   rather than the previously penciled in `/Shared/Achievements/gameID`
+local function get_achievement_folder_root_path(gameID)
+	if type(gameID) ~= "string" then
+		error("bad argument #1: expected string, got " .. type(gameID), 2)
+	end
+	local root = string.format("/Shared/%s/", gameID)
+	return root
+end
+local function get_achievement_data_file_path(gameID)
+	if type(gameID) ~= "string" then
+		error("bad argument #1: expected string, got " .. type(gameID), 2)
+	end
+	local root = get_achievement_folder_root_path(gameID)
+	return root .. "/Achievements.json"
+end
 
 -- local achievement_folder = root_folder .. playdate.metadata.bundleID .. "/"
 
@@ -165,14 +180,14 @@ end
 --[[ External Game Functions ]]--
 
 achievements.gamePlayed = function(game_id)
-	return playdate.file.isdir(root_folder .. game_id)
+	return playdate.file.isdir(get_achievement_folder_root_path(game_id))
 end
 
 achievements.gameData = function(game_id)
 	if not achievements.gamePlayed(game_id) then
 		error("No game with ID '" .. game_id .. "' was found", 2)
 	end
-	return playdate.datastore.read(root_folder .. game_id .. datafile_name)
+	return playdate.datastore.read(get_achievement_data_file_path(game_id))
 end
 
 
