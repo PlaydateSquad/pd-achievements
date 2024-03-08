@@ -156,6 +156,7 @@ function achievements.initialize(configuration)
 			error("achievement id '" .. ach.id .. "' defined multiple times", 2)
 		end
 		achievements.keyedAchievements[ach.id] = ach
+		ach.granted_at = achievements.localData[ach.id] or false
 	end
 
 	merge_and_export_data()
@@ -170,18 +171,23 @@ achievements.getInfo = function(achievement_id)
 end
 
 achievements.grant = function(achievement_id, display_style)
-	if not achievements.keyedAchievements[achievement_id] then
+	local ach = achievements.keyedAchievements[achievement_id]
+	if not ach then
 		error("attempt to grant unconfigured achevement '" .. achievement_id .. "'", 2)
 	end
-	achievements.localData[achievement_id] = ( playdate.getSecondsSinceEpoch() )
+	local time = playdate.getSecondsSinceEpoch()
+	achievements.localData[achievement_id] = ( time )
+	ach.granted_at = time
 	-- Drawing to come later...
 	
 end
 
 achievements.revoke = function(achievement_id)
-	if not achievements.keyedAchievements[achievement_id] then
+	local ach = achievements.keyedAchievements[achievement_id]
+	if not ach then
 		error("attempt to revoke unconfigured achevement '" .. achievement_id .. "'", 2)
 	end
+	ach.granted_at = false
 	achievements.localData[achievement_id] = nil
 end
 
