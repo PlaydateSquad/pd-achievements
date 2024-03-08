@@ -109,57 +109,57 @@ achievements = {
 	version = "prototype 0.1"
 }
 
-local function load_local_data()
+local function load_granted_data()
 	local data = json.decodeFile(local_achievement_file)
 	if not data then
 		data = {}
 	end
-	achievements.localData = data
+	achievements.granted = data
 end
 
+local function export_data()
+end
 function achievements.save()
 	json.encodeToFile(local_achievement_file, false, achievements.localData)
 end
 
-local function merge_and_export_data()
-end
 local function copy_images_to_shared()
 end
 
-function achievements.initialize(configuration)
-	if configuration.achievements == nil then
+function achievements.initialize(gamedata)
+	if gamedata.achievements == nil then
 		error("achievements not configured", 2)
-	elseif type(configuration.achievements) ~= "table" then
+	elseif type(gamedata.achievements) ~= "table" then
 		error("achievements must be a table", 2)
 	end
-	if configuration.gameID == nil then
+	if gamedata.gameID == nil then
 		error("gameID not configured", 2)
-	elseif type(configuration.gameID) ~= "string" then
+	elseif type(gamedata.gameID) ~= "string" then
 		error("gameID must be a string", 2)
 	end
 	for _, field in ipairs{"name", "author", "description"} do
-		if configuration[field] == nil then
-			configuration[field] = playdate.metadata[field]
-		elseif type(configuration[field]) ~= "string" then
+		if gamedata[field] == nil then
+			gamedata[field] = playdate.metadata[field]
+		elseif type(gamedata[field]) ~= "string" then
 			error(field .. " must be a string", 2)
 		end
 	end
-	configuration.version = metadata.version
-	configuration.libversion = achievements.version
-	achievements.configuration = configuration
+	gamedata.version = metadata.version
+	gamedata.libversion = achievements.version
+	achievements.gameData = gamedata
 
-	load_local_data()
+	load_granted_data()
 
 	achievements.keyedAchievements = {}
-	for _, ach in ipairs(configuration.achievements) do
+	for _, ach in ipairs(gamedata.achievements) do
 		if achievements.keyedAchievements[ach.id] then
 			error("achievement id '" .. ach.id .. "' defined multiple times", 2)
 		end
 		achievements.keyedAchievements[ach.id] = ach
-		ach.granted_at = achievements.localData[ach.id] or false
+		ach.granted_at = achievements.granted[ach.id] or false
 	end
 
-	merge_and_export_data()
+	export_data()
 	copy_images_to_shared()
 end
 
@@ -176,7 +176,7 @@ achievements.grant = function(achievement_id, display_style)
 		error("attempt to grant unconfigured achevement '" .. achievement_id .. "'", 2)
 	end
 	local time = playdate.getSecondsSinceEpoch()
-	achievements.localData[achievement_id] = ( time )
+	achievements.granted[achievement_id] = ( time )
 	ach.granted_at = time
 	-- Drawing to come later...
 	
@@ -188,7 +188,7 @@ achievements.revoke = function(achievement_id)
 		error("attempt to revoke unconfigured achevement '" .. achievement_id .. "'", 2)
 	end
 	ach.granted_at = false
-	achievements.localData[achievement_id] = nil
+	achievements.granted[achievement_id] = nil
 end
 
 --[[ External Game Functions ]]--
