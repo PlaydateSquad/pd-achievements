@@ -17,7 +17,7 @@
 
 	The user now needs to configure the library. Make a config table as so:
 
-		local achievementConfig = {
+		local achievementData = {
 			-- Technically, any string. We need to spell it out explicitly
 			--   instead of using metadata.bundleID so that it won't get 
 			--   mangled by online sideloading. Plus, this way multi-pdx
@@ -51,7 +51,7 @@
 	  will be auto-filled or simply absent in the case of achievement data.
 
 	The user passes the config table to the library like so:
-		achievements.initialize(achievementConfig)
+		achievements.initialize(achievementData)
 	This function finishes populating the configuration table with metadata
 	  if necessary, merges the achievement data with the saved list of granted
 	  achievements, creates the shared folder and .json file with the new data,
@@ -109,7 +109,7 @@ achievements = {
 	version = "prototype 0.1"
 }
 
-local function load_data()
+local function load_local_data()
 	local data = json.decodeFile(local_achievement_file)
 	if not data then
 		data = {}
@@ -123,7 +123,7 @@ end
 
 local function merge_and_export_data()
 end
-local function copy_images_to_data()
+local function copy_images_to_shared()
 end
 
 function achievements.initialize(configuration)
@@ -148,6 +148,8 @@ function achievements.initialize(configuration)
 	configuration.libversion = achievements.version
 	achievements.configuration = configuration
 
+	load_local_data()
+
 	achievements.keyedAchievements = {}
 	for _, ach in ipairs(configuration.achievements) do
 		if achievements.keyedAchievements[ach.id] then
@@ -157,7 +159,7 @@ function achievements.initialize(configuration)
 	end
 
 	merge_and_export_data()
-	copy_images_to_data()
+	copy_images_to_shared()
 end
 
 
