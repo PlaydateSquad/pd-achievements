@@ -215,7 +215,13 @@ achievements.gameData = function(game_id)
 	if not achievements.gamePlayed(game_id) then
 		error("No game with ID '" .. game_id .. "' was found", 2)
 	end
-	return json.decodeFile(get_achievement_data_file_path(game_id))
+	local data = json.decodeFile(get_achievement_data_file_path(game_id))
+	local keys = {}
+	for _, ach in ipairs(data.achievements) do
+		keys[ach.id] = ach
+	end
+	data.keyedAchievements = keys
+	return data
 end
 
 
