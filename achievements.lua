@@ -133,7 +133,7 @@ function achievements.initialize(gamedata)
 		error("achievements must be a table", 2)
 	end
 	if gamedata.gameID == nil then
-		error("gameID not configured", 2)
+		gamedata.gameID = string.gsub(metadata.bundleID, "^user%.%d+%.", "")
 	elseif type(gamedata.gameID) ~= "string" then
 		error("gameID must be a string", 2)
 	end
