@@ -202,7 +202,7 @@ achievements.gameData = function(game_id)
 	if not achievements.gamePlayed(game_id) then
 		error("No game with ID '" .. game_id .. "' was found", 2)
 	end
-	return playdate.datastore.read(get_achievement_data_file_path(game_id))
+	return json.decodeFile(get_achievement_data_file_path(game_id))
 end
 
 
