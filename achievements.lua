@@ -48,12 +48,14 @@
 	  will be auto-filled or simply absent in the case of achievement data.
 
 	The user passes the config table to the library like so:
-		achievements.initialize(achievementData)
+		achievements.initialize(achievementData, preventdebug)
 	This function finishes populating the configuration table with metadata
 	  if necessary, merges the achievement data with the saved list of granted
 	  achievements, creates the shared folder and .json file with the new data,
 	  and iterates over the achievement data in order to copy images given to
 	  the shared folder.
+	If `preventdebug` evaluates true, initialization debugging messages will not
+	  be printed to the console.
 
 	In order to grant an achievement to the player, run `achievements.grant(id)`
 	  If this is a valid achievement id, it will key the id to the current epoch
