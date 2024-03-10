@@ -132,7 +132,8 @@ function achievements.initialize(gamedata, prevent_debug)
 	print("------")
 	print("Initializing achievements...")
 	if gamedata.achievements == nil then
-		error("achievements not configured", 2)
+		print("WARNING: no achievements configured")
+		gamedata.achievements = {}
 	elseif type(gamedata.achievements) ~= "table" then
 		error("achievements must be a table", 2)
 	end
