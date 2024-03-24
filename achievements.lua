@@ -107,7 +107,15 @@ local gfx <const> = playdate.graphics
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
 	specversion = "0.1+prototype",
-	libversion = "0.2-alpha+spec_proposal",
+	libversion = "0.2-alpha+prototype",
+
+	onUnconfigured = error,
+	forceSaveOnGrantOrRevoke = false,
+
+	displayGrantedMilliseconds = 2000,
+	displayGrantedDefaultX = 20,
+	displayGrantedDefaultY = 0,
+	displayGrantedDelayNext = 400,
 }
 
 local function load_granted_data(from_file)
@@ -192,19 +200,7 @@ function achievements.initialize(gamedata, prevent_debug)
 	print("------")
 end
 
-
---[[ Achievement Management Functions ]]--
-
-achievements.getInfo = function(achievement_id)
-	return achievements.keyedAchievements[achievement_id] or false
-end
-
-achievements.displayGrantedMilliseconds = 2000
-achievements.displayGrantedDefaultX = 20
-achievements.displayGrantedDefaultY = 0
-achievements.displayGrantedDelayNext = 400
-achievements.forceSaveOnGrantOrRevoke = false
-achievements.onUnconfigured = error
+--[[ Achievement Drawing & Animation ]]--
 
 local function resolveAchievementOrId(achievement_or_id)
 	if type(achievement_or_id) == "string" then
@@ -302,8 +298,23 @@ achievements.animateGranted = function(achievement_or_id, x, y, msec_since_grant
 	return animateGrantedUnsafe(ach, x, y, msec_since_granted, draw_card_func)
 end
 
-local last_grant_display_msec = -achievements.displayGrantedDelayNext
+-- TODO: name?
 local animate_coros = {}
+achievements.visualUpdate = function ()
+    for achievement_id, coro_func in pairs(animate_coros) do
+        if not coroutine.resume(coro_func) then
+			animate_coros[achievement_id] = nil
+		end
+    end
+end
+
+--[[ Achievement Management Functions ]]--
+
+achievements.getInfo = function(achievement_id)
+	return achievements.keyedAchievements[achievement_id] or false
+end
+
+local last_grant_display_msec = -achievements.displayGrantedDelayNext
 achievements.grant = function(achievement_id, silent, draw_card_func, animate_func)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
@@ -372,15 +383,6 @@ achievements.revoke = function(achievement_id)
 	end
 	draw_card_cache[achievement_id] = nil
 	return true
-end
-
--- TODO: name?
-achievements.visualUpdate = function ()
-    for achievement_id, coro_func in pairs(animate_coros) do
-        if not coroutine.resume(coro_func) then
-			animate_coros[achievement_id] = nil
-		end
-    end
 end
 
 --[[ External Game Functions ]]--
