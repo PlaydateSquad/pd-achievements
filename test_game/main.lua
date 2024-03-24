@@ -7,7 +7,7 @@ local achievementData = {
     gameID = "com.yourcompany.yourgame",
     name = "My Awesome Game",
     author = "You, Inc",
-    description = "The next evolution in cranking technology.",
+    description = "The next (r)evolution in cranking technology.",
     achievements = {
         {
             id = "test_achievement",
