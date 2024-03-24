@@ -102,7 +102,8 @@ local metadata <const> = playdate.metadata
 
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
-	version = "prototype 0.1"
+	specversion = "0.1+prototype",
+	libversion = "0.2-alpha+spec_proposal",
 }
 
 local function load_granted_data(from_file)
@@ -157,7 +158,8 @@ function achievements.initialize(gamedata, prevent_debug)
 		end
 	end
 	gamedata.version = metadata.version
-	gamedata.libversion = achievements.version
+	gamedata.specversion = achievements.specversion
+	gamedata.libversion = achievements.libversion
 	print("game version saved as \"" .. gamedata.version .. "\"")
 	print("library version saved as \"" .. gamedata.libversion .. "\"")
 	achievements.gameData = gamedata
