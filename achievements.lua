@@ -308,44 +308,11 @@ achievements.visualUpdate = function ()
 	end
 end
 
---[[ Achievement Management Functions ]]--
-
-achievements.getInfo = function(achievement_id)
-	return achievements.keyedAchievements[achievement_id] or false
-end
-
 local last_grant_display_msec = -achievements.displayGrantedDelayNext
-achievements.grant = function(achievement_id, silent, draw_card_func, animate_func)
-	local ach = achievements.keyedAchievements[achievement_id]
-	if not ach then
-		achievements.onUnconfigured("attempt to grant unconfigured achievement '" .. achievement_id .. "'", 2)
-		return false
-	end
-	-- playdate documentation states that getSecondsSinceEpoch should be a list of (seconds, milliseconds), but only the seconds are given...
-	local time = playdate.getSecondsSinceEpoch()
-	if ach.granted_at ~= false and arch.granted_at <= ( time ) then
-		return false
-	end
-	achievements.granted[achievement_id] = ( time )
-	ach.granted_at = time
-
-	if achievements.forceSaveOnGrantOrRevoke then
-		achievements.save()
-	end
-
-	-- drawing, if needed
-	if silent then
-		return true
-	end
-	draw_card_cache[achievement_id] = nil
-	if draw_card_func == nil then
-		draw_card_func = drawCardUnsafe
-	end
-	if animate_func == nil then
-		animate_func = animateGrantedUnsafe
-	end
+local function startGrantedAnimation(ach, draw_card_func, animate_func)
+	draw_card_cache[ach.id] = nil
 	-- tie display-coroutine to achievement-id, so that the system doesn't get confused by rapid grant/revoke
-	animate_coros[achievement_id] = coroutine.create(
+	animate_coros[ach.id] = coroutine.create(
 		function ()
 			-- NOTE: use getCurrentTimeMilliseconds here (regardless of time granted), since that'll take into account game-pausing.
 			local start_msec = 0
@@ -367,6 +334,42 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 			end
 		end
 	)
+end
+
+--[[ Achievement Management Functions ]]--
+
+achievements.getInfo = function(achievement_id)
+	return achievements.keyedAchievements[achievement_id] or false
+end
+
+achievements.grant = function(achievement_id, silent, draw_card_func, animate_func)
+	local ach = achievements.keyedAchievements[achievement_id]
+	if not ach then
+		achievements.onUnconfigured("attempt to grant unconfigured achievement '" .. achievement_id .. "'", 2)
+		return false
+	end
+	-- playdate documentation states that getSecondsSinceEpoch should be a list of (seconds, milliseconds), but only the seconds are given...
+	local time = playdate.getSecondsSinceEpoch()
+	if ach.granted_at ~= false and arch.granted_at <= ( time ) then
+		return false
+	end
+	achievements.granted[achievement_id] = ( time )
+	ach.granted_at = time
+
+	if achievements.forceSaveOnGrantOrRevoke then
+		achievements.save()
+	end
+
+	-- drawing, if needed
+	if not silent then
+		if draw_card_func == nil then
+			draw_card_func = drawCardUnsafe
+		end
+		if animate_func == nil then
+			animate_func = animateGrantedUnsafe
+		end
+		startGrantedAnimation(ach, draw_card_func, animate_func)
+	end
 	return true
 end
 
