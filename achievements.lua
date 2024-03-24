@@ -149,10 +149,14 @@ function achievements.initialize(gamedata, prevent_debug)
 	elseif type(gamedata.gameID) ~= "string" then
 		error("gameID must be a string", 2)
 	end
-	for _, field in ipairs{"name", "author", "description"} do
+	for _, field in ipairs{"name", "author", "version", "description"} do
 		if gamedata[field] == nil then
-			gamedata[field] = playdate.metadata[field]
-			print(field .. " not configured: defaulting to \"" .. gamedata[field] .. "\"")
+			if playdate.metadata[field] ~= nill then
+				gamedata[field] = playdate.metadata[field]
+				print(field .. ' not configured: defaulting to "' .. gamedata[field] .. '"')
+			else
+				print("WARNING: " .. field .. " not configured AND not present in pxinfo metadata")
+			end
 		elseif type(gamedata[field]) ~= "string" then
 			error(field .. " must be a string", 2)
 		end
