@@ -202,14 +202,14 @@ end
 
 --[[ Achievement Drawing & Animation ]]--
 
-local function resolveAchievementOrId(achievement_or_id)
+local function resolve_achievement_or_id(achievement_or_id)
 	if type(achievement_or_id) == "string" then
 		return achievements.keyedAchievements[achievement_or_id]
 	end
 	return achievement_or_id
 end
 
-local function createCard(width, height, round, draw_func)
+local function create_card(width, height, round, draw_func)
 	local img = gfx.image.new(width, height)
 	if draw_func ~= nil then
 		gfx.pushContext(img)
@@ -228,12 +228,12 @@ local function createCard(width, height, round, draw_func)
 end
 
 local draw_card_cache = {} -- NOTE: don't forget to invalidate the cache on grant/revoke/progress!
-local function drawCardUnsafe(ach, x, y)
+local function draw_card_unsafe(ach, x, y)
 	-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
 
 	if draw_card_cache[ach.id] == nil then
 		-- TODO: properly draw this, have someone with better art-experience look at it
-		draw_card_cache[ach.id] = createCard(
+		draw_card_cache[ach.id] = create_card(
 			360,
 			40,
 			3,
@@ -257,7 +257,7 @@ local function drawCardUnsafe(ach, x, y)
 end
 
 achievements.drawCard = function (achievement_or_id, x, y)
-	local ach = resolveAchievementOrId(achievement_or_id)
+	local ach = resolve_achievement_or_id(achievement_or_id)
 	if not ach then
 		achievements.onUnconfigured("attempt to draw unconfigured achievement '" .. achievement_or_id .. "'", 2)
 		return
@@ -266,10 +266,10 @@ achievements.drawCard = function (achievement_or_id, x, y)
 		x = achievements.displayGrantedDefaultX
 		y = achievements.displayGrantedDefaultY
 	end
-	drawCardUnsafe(ach, x, y)
+	draw_card_unsafe(ach, x, y)
 end
 
-local function animateGrantedUnsafe(ach, x, y, msec_since_granted, draw_card_func)
+local function animate_granted_unsafe(ach, x, y, msec_since_granted, draw_card_func)
 	draw_card_func(
 		ach,
 		x + 7 * math.sin(msec_since_granted/90.0),
@@ -279,7 +279,7 @@ local function animateGrantedUnsafe(ach, x, y, msec_since_granted, draw_card_fun
 end
 
 achievements.animateGranted = function(achievement_or_id, x, y, msec_since_granted, draw_card_func)
-	local ach = resolveAchievementOrId(achievement_or_id)
+	local ach = resolve_achievement_or_id(achievement_or_id)
 	if not ach then
 		achievements.onUnconfigured("attempt to animate unconfigured achievement '" .. achievement_or_id .. "'", 2)
 		return
@@ -293,14 +293,13 @@ achievements.animateGranted = function(achievement_or_id, x, y, msec_since_grant
 		msec_since_granted = achievements.displayGrantedMilliseconds / 2
 	end
 	if draw_card_func == nil then
-		draw_card_func = drawCardUnsafe
+		draw_card_func = draw_card_unsafe
 	end
-	return animateGrantedUnsafe(ach, x, y, msec_since_granted, draw_card_func)
+	return animate_granted_unsafe(ach, x, y, msec_since_granted, draw_card_func)
 end
 
--- TODO: name?
 local animate_coros = {}
-achievements.visualUpdate = function ()
+achievements.updateVisuals = function ()
 	for achievement_id, coro_func in pairs(animate_coros) do
 		if not coroutine.resume(coro_func) then
 			animate_coros[achievement_id] = nil
@@ -309,7 +308,7 @@ achievements.visualUpdate = function ()
 end
 
 local last_grant_display_msec = -achievements.displayGrantedDelayNext
-local function startGrantedAnimation(ach, draw_card_func, animate_func)
+local function start_granted_animation(ach, draw_card_func, animate_func)
 	draw_card_cache[ach.id] = nil
 	-- tie display-coroutine to achievement-id, so that the system doesn't get confused by rapid grant/revoke
 	animate_coros[ach.id] = coroutine.create(
@@ -363,12 +362,12 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 	-- drawing, if needed
 	if not silent then
 		if draw_card_func == nil then
-			draw_card_func = drawCardUnsafe
+			draw_card_func = draw_card_unsafe
 		end
 		if animate_func == nil then
-			animate_func = animateGrantedUnsafe
+			animate_func = animate_granted_unsafe
 		end
-		startGrantedAnimation(ach, draw_card_func, animate_func)
+		start_granted_animation(ach, draw_card_func, animate_func)
 	end
 	return true
 end

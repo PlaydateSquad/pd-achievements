@@ -68,5 +68,5 @@ function playdate.update()
     playdate.graphics.drawText("H: grant invalid", 10, 60)
     playdate.graphics.drawText("J: invoke invalid", 10, 80)
     playdate.graphics.drawText("R: save/export data", 10, 100)
-    achievements.visualUpdate()
+    achievements.updateVisuals()
 end
