@@ -4,7 +4,7 @@ import "../achievements"
 
 -- Copied from the comments in the other file...
 local achievementData = {
-    gameID = "com.yourcompany.yourgame",
+    gameID = "com.example.achievementtest",
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
