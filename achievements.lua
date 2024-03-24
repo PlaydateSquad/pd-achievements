@@ -301,11 +301,11 @@ end
 -- TODO: name?
 local animate_coros = {}
 achievements.visualUpdate = function ()
-    for achievement_id, coro_func in pairs(animate_coros) do
-        if not coroutine.resume(coro_func) then
+	for achievement_id, coro_func in pairs(animate_coros) do
+		if not coroutine.resume(coro_func) then
 			animate_coros[achievement_id] = nil
 		end
-    end
+	end
 end
 
 --[[ Achievement Management Functions ]]--
