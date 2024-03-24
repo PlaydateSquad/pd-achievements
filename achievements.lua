@@ -102,6 +102,7 @@ local function get_achievement_data_file_path(gameID)
 end
 
 local metadata <const> = playdate.metadata
+local gfx <const> = playdate.graphics
 
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
@@ -202,7 +203,7 @@ achievements.displayGrantedMilliseconds = 2000
 achievements.displayGrantedDefaultX = 20
 achievements.displayGrantedDefaultY = 0
 achievements.displayGrantedDelayNext = 400
-achievements.forceSaveOnGrantOrRevoke = true
+achievements.forceSaveOnGrantOrRevoke = false
 achievements.onUnconfigured = error
 
 local function resolveAchievementOrId(achievement_or_id)
@@ -212,20 +213,51 @@ local function resolveAchievementOrId(achievement_or_id)
 	return achievement_or_id
 end
 
--- don't waste time checking if we know we'll supply the right arguments anyway (for in-library usage)
-local gfx <const> = playdate.graphics
+local function createCard(width, height, round, draw_func)
+	local img = gfx.image.new(width, height)
+	if draw_func ~= nil then
+		gfx.pushContext(img)
+		draw_func()
+		gfx.popContext()
+	end
+	-- mask image, for rounded corners
+	if round ~= nil and round > 0 then
+		gfx.pushContext(img:getMaskImage())
+		gfx.clear(gfx.kColorBlack)
+		gfx.setColor(gfx.kColorWhite)
+		gfx.fillRoundRect(0, 0, width, height, round)
+		gfx.popContext()
+	end
+	return img
+end
+
+local draw_card_cache = {} -- NOTE: don't forget to invalidate the cache on grant/revoke/progress!
 local function drawCardUnsafe(ach, x, y)
-	-- TODO: pre-make achievement 'badge' to speed up processing, that way we don't mess up the existing colors either, since we can lock the image context
-	--       that _does_ mean badges will need to be updated separately (eventually) when we revoke/'add-progress-to' the things
 	-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
-	-- TODO: properly draw this, have someone with better art-experience look at it
-	gfx.fillRoundRect(x, y, 360, 40, 3)
-	gfx.setColor(gfx.kColorWhite)
-	gfx.drawRoundRect(x, y, 360, 40, 3, 2)
-	gfx.fillRect(x + 4, y + 4, 32, 32)  -- placeholder for image or animation
-	gfx.fillRect(x + 324, y + 4, 32, 32)  -- placeholder for image or animation
-	gfx.drawTextInRect(ach.name, x + 40, y + 14, 292, 60, nil, "...", kTextAlignment.center)
-	gfx.setColor(gfx.kColorBlack)
+
+	if draw_card_cache[ach.id] == nil then
+		-- TODO: properly draw this, have someone with better art-experience look at it
+		draw_card_cache[ach.id] = createCard(
+			360,
+			40,
+			3,
+			function()
+				-- TODO?: 'achievement unlocked', progress, time, etc.??
+				gfx.clear(gfx.kColorBlack)
+				gfx.setColor(gfx.kColorWhite)
+				gfx.drawRoundRect(0, 0, 360, 40, 3, 3)
+				-- TODO: either do these next 2 separately, or make the entire card into an animation
+				gfx.fillRect(4, 4, 32, 32)  -- placeholder for image or animation
+				gfx.fillRect(324, 4, 32, 32)  -- placeholder for image or animation
+				gfx.drawTextInRect(ach.name, 40, 14, 292, 60, nil, "...", kTextAlignment.center)
+			end
+		)
+	end
+
+	gfx.pushContext()
+	gfx.setImageDrawMode(gfx.kDrawModeCopy)
+	draw_card_cache[ach.id]:draw(x, y);
+	gfx.popContext()
 end
 
 achievements.drawCard = function (achievement_or_id, x, y)
@@ -294,6 +326,7 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 	if silent then
 		return true
 	end
+	draw_card_cache[achievement_id] = nil
 	if draw_card_func == nil then
 		draw_card_func = drawCardUnsafe
 	end
@@ -337,6 +370,7 @@ achievements.revoke = function(achievement_id)
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
 	end
+	draw_card_cache[achievement_id] = nil
 	return true
 end
 
