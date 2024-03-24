@@ -205,6 +205,13 @@ achievements.displayGrantedDelayNext = 400
 achievements.forceSaveOnGrantOrRevoke = true
 achievements.onUnconfigured = error
 
+local function resolveAchievementOrId(achievement_or_id)
+	if type(achievement_or_id) == "string" then
+		return achievements.keyedAchievements[achievement_or_id]
+	end
+	return achievement_or_id
+end
+
 -- don't waste time checking if we know we'll supply the right arguments anyway (for in-library usage)
 local gfx <const> = playdate.graphics
 local function drawCardUnsafe(ach, x, y)
@@ -221,10 +228,10 @@ local function drawCardUnsafe(ach, x, y)
 	gfx.setColor(gfx.kColorBlack)
 end
 
-achievements.drawCard = function (achievement_id, x, y)
-	local ach = achievements.keyedAchievements[achievement_id]
+achievements.drawCard = function (achievement_or_id, x, y)
+	local ach = resolveAchievementOrId(achievement_or_id)
 	if not ach then
-		achievements.onUnconfigured("attempt to draw unconfigured achievement '" .. achievement_id .. "'", 2)
+		achievements.onUnconfigured("attempt to draw unconfigured achievement '" .. achievement_or_id .. "'", 2)
 		return
 	end
 	if x == nil or y == nil then
@@ -243,10 +250,10 @@ local function animateGrantedUnsafe(ach, x, y, msec_since_granted, draw_card_fun
 	return msec_since_granted <= achievements.displayGrantedMilliseconds
 end
 
-achievements.animateGranted = function(achievement_id, x, y, msec_since_granted, draw_card_func)
-	local ach = achievements.keyedAchievements[achievement_id]
+achievements.animateGranted = function(achievement_or_id, x, y, msec_since_granted, draw_card_func)
+	local ach = resolveAchievementOrId(achievement_or_id)
 	if not ach then
-		achievements.onUnconfigured("attempt to draw unconfigured achievement '" .. achievement_id .. "'", 2)
+		achievements.onUnconfigured("attempt to animate unconfigured achievement '" .. achievement_or_id .. "'", 2)
 		return
 	end
 	if x == nil or y == nil then
