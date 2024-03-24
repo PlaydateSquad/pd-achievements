@@ -116,6 +116,8 @@ achievements = {
 	displayGrantedDefaultX = 20,
 	displayGrantedDefaultY = 0,
 	displayGrantedDelayNext = 400,
+	iconWidth = 32,
+	iconHeight = 32,
 }
 
 local function load_granted_data(from_file)
@@ -141,6 +143,63 @@ function achievements.save(to_file)
 	json.encodeToFile(to_file, false, achievements.granted)
 end
 
+local function set_rounded_mask(img, width, height, round)
+	gfx.pushContext(img:getMaskImage())
+	gfx.clear(gfx.kColorBlack)
+	gfx.setColor(gfx.kColorWhite)
+	gfx.fillRoundRect(0, 0, width, height, round)
+	gfx.popContext()
+end
+
+local path_to_image_data = {
+	_default_icon = { image = gfx.image.new(achievements.iconWidth, achievements.iconHeight), ids = {} },
+	_default_locked = { image = gfx.image.new(achievements.iconWidth, achievements.iconHeight), ids = {} },
+}
+local function load_images()
+	-- 'load' default icon:
+	-- TODO: art not final
+	gfx.pushContext(path_to_image_data._default_icon.image)
+	gfx.clear(gfx.kColorWhite)
+	gfx.setColor(gfx.kColorBlack)
+	gfx.drawRoundRect(2, 2, achievements.iconWidth - 4, achievements.iconHeight - 4, 3)
+	gfx.fillRect(14, 6, 4, 12)
+	gfx.fillRect(14, 22, 4, 4)
+	gfx.popContext()
+	set_rounded_mask(path_to_image_data._default_icon.image, achievements.iconWidth, achievements.iconHeight, 3)
+
+	-- 'load' default locked icon:
+	-- TODO: art not final
+	gfx.pushContext(path_to_image_data._default_locked.image)
+	gfx.clear(gfx.kColorWhite)
+	gfx.setColor(gfx.kColorBlack)
+	gfx.drawRoundRect(2, 2, achievements.iconWidth - 4, achievements.iconHeight - 4, 3)
+	gfx.setLineWidth(3)
+	gfx.drawCircleInRect(12, 7, 8, 8)
+	gfx.fillRect(9, 12, 14, 14)
+	gfx.popContext()
+	set_rounded_mask(path_to_image_data._default_locked.image, achievements.iconWidth, achievements.iconHeight, 3)
+
+	-- load images if a file is known, otherwise set defaults
+	for key, value in pairs(achievements.keyedAchievements) do
+		if value.icon ~= nil then
+			if path_to_image_data[value.icon] == nil then
+				path_to_image_data[value.icon] = { image = gfx.image.new(value.icon), ids = {} }
+			end
+		else
+			value.icon = "_default_icon"
+		end
+		table.insert(path_to_image_data[value.icon].ids, key)
+		if value.icon_locked ~= nil then
+			if path_to_image_data[value.icon_locked] == nil then
+				path_to_image_data[value.icon_locked] = { image = gfx.image.new(value.icon_locked), ids = {} }
+			end
+		else
+			value.icon_locked = "_default_locked"
+		end
+		table.insert(path_to_image_data[value.icon_locked].ids, key)
+	end
+end
+
 local function copy_images_to_shared()
 end
 
@@ -163,7 +222,7 @@ function achievements.initialize(gamedata, prevent_debug)
 	end
 	for _, field in ipairs{"name", "author", "version", "description"} do
 		if gamedata[field] == nil then
-			if playdate.metadata[field] ~= nill then
+			if playdate.metadata[field] ~= nil then
 				gamedata[field] = playdate.metadata[field]
 				print(field .. ' not configured: defaulting to "' .. gamedata[field] .. '"')
 			else
@@ -190,6 +249,8 @@ function achievements.initialize(gamedata, prevent_debug)
 		achievements.keyedAchievements[ach.id] = ach
 		ach.granted_at = achievements.granted[ach.id] or false
 	end
+
+	load_images()
 
 	playdate.file.mkdir(get_achievement_folder_root_path(gamedata.gameID))
 	export_data()
@@ -218,11 +279,7 @@ local function create_card(width, height, round, draw_func)
 	end
 	-- mask image, for rounded corners
 	if round ~= nil and round > 0 then
-		gfx.pushContext(img:getMaskImage())
-		gfx.clear(gfx.kColorBlack)
-		gfx.setColor(gfx.kColorWhite)
-		gfx.fillRoundRect(0, 0, width, height, round)
-		gfx.popContext()
+		set_rounded_mask(img, width, height, round)
 	end
 	return img
 end
@@ -230,7 +287,6 @@ end
 local draw_card_cache = {} -- NOTE: don't forget to invalidate the cache on grant/revoke/progress!
 local function draw_card_unsafe(ach, x, y)
 	-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
-
 	if draw_card_cache[ach.id] == nil then
 		-- TODO: properly draw this, have someone with better art-experience look at it
 		draw_card_cache[ach.id] = create_card(
@@ -240,11 +296,13 @@ local function draw_card_unsafe(ach, x, y)
 			function()
 				-- TODO?: 'achievement unlocked', progress, time, etc.??
 				gfx.clear(gfx.kColorBlack)
+				gfx.setImageDrawMode(gfx.kDrawModeCopy)
 				gfx.setColor(gfx.kColorWhite)
 				gfx.drawRoundRect(0, 0, 360, 40, 3, 3)
 				-- TODO: either do these next 2 separately, or make the entire card into an animation
-				gfx.fillRect(4, 4, 32, 32)  -- placeholder for image or animation
-				gfx.fillRect(324, 4, 32, 32)  -- placeholder for image or animation
+				path_to_image_data[ach.icon].image:draw(4, 4)
+				path_to_image_data[ach.icon_locked].image:draw(324, 4)
+				gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
 				gfx.drawTextInRect(ach.name, 40, 14, 292, 60, nil, "...", kTextAlignment.center)
 			end
 		)
@@ -270,10 +328,11 @@ achievements.drawCard = function (achievement_or_id, x, y)
 end
 
 local function animate_granted_unsafe(ach, x, y, msec_since_granted, draw_card_func)
+	-- TODO: like for drawing, this needs a bit more care and attention from someone with an art eye
 	draw_card_func(
 		ach,
-		x + 7 * math.sin(msec_since_granted/90.0),
-		y + (msec_since_granted/10.0)
+		x + 7.0 * math.sin(msec_since_granted / 90.0),
+		y + (msec_since_granted / 10.0)
 	)
 	return msec_since_granted <= achievements.displayGrantedMilliseconds
 end

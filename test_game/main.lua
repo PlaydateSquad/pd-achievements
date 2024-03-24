@@ -14,14 +14,16 @@ local achievementData = {
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "filepath"
+            icon = nil,
+			icon_locked = nil,
         },
         {
             id = "test_achievement_2",
             name = "Name Of Achievement",
             description = "Achievement Description",
             is_secret = false,
-            icon = "filepath"
+            icon = nil,
+			icon_locked = nil,
         },
     }
 }
