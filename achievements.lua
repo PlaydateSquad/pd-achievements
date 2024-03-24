@@ -202,6 +202,7 @@ achievements.displayGrantedMilliseconds = 2000
 achievements.displayGrantedDefaultX = 20
 achievements.displayGrantedDefaultY = 0
 achievements.displayGrantedDelayNext = 400
+achievements.forceSaveOnGrantOrRevoke = true
 achievements.onUnconfigured = error
 
 -- don't waste time checking if we know we'll supply the right arguments anyway (for in-library usage)
@@ -278,6 +279,10 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 	achievements.granted[achievement_id] = ( time )
 	ach.granted_at = time
 
+	if achievements.forceSaveOnGrantOrRevoke then
+		achievements.save()
+	end
+
 	-- drawing, if needed
 	if silent then
 		return true
@@ -322,6 +327,9 @@ achievements.revoke = function(achievement_id)
 	end
 	ach.granted_at = false
 	achievements.granted[achievement_id] = nil
+	if achievements.forceSaveOnGrantOrRevoke then
+		achievements.save()
+	end
 	return true
 end
 
