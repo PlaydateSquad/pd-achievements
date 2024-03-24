@@ -198,7 +198,51 @@ achievements.getInfo = function(achievement_id)
 	return achievements.keyedAchievements[achievement_id] or false
 end
 
-achievements.grant = function(achievement_id, display_style)
+achievements.displayGrantedMilliseconds = 2000
+achievements.displayGrantedDefaultX = 20
+achievements.displayGrantedDefaultY = 0
+achievements.onUnconfigured = error
+
+-- don't waste time checking if we know we'll supply the right arguments anyway (for in-library usage)
+local function drawGrantedUnsafe(ach, x, y, msec_since_granted)
+
+	-- TODO: pre-make achievement 'badge' to speed up processing, that way we don't mess up the existing colors either, since we can lock the image context
+	--       that _does_ mean badges will need to be updated separately (eventually) when we revoke/'add-progress-to' the things
+	-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
+	-- TODO: properly draw this, have someone with better art-experience look at it
+	local xx = x + 7 * math.sin(msec_since_granted/90.0)
+	local yy = y + (msec_since_granted/10.0)
+	local gfx <const> = playdate.graphics
+	gfx.fillRoundRect(xx, yy, 360, 40, 3)
+	gfx.setColor(gfx.kColorWhite)
+	gfx.drawRoundRect(xx, yy, 360, 40, 3, 2)
+	gfx.fillRect(xx + 4, yy + 4, 32, 32)  -- placeholder for image or animation
+	gfx.fillRect(xx + 324, yy + 4, 32, 32)  -- placeholder for image or animation
+	gfx.drawTextInRect(ach.name, xx + 40, yy + 14, 292, 60, nil, "...", kTextAlignment.center)
+	gfx.setColor(gfx.kColorBlack)
+
+	return msec_since_granted <= achievements.displayGrantedMilliseconds
+end
+
+achievements.drawGranted = function(achievement_id, x, y, msec_since_granted)
+	local ach = achievements.keyedAchievements[achievement_id]
+	if not ach then
+		achievements.onUnconfigured("attempt to draw unconfigured achievement '" .. achievement_id .. "'", 2)
+		return
+	end
+	if x == nil or y == nil then
+		x = achievements.displayGrantedDefaultX
+		y = achievements.displayGrantedDefaultY
+	end
+	if msec_since_granted == nil then
+		-- for now, the animation will take an equal time in as out, so 'half-time' is a good position to draw unspecified
+		msec_since_granted = achievements.displayGrantedMilliseconds / 2
+	end
+	return drawGrantedUnsafe(ach, x, y, msec_since_granted)
+end
+
+local draw_coros = {}
+achievements.grant = function(achievement_id, silent, display_func)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
 		achievements.onUnconfigured("attempt to grant unconfigured achievement '" .. achievement_id .. "'", 2)
@@ -209,8 +253,32 @@ achievements.grant = function(achievement_id, display_style)
 	local time = playdate.getSecondsSinceEpoch()
 	achievements.granted[achievement_id] = ( time )
 	ach.granted_at = time
-	-- Drawing to come later...
-	
+
+	-- drawing, if needed
+	if silent then
+		return
+	end
+	if display_func == nil then
+		display_func = achievements.drawGranted
+	end
+	-- tie display-coroutine to achievement-id, so that the system doesn't get confused by rapid grant/revoke
+	draw_coros[achievement_id] = coroutine.create(
+		function ()
+			-- NOTE: use getCurrentTimeMilliseconds here (regardless of time granted), since that'll take into account game-pausing.
+			local start_msec = playdate.getCurrentTimeMilliseconds()
+			local current_msec = start_msec
+			while display_func(
+				achievement_id,
+				achievements.displayGrantedDefaultX,
+				achievements.displayGrantedDefaultY,
+				current_msec - start_msec
+			) do
+				coroutine.yield()
+				current_msec = playdate.getCurrentTimeMilliseconds()
+			end
+		end
+	)
+	-- TODO: what if multiple acievements at the same time?
 end
 
 achievements.revoke = function(achievement_id)
@@ -221,6 +289,14 @@ achievements.revoke = function(achievement_id)
 	end
 	ach.granted_at = false
 	achievements.granted[achievement_id] = nil
+end
+
+achievements.visualUpdate = function ()
+    for achievement_id, coro_func in pairs(draw_coros) do
+        if not coroutine.resume(coro_func) then
+			draw_coros[achievement_id] = nil
+		end
+    end
 end
 
 --[[ External Game Functions ]]--

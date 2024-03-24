@@ -35,7 +35,7 @@ function playdate.keyPressed(key)
             achievements.revoke("test_achievement")
         else
             print("granting example achievement 1")
-            achievements.grant("test_achievement")
+            achievements.grant("test_achievement", true)
         end
     elseif key == "g" then
         if achievements.granted["test_achievement_2"] then
@@ -63,10 +63,10 @@ playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
 function playdate.update()
     gfx.fillRect(0, 0, 400, 240)
     playdate.drawFPS(0,0)
-    playdate.graphics.drawText("F: grant/revoke 1", 10, 20)
-    playdate.graphics.drawText("G: grant/revoke 2", 10, 40)
+    playdate.graphics.drawText("F: grant/revoke 1 (silent)", 10, 20)
+    playdate.graphics.drawText("G: grant/revoke 2 (drawn)", 10, 40)
     playdate.graphics.drawText("H: grant invalid", 10, 60)
     playdate.graphics.drawText("J: invoke invalid", 10, 80)
     playdate.graphics.drawText("R: save/export data", 10, 100)
-
+    achievements.visualUpdate()
 end
