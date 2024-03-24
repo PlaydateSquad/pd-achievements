@@ -201,15 +201,16 @@ end
 achievements.displayGrantedMilliseconds = 2000
 achievements.displayGrantedDefaultX = 20
 achievements.displayGrantedDefaultY = 0
+achievements.displayGrantedDelayNext = 400
 achievements.onUnconfigured = error
 
 -- don't waste time checking if we know we'll supply the right arguments anyway (for in-library usage)
+local gfx <const> = playdate.graphics
 local function drawCardUnsafe(ach, x, y)
 	-- TODO: pre-make achievement 'badge' to speed up processing, that way we don't mess up the existing colors either, since we can lock the image context
 	--       that _does_ mean badges will need to be updated separately (eventually) when we revoke/'add-progress-to' the things
 	-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
 	-- TODO: properly draw this, have someone with better art-experience look at it
-	local gfx <const> = playdate.graphics
 	gfx.fillRoundRect(x, y, 360, 40, 3)
 	gfx.setColor(gfx.kColorWhite)
 	gfx.drawRoundRect(x, y, 360, 40, 3, 2)
@@ -261,22 +262,25 @@ achievements.animateGranted = function(achievement_id, x, y, msec_since_granted,
 	return animateGrantedUnsafe(ach, x, y, msec_since_granted, draw_card_func)
 end
 
-local draw_coros = {}
+local last_grant_display_msec = -achievements.displayGrantedDelayNext
+local animate_coros = {}
 achievements.grant = function(achievement_id, silent, draw_card_func, animate_func)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
 		achievements.onUnconfigured("attempt to grant unconfigured achievement '" .. achievement_id .. "'", 2)
-		return
+		return false
 	end
-	-- TODO: check if alreayd granted!
 	-- playdate documentation states that getSecondsSinceEpoch should be a list of (seconds, milliseconds), but only the seconds are given...
 	local time = playdate.getSecondsSinceEpoch()
+	if ach.granted_at ~= false and arch.granted_at <= ( time ) then
+		return false
+	end
 	achievements.granted[achievement_id] = ( time )
 	ach.granted_at = time
 
 	-- drawing, if needed
 	if silent then
-		return
+		return true
 	end
 	if draw_card_func == nil then
 		draw_card_func = drawCardUnsafe
@@ -285,10 +289,15 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 		animate_func = animateGrantedUnsafe
 	end
 	-- tie display-coroutine to achievement-id, so that the system doesn't get confused by rapid grant/revoke
-	draw_coros[achievement_id] = coroutine.create(
+	animate_coros[achievement_id] = coroutine.create(
 		function ()
 			-- NOTE: use getCurrentTimeMilliseconds here (regardless of time granted), since that'll take into account game-pausing.
-			local start_msec = playdate.getCurrentTimeMilliseconds()
+			local start_msec = 0
+			repeat
+				start_msec = playdate.getCurrentTimeMilliseconds()
+				coroutine.yield()
+			until start_msec > (last_grant_display_msec + achievements.displayGrantedDelayNext)
+			last_grant_display_msec = start_msec
 			local current_msec = start_msec
 			while animate_func(
 				ach,
@@ -302,23 +311,25 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 			end
 		end
 	)
-	-- TODO: what if multiple acievements at the same time?
+	return true
 end
 
 achievements.revoke = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
 		achievements.onUnconfigured("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
-		return
+		return false
 	end
 	ach.granted_at = false
 	achievements.granted[achievement_id] = nil
+	return true
 end
 
+-- TODO: name?
 achievements.visualUpdate = function ()
-    for achievement_id, coro_func in pairs(draw_coros) do
+    for achievement_id, coro_func in pairs(animate_coros) do
         if not coroutine.resume(coro_func) then
-			draw_coros[achievement_id] = nil
+			animate_coros[achievement_id] = nil
 		end
     end
 end
