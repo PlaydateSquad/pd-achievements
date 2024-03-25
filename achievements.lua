@@ -88,6 +88,10 @@ local default_achievement_file_name <const> = "Achievements.json"
 local default_shared_images_subfolder <const> = "AchievementImages/"
 local default_shared_images_updated_file <const> = "_last_seen_version.txt"
 
+local function basename(str)
+    return str:sub((#str + 1) - (str:reverse():find("/", 0, true) - 1))
+end
+
 local function parse_version_string(ver)
 	local status = true
 
@@ -292,8 +296,20 @@ local function copy_images_to_shared(gameID, current_version_str)
 		playdate.file.delete(folder, true)
 	end
 	playdate.file.mkdir(folder)
-
-	print("CORE NOT IMPLEMENTED YET") -- TODO!
+	local skip_default_icons <const> = { _default_icon = true, _default_locked = true }
+	for original_path, data in pairs(path_to_image_data) do
+		if skip_default_icons[original_path] == nil then
+			if original_path:sub(1,1) == "/" then
+				error("Absolute paths in the (non-shared) achievement template data aren't implemented. (Yet?)", 2)
+			end
+			local shared_path = folder .. original_path
+			local subfolder = basename(shared_path)
+			if not playdate.file.exists(subfolder) then
+				playdate.file.mkdir(subfolder)
+			end
+			playdate.datastore.writeImage(data.image, shared_path)
+		end
+	end
 
 	-- also write the version-file
 	local ver_file, err = playdate.file.open(path, playdate.file.kFileWrite)
