@@ -511,8 +511,7 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 		achievements.onUnconfigured("attempt to grant unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
-	-- playdate documentation states that getSecondsSinceEpoch should be a list of (seconds, milliseconds), but only the seconds are given...
-	local time = playdate.getSecondsSinceEpoch()
+	local time, _ = playdate.getSecondsSinceEpoch()
 	if ach.granted_at ~= false and arch.granted_at <= ( time ) then
 		return false
 	end
