@@ -401,8 +401,12 @@ local function draw_card_unsafe(ach, x, y)
 				gfx.setColor(gfx.kColorWhite)
 				gfx.drawRoundRect(0, 0, 360, 40, 3, 3)
 				-- TODO: either do these next 2 separately, or make the entire card into an animation
-				path_to_image_data[ach.icon].image:draw(4, 4)
-				path_to_image_data[ach.icon_locked].image:draw(324, 4)
+				local select_icon = ach.icon_locked
+				if ach.granted_at then
+					select_icon = ach.icon
+				end
+				path_to_image_data[select_icon].image:draw(4, 4)
+				path_to_image_data[select_icon].image:draw(324, 4)
 				gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
 				gfx.drawTextInRect(ach.name, 40, 14, 292, 60, nil, "...", kTextAlignment.center)
 			end
