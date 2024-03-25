@@ -3,4 +3,4 @@ author=You, Inc
 description=Testing grounds for adding achievements.
 bundleID=com.example.achievementtest
 version=0.2
-buildNumber=2
+buildNumber=4
