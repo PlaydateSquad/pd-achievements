@@ -85,6 +85,63 @@ import "CoreLibs/graphics"
 --   rather than the previously penciled in `/Shared/Achievements/gameID`
 local default_shared_achievement_folder <const> = "/Shared/"
 local default_achievement_file_name <const> = "Achievements.json"
+local default_shared_images_subfolder <const> = "AchievementImages/"
+local default_shared_images_updated_file <const> = "_last_seen_version.txt"
+
+local function parse_version_string(ver)
+	local status = true
+
+	local function split_all_after_first(str, char)
+		local char_pos = str:find(char, 1, true)
+		local res = nil
+		if char_pos ~= nil then
+			status, res = pcall(function() return { str:sub(0, char_pos - 1), str:sub(char_pos + 1, -1) } end)
+			if status then
+				return res[1], res[2]
+			end
+		end
+		return str, ""
+	end
+
+	-- drop everything after '+' (as is normal in semver)
+	ver, _ = split_all_after_first(ver, '+')
+	-- also drop everything after '-' (as parsing that is massive overkill for the intended use)
+	ver, _ = split_all_after_first(ver, '-')
+
+	-- what is left should be a normal version number
+	local result = {}
+	while ver ~= nil and ver ~= "" do
+		local num_str, next = split_all_after_first(ver, '.')
+		if num_str ~= nil and num_str ~= "" then
+			local num = nil
+			status, num = pcall(function() return tonumber(num_str) end)
+			if not status then
+				num = -1
+			end
+			table.insert(result, num)
+		end
+		ver = next
+	end
+
+	return result
+end
+
+local function compare_version_strings(version_a, version_b)
+	local ver_a = parse_version_string(version_a)
+	local ver_b = parse_version_string(version_b)
+	local longest = math.max(#ver_a, #ver_b)
+	for i_pos = 1, longest, 1 do
+		ver_a[i_pos] = ver_a[i_pos] or 0
+		ver_b[i_pos] = ver_b[i_pos] or 0
+		if ver_a[i_pos] < ver_b[i_pos] then
+			return -1
+		end
+		if ver_a[i_pos] > ver_b[i_pos] then
+			return 1
+		end
+	end
+	return 0
+end
 
 local function get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
@@ -99,6 +156,20 @@ local function get_achievement_data_file_path(gameID)
 	end
 	local root = get_achievement_folder_root_path(gameID)
 	return root .. default_achievement_file_name
+end
+local function get_shared_images_path(gameID)
+	if type(gameID) ~= "string" then
+		error("bad argument #1: expected string, got " .. type(gameID), 2)
+	end
+	local root = get_achievement_folder_root_path(gameID)
+	return root .. default_shared_images_subfolder
+end
+local function get_shared_images_updated_file_path(gameID)
+	if type(gameID) ~= "string" then
+		error("bad argument #1: expected string, got " .. type(gameID), 2)
+	end
+	local folder = get_shared_images_path(gameID)
+	return folder .. default_shared_images_updated_file
 end
 
 local metadata <const> = playdate.metadata
@@ -200,7 +271,37 @@ local function load_images()
 	end
 end
 
-local function copy_images_to_shared()
+local function copy_images_to_shared(gameID, current_version_str)
+	-- if >= the current version of the gamedata already exists, no need to re-copy the images
+	local path = get_shared_images_updated_file_path(gameID)
+	if playdate.file.exists(path) and not playdate.file.isdir(path) then
+		local ver_file, err = playdate.file.open(path, playdate.file.kFileRead)
+		if not ver_file then
+			error("Couldn't read version file at '" .. path .. "', because: " .. err, 2)
+		end
+		local ver_str = ver_file:readline() or "0.0.0"
+		ver_file:close()
+		if compare_version_strings(ver_str, current_version_str) <= 0 then
+			return
+		end
+	end
+
+	-- otherwise, the structure should be copied
+	local folder = get_shared_images_path(gameID)
+	if playdate.file.exists(folder) then
+		playdate.file.delete(folder, true)
+	end
+	playdate.file.mkdir(folder)
+
+	print("CORE NOT IMPLEMENTED YET") -- TODO!
+
+	-- also write the version-file
+	local ver_file, err = playdate.file.open(path, playdate.file.kFileWrite)
+	if not ver_file then
+		error("Couldn't write version file at '" .. path .. "', because: " .. err, 2)
+	end
+	ver_file:write(current_version_str)
+	ver_file:close()
 end
 
 local function donothing(...) end
@@ -254,7 +355,7 @@ function achievements.initialize(gamedata, prevent_debug)
 
 	playdate.file.mkdir(get_achievement_folder_root_path(gamedata.gameID))
 	export_data()
-	copy_images_to_shared()
+	copy_images_to_shared(gamedata.gameID, gamedata.version)
 
 	print("files exported to /Shared")
 	print("Achievements have been initialized!")
