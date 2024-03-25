@@ -83,7 +83,7 @@ import "CoreLibs/graphics"
 -- Right, we're gonna make this easier to change in the future.
 -- Another note: changing the data directory to `/Shared/gameID`
 --   rather than the previously penciled in `/Shared/Achievements/gameID`
-local default_shared_achievement_folder <const> = "/Shared/"
+local default_shared_achievement_folder <const> = "/Shared/Data/"
 local default_achievement_file_name <const> = "Achievements.json"
 local default_shared_images_subfolder <const> = "AchievementImages/"
 local default_shared_images_updated_file <const> = "_last_seen_version.txt"
