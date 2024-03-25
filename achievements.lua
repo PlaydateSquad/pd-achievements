@@ -89,7 +89,14 @@ local default_shared_images_subfolder <const> = "AchievementImages/"
 local default_shared_images_updated_file <const> = "_last_seen_version.txt"
 
 local function basename(str)
-    return str:sub((#str + 1) - (str:reverse():find("/", 0, true) - 1))
+	local pos = str:reverse():find("/", 0, true)
+	if pos == nil then
+		return str
+	end
+	if pos == #str then
+		pos = str:reverse():find("/", 2, true)
+	end
+	return str:sub((#str + 1) - (pos - 1))
 end
 
 local function parse_version_string(ver)
