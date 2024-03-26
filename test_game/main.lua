@@ -4,24 +4,26 @@ import "../achievements"
 
 -- Copied from the comments in the other file...
 local achievementData = {
-    gameID = "com.yourcompany.yourgame",
+    gameID = "com.example.achievementtest",
     name = "My Awesome Game",
     author = "You, Inc",
-    description = "The next evolution in cranking technology.",
+    description = "The next (r)evolution in cranking technology.",
     achievements = {
         {
             id = "test_achievement",
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "filepath"
+            icon = "test.pdi",
+            icon_locked = "test_locked.pdi",
         },
         {
             id = "test_achievement_2",
-            name = "Achievement Name",
+            name = "Name Of Achievement",
             description = "Achievement Description",
             is_secret = false,
-            icon = "filepath"
+            icon = nil,
+            icon_locked = nil,
         },
     }
 }
@@ -68,5 +70,5 @@ function playdate.update()
     playdate.graphics.drawText("H: grant invalid", 10, 60)
     playdate.graphics.drawText("J: invoke invalid", 10, 80)
     playdate.graphics.drawText("R: save/export data", 10, 100)
-
+    achievements.updateVisuals()
 end
