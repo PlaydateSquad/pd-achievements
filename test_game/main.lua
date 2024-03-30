@@ -34,10 +34,10 @@ function playdate.keyPressed(key)
     if key == "f" then
         if achievements.granted["test_achievement"] then
             print("revoking example achievement 1")
-            achievements.revoke("test_achievement")
+            toast_graphics.revoke("test_achievement")
         else
             print("granting example achievement 1")
-            achievements.grant("test_achievement")
+            toast_graphics.grant("test_achievement")
         end
     elseif key == "g" then
         if achievements.granted["test_achievement_2"] then
@@ -70,5 +70,5 @@ function playdate.update()
     playdate.graphics.drawText("H: grant invalid", 10, 60)
     playdate.graphics.drawText("J: invoke invalid", 10, 80)
     playdate.graphics.drawText("R: save/export data", 10, 100)
-    achievements.updateVisuals()
+    toast_graphics.updateVisuals()
 end

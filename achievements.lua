@@ -397,7 +397,7 @@ local function draw_card_unsafe(ach, x, y)
 	gfx.popContext()
 end
 
-achievements.drawCard = function (achievement_or_id, x, y)
+toast_graphics.drawCard = function (achievement_or_id, x, y)
 	local ach = resolve_achievement_or_id(achievement_or_id)
 	if not ach then
 		achievements.onUnconfigured("attempt to draw unconfigured achievement '" .. achievement_or_id .. "'", 2)
@@ -420,7 +420,7 @@ local function animate_granted_unsafe(ach, x, y, msec_since_granted, draw_card_f
 	return msec_since_granted <= toast_graphics.displayGrantedMilliseconds
 end
 
-achievements.animateGranted = function(achievement_or_id, x, y, msec_since_granted, draw_card_func)
+toast_graphics.animateGranted = function(achievement_or_id, x, y, msec_since_granted, draw_card_func)
 	local ach = resolve_achievement_or_id(achievement_or_id)
 	if not ach then
 		achievements.onUnconfigured("attempt to animate unconfigured achievement '" .. achievement_or_id .. "'", 2)
@@ -441,7 +441,7 @@ achievements.animateGranted = function(achievement_or_id, x, y, msec_since_grant
 end
 
 local animate_coros = {}
-achievements.updateVisuals = function ()
+toast_graphics.updateVisuals = function ()
 	for achievement_id, coro_func in pairs(animate_coros) do
 		if not coroutine.resume(coro_func) then
 			animate_coros[achievement_id] = nil
@@ -483,7 +483,7 @@ achievements.getInfo = function(achievement_id)
 	return achievements.keyedAchievements[achievement_id] or false
 end
 
-achievements.grant = function(achievement_id, silent, draw_card_func, animate_func)
+achievements.grant = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
 		achievements.onUnconfigured("attempt to grant unconfigured achievement '" .. achievement_id .. "'", 2)
@@ -499,9 +499,12 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
 	end
+	return true
+end
 
-	-- drawing, if needed
-	if not silent then
+toast_graphics.grant = function(achievement_id, draw_card_func, animate_func)
+	if achievements.grant(achievement_id) then
+		local ach = achievements.keyedAchievements[achievement_id]
 		if draw_card_func == nil then
 			draw_card_func = draw_card_unsafe
 		end
@@ -510,7 +513,6 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 		end
 		start_granted_animation(ach, draw_card_func, animate_func)
 	end
-	return true
 end
 
 achievements.revoke = function(achievement_id)
@@ -524,8 +526,13 @@ achievements.revoke = function(achievement_id)
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
 	end
-	draw_card_cache[achievement_id] = nil
 	return true
+end
+
+toast_graphics.revoke = function(achievement_id)
+	if achievements.revoke(achievement_id) then
+		draw_card_cache[achievement_id] = nil
+	end
 end
 
 --[[ External Game Functions ]]--
