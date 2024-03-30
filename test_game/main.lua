@@ -14,8 +14,8 @@ local achievementData = {
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "test.pdi",
-            icon_locked = "test_locked.pdi",
+            icon = "test",
+            icon_locked = "test_locked",
         },
         {
             id = "test_achievement_2",

@@ -99,6 +99,17 @@ local function basename(str)
 	return str:sub((#str + 1) - (pos - 1))
 end
 
+local function force_extension(str, new_ext)
+	local pos = str:reverse():find(".", 0, true)
+	if pos == nil then
+		return str .. "." .. new_ext
+	end
+	if pos == 1 then
+		return str .. new_ext
+	end
+	return str:sub((#str + 1) - (pos - 1)) .. "." .. new_ext
+end
+
 local function get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
@@ -204,7 +215,8 @@ local function load_images()
 	for key, value in pairs(achievements.keyedAchievements) do
 		if value.icon ~= nil then
 			if path_to_image_data[value.icon] == nil then
-				path_to_image_data[value.icon] = { image = gfx.image.new(value.icon), ids = {} }
+				local filename = force_extension(value.icon, "pdi")
+				path_to_image_data[value.icon] = { image = gfx.image.new(filename), ids = {} }
 			end
 		else
 			value.icon = "_default_icon"
@@ -212,7 +224,8 @@ local function load_images()
 		table.insert(path_to_image_data[value.icon].ids, key)
 		if value.icon_locked ~= nil then
 			if path_to_image_data[value.icon_locked] == nil then
-				path_to_image_data[value.icon_locked] = { image = gfx.image.new(value.icon_locked), ids = {} }
+				local filename = force_extension(value.icon_locked, "pdi")
+				path_to_image_data[value.icon_locked] = { image = gfx.image.new(filename), ids = {} }
 			end
 		else
 			value.icon_locked = "_default_locked"
