@@ -147,11 +147,8 @@ achievements = {
 	iconHeight = 32,
 }
 
-local function load_granted_data(from_file)
-	if from_file == nil then
-		from_file = "./" .. achievement_file_name
-	end
-	local data = json.decodeFile(from_file)
+local function load_granted_data()
+	local data = json.decodeFile(achievement_file_name)
 	if not data then
 		data = {}
 	end
@@ -162,12 +159,9 @@ local function export_data()
 	local data = achievements.gameData
 	json.encodeToFile(get_achievement_data_file_path(data.gameID), true, data)
 end
-function achievements.save(to_file)
-	if to_file == nil then
-		to_file = "./" .. achievement_file_name
-	end
+function achievements.save()
 	export_data()
-	json.encodeToFile(to_file, false, achievements.granted)
+	json.encodeToFile(achievement_file_name, false, achievements.granted)
 end
 
 local function set_rounded_mask(img, width, height, round)
