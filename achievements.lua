@@ -83,10 +83,10 @@ import "CoreLibs/graphics"
 -- Right, we're gonna make this easier to change in the future.
 -- Another note: changing the data directory to `/Shared/gameID`
 --   rather than the previously penciled in `/Shared/Achievements/gameID`
-local default_shared_achievement_folder <const> = "/Shared/Data/"
-local default_achievement_file_name <const> = "Achievements.json"
-local default_shared_images_subfolder <const> = "AchievementImages/"
-local default_shared_images_updated_file <const> = "_last_seen_version.txt"
+local shared_achievement_folder <const> = "/Shared/Data/"
+local achievement_file_name <const> = "Achievements.json"
+local shared_images_subfolder <const> = "AchievementImages/"
+local shared_images_updated_file <const> = "_last_seen_version.txt"
 
 local function basename(str)
 	local pos = str:reverse():find("/", 0, true)
@@ -103,7 +103,7 @@ local function get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
-	local root = string.format(default_shared_achievement_folder .. "%s/", gameID)
+	local root = string.format(shared_achievement_folder .. "%s/", gameID)
 	return root
 end
 local function get_achievement_data_file_path(gameID)
@@ -111,21 +111,21 @@ local function get_achievement_data_file_path(gameID)
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
 	local root = get_achievement_folder_root_path(gameID)
-	return root .. default_achievement_file_name
+	return root .. achievement_file_name
 end
 local function get_shared_images_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
 	local root = get_achievement_folder_root_path(gameID)
-	return root .. default_shared_images_subfolder
+	return root .. shared_images_subfolder
 end
 local function get_shared_images_updated_file_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
 	local folder = get_shared_images_path(gameID)
-	return folder .. default_shared_images_updated_file
+	return folder .. shared_images_updated_file
 end
 
 local metadata <const> = playdate.metadata
@@ -149,7 +149,7 @@ achievements = {
 
 local function load_granted_data(from_file)
 	if from_file == nil then
-		from_file = "./" .. default_achievement_file_name
+		from_file = "./" .. achievement_file_name
 	end
 	local data = json.decodeFile(from_file)
 	if not data then
@@ -164,7 +164,7 @@ local function export_data()
 end
 function achievements.save(to_file)
 	if to_file == nil then
-		to_file = "./" .. default_achievement_file_name
+		to_file = "./" .. achievement_file_name
 	end
 	export_data()
 	json.encodeToFile(to_file, false, achievements.granted)
