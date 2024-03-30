@@ -481,7 +481,7 @@ achievements.grant = function(achievement_id, silent, draw_card_func, animate_fu
 		return false
 	end
 	local time, _ = playdate.getSecondsSinceEpoch()
-	if ach.granted_at ~= false and arch.granted_at <= ( time ) then
+	if ach.granted_at ~= false and ach.granted_at <= ( time ) then
 		return false
 	end
 	achievements.granted[achievement_id] = ( time )
