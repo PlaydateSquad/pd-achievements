@@ -149,7 +149,9 @@ achievements = {
 
 	onUnconfigured = error,
 	forceSaveOnGrantOrRevoke = false,
-
+}
+---@diagnostic disable-next-line: lowercase-global
+toast_graphics = {
 	displayGrantedMilliseconds = 2000,
 	displayGrantedDefaultX = 20,
 	displayGrantedDefaultY = 0,
@@ -184,8 +186,8 @@ local function set_rounded_mask(img, width, height, round)
 end
 
 local path_to_image_data = {
-	_default_icon = { image = gfx.image.new(achievements.iconWidth, achievements.iconHeight), ids = {} },
-	_default_locked = { image = gfx.image.new(achievements.iconWidth, achievements.iconHeight), ids = {} },
+	_default_icon = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
+	_default_locked = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
 }
 local function load_images()
 	-- 'load' default icon:
@@ -193,23 +195,23 @@ local function load_images()
 	gfx.pushContext(path_to_image_data._default_icon.image)
 	gfx.clear(gfx.kColorWhite)
 	gfx.setColor(gfx.kColorBlack)
-	gfx.drawRoundRect(2, 2, achievements.iconWidth - 4, achievements.iconHeight - 4, 3)
+	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
 	gfx.fillRect(14, 6, 4, 12)
 	gfx.fillRect(14, 22, 4, 4)
 	gfx.popContext()
-	set_rounded_mask(path_to_image_data._default_icon.image, achievements.iconWidth, achievements.iconHeight, 3)
+	set_rounded_mask(path_to_image_data._default_icon.image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 
 	-- 'load' default locked icon:
 	-- TODO: art not final
 	gfx.pushContext(path_to_image_data._default_locked.image)
 	gfx.clear(gfx.kColorWhite)
 	gfx.setColor(gfx.kColorBlack)
-	gfx.drawRoundRect(2, 2, achievements.iconWidth - 4, achievements.iconHeight - 4, 3)
+	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
 	gfx.setLineWidth(3)
 	gfx.drawCircleInRect(12, 7, 8, 8)
 	gfx.fillRect(9, 12, 14, 14)
 	gfx.popContext()
-	set_rounded_mask(path_to_image_data._default_locked.image, achievements.iconWidth, achievements.iconHeight, 3)
+	set_rounded_mask(path_to_image_data._default_locked.image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 
 	-- load images if a file is known, otherwise set defaults
 	for key, value in pairs(achievements.keyedAchievements) do
@@ -402,8 +404,8 @@ achievements.drawCard = function (achievement_or_id, x, y)
 		return
 	end
 	if x == nil or y == nil then
-		x = achievements.displayGrantedDefaultX
-		y = achievements.displayGrantedDefaultY
+		x = toast_graphics.displayGrantedDefaultX
+		y = toast_graphics.displayGrantedDefaultY
 	end
 	draw_card_unsafe(ach, x, y)
 end
@@ -415,7 +417,7 @@ local function animate_granted_unsafe(ach, x, y, msec_since_granted, draw_card_f
 		x + 7.0 * math.sin(msec_since_granted / 90.0),
 		y + (msec_since_granted / 10.0)
 	)
-	return msec_since_granted <= achievements.displayGrantedMilliseconds
+	return msec_since_granted <= toast_graphics.displayGrantedMilliseconds
 end
 
 achievements.animateGranted = function(achievement_or_id, x, y, msec_since_granted, draw_card_func)
@@ -430,7 +432,7 @@ achievements.animateGranted = function(achievement_or_id, x, y, msec_since_grant
 	end
 	if msec_since_granted == nil then
 		-- for now, the animation will take an equal time in as out, so 'half-time' is a good position to draw unspecified
-		msec_since_granted = achievements.displayGrantedMilliseconds / 2
+		msec_since_granted = toast_graphics.displayGrantedMilliseconds / 2
 	end
 	if draw_card_func == nil then
 		draw_card_func = draw_card_unsafe
@@ -447,7 +449,7 @@ achievements.updateVisuals = function ()
 	end
 end
 
-local last_grant_display_msec = -achievements.displayGrantedDelayNext
+local last_grant_display_msec = -toast_graphics.displayGrantedDelayNext
 local function start_granted_animation(ach, draw_card_func, animate_func)
 	draw_card_cache[ach.id] = nil
 	-- tie display-coroutine to achievement-id, so that the system doesn't get confused by rapid grant/revoke
@@ -458,13 +460,13 @@ local function start_granted_animation(ach, draw_card_func, animate_func)
 			repeat
 				start_msec = playdate.getCurrentTimeMilliseconds()
 				coroutine.yield()
-			until start_msec > (last_grant_display_msec + achievements.displayGrantedDelayNext)
+			until start_msec > (last_grant_display_msec + toast_graphics.displayGrantedDelayNext)
 			last_grant_display_msec = start_msec
 			local current_msec = start_msec
 			while animate_func(
 				ach,
-				achievements.displayGrantedDefaultX,
-				achievements.displayGrantedDefaultY,
+				toast_graphics.displayGrantedDefaultX,
+				toast_graphics.displayGrantedDefaultY,
 				current_msec - start_msec,
 				draw_card_func
 			) do
