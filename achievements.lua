@@ -88,15 +88,15 @@ local achievement_file_name <const> = "Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
 local shared_images_updated_file <const> = "_last_seen_version.txt"
 
-local function basename(str)
+local function dirname(str)
 	local pos = str:reverse():find("/", 0, true)
 	if pos == nil then
-		return str
+		return "/"
 	end
 	if pos == #str then
 		pos = str:reverse():find("/", 2, true)
 	end
-	return str:sub((#str + 1) - (pos - 1))
+	return str:sub(0, #str - (pos - 1))
 end
 
 local function force_extension(str, new_ext)
@@ -107,7 +107,7 @@ local function force_extension(str, new_ext)
 	if pos == 1 then
 		return str .. new_ext
 	end
-	return str:sub((#str + 1) - (pos - 1)) .. "." .. new_ext
+	return str:sub(0, (#str - 1) - (pos - 1)) .. "." .. new_ext
 end
 
 local function get_achievement_folder_root_path(gameID)
@@ -185,25 +185,27 @@ local function set_rounded_mask(img, width, height, round)
 	gfx.popContext()
 end
 
+-- make 'defaults' start with a *, so they can't show up in the file system, so any file-name the user can choose is valid
+-- since lua's variable naming is more restrictive than the file-systems, we need to set them as strings
 local path_to_image_data = {
-	_default_icon = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
-	_default_locked = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
+	["*_default_icon"] = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
+	["*_default_locked"] = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
 }
 local function load_images()
 	-- 'load' default icon:
 	-- TODO: art not final
-	gfx.pushContext(path_to_image_data._default_icon.image)
+	gfx.pushContext(path_to_image_data["*_default_icon"].image)
 	gfx.clear(gfx.kColorWhite)
 	gfx.setColor(gfx.kColorBlack)
 	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
 	gfx.fillRect(14, 6, 4, 12)
 	gfx.fillRect(14, 22, 4, 4)
 	gfx.popContext()
-	set_rounded_mask(path_to_image_data._default_icon.image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
+	set_rounded_mask(path_to_image_data["*_default_icon"].image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 
 	-- 'load' default locked icon:
 	-- TODO: art not final
-	gfx.pushContext(path_to_image_data._default_locked.image)
+	gfx.pushContext(path_to_image_data["*_default_locked"].image)
 	gfx.clear(gfx.kColorWhite)
 	gfx.setColor(gfx.kColorBlack)
 	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
@@ -211,7 +213,7 @@ local function load_images()
 	gfx.drawCircleInRect(12, 7, 8, 8)
 	gfx.fillRect(9, 12, 14, 14)
 	gfx.popContext()
-	set_rounded_mask(path_to_image_data._default_locked.image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
+	set_rounded_mask(path_to_image_data["*_default_locked"].image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 
 	-- load images if a file is known, otherwise set defaults
 	for key, value in pairs(achievements.keyedAchievements) do
@@ -221,7 +223,7 @@ local function load_images()
 				path_to_image_data[value.icon] = { image = gfx.image.new(filename), ids = {} }
 			end
 		else
-			value.icon = "_default_icon"
+			value.icon = "*_default_icon"
 		end
 		table.insert(path_to_image_data[value.icon].ids, key)
 		if value.icon_locked ~= nil then
@@ -230,10 +232,77 @@ local function load_images()
 				path_to_image_data[value.icon_locked] = { image = gfx.image.new(filename), ids = {} }
 			end
 		else
-			value.icon_locked = "_default_locked"
+			value.icon_locked = "*_default_locked"
 		end
 		table.insert(path_to_image_data[value.icon_locked].ids, key)
 	end
+end
+
+achievements.getLocalPaths = function(variables)
+	local result_set = {}
+	for _, variable in ipairs(variables) do
+		for _, value in pairs(achievements.keyedAchievements) do
+			if value[variable] ~= nil then
+				-- Always compiled to .pdi, but the user doesn't need to be aware of that (like pd.image.new).
+				local filename = force_extension(value[variable], "pdi")
+				result_set[filename] = true
+			end
+		end
+	end
+	-- spoon the set of results into a 'normal' vector
+	local result = {}
+	for filename, _ in pairs(result_set) do
+		table.insert(result, filename)
+	end
+	return result
+end
+
+local function copy_file(src_path, dest_path)
+	-- make sure the source-file exists
+	if not (playdate.file.exists(src_path) or playdate.file.isdir(src_path)) then
+		error("Can't find file '"..src_path.."'; either non-existant, non-accessible, or a directory.")
+	end
+
+	-- make sure the folder structure up to the destination path exists
+	local subfolder = dirname(dest_path)
+	if playdate.file.exists(subfolder) and not playdate.file.isdir(subfolder) then
+		error("Directory-name for destination, '"..subfolder.."', is not a folder.")
+	end
+	if not playdate.file.exists(subfolder) then
+		playdate.file.mkdir(subfolder)
+	end
+
+	-- open both the source and the destination paths (one for reading, the other for writing to)
+	local in_file, err = playdate.file.open(src_path, playdate.file.kFileRead)
+	if err then
+		error("Can't open source file '"..src_path.."', because: '"..err.."'.")
+	end
+	local out_file, err = playdate.file.open(dest_path, playdate.file.kFileWrite)
+	if err then
+		error("Can't open destination file '"..dest_path.."', because: '"..err.."'.")
+	end
+
+	-- no 'SEEK_END' in lua, so we need to check the size this way
+	local num_bytes = playdate.file.getSize(src_path)
+	if num_bytes == 0 then
+		out_file:close()
+		in_file:close()
+		return
+	end
+
+	-- finally, the acctual read/write process
+	local buffer, err = in_file:read(num_bytes)
+	if buffer == nil then
+		error("Can't read source file '"..src_path.."', because: '"..err.."'.")
+	end
+	-- NOTE: the documentation says this should be a string, but it seems we can get away with just yeeting the buffer in there
+	local res, err = out_file:write(buffer)
+	if res == 0 then
+		error("Can't write to destination file '"..dest_path.."' because: '"..err.."'.")
+	end
+
+	out_file:close()
+	in_file:close()
 end
 
 local function copy_images_to_shared(gameID, current_build_nr)
@@ -258,18 +327,9 @@ local function copy_images_to_shared(gameID, current_build_nr)
 		playdate.file.delete(folder, true)
 	end
 	playdate.file.mkdir(folder)
-	local skip_default_icons <const> = { _default_icon = true, _default_locked = true }
-	for original_path, data in pairs(path_to_image_data) do
-		if skip_default_icons[original_path] == nil then
-			if original_path:sub(1,1) == "/" then
-				error("Absolute paths in the (non-shared) achievement template data aren't implemented. (Yet?)", 2)
-			end
-			local shared_path = folder .. original_path
-			local subfolder = basename(shared_path)
-			if not playdate.file.exists(subfolder) then
-				playdate.file.mkdir(subfolder)
-			end
-			playdate.datastore.writeImage(data.image, shared_path)
+	for _, local_path in ipairs(achievements.getLocalPaths({ "icon", "icon_locked" })) do
+		if local_path:sub(1,1) ~= "*" then
+			copy_file(local_path, folder .. local_path)
 		end
 	end
 
