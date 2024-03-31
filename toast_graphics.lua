@@ -104,8 +104,8 @@ local function create_card(width, height, round, draw_func)
 end
 
 local draw_card_cache = {} -- NOTE: don't forget to invalidate the cache on grant/revoke/progress!
-local function draw_card_unsafe(ach, x, y)
-	-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
+local function draw_card_unsafe(ach, x, y, msec_since_granted)
+	-- if not in cache yet, create the card for quick drawing later
 	if draw_card_cache[ach.id] == nil then
 		-- TODO: properly draw this, have someone with better art-experience look at it
 		draw_card_cache[ach.id] = create_card(
@@ -126,18 +126,28 @@ local function draw_card_unsafe(ach, x, y)
 				path_to_image_data[select_icon].image:draw(4, 4)
 				path_to_image_data[select_icon].image:draw(324, 4)
 				gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+				-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
 				gfx.drawTextInRect(ach.name, 40, 14, 292, 60, nil, "...", kTextAlignment.center)
 			end
 		)
 	end
 
+	-- animation
+	if msec_since_granted ~= 0 then
+		x = x + 7.0 * math.sin(msec_since_granted / 90.0)
+		y = y + (msec_since_granted / 10.0)
+	end
+
+	-- draw to screen
 	gfx.pushContext()
 	gfx.setImageDrawMode(gfx.kDrawModeCopy)
 	draw_card_cache[ach.id]:draw(x, y);
 	gfx.popContext()
+
+	return msec_since_granted <= toast_graphics.displayGrantedMilliseconds
 end
 
-toast_graphics.drawCard = function (achievement_or_id, x, y)
+toast_graphics.drawCard = function(achievement_or_id, x, y, msec_since_granted)
 	local ach = resolve_achievement_or_id(achievement_or_id)
 	if not ach then
 		achievements.onUnconfigured("attempt to draw unconfigured achievement '" .. achievement_or_id .. "'", 2)
@@ -147,37 +157,11 @@ toast_graphics.drawCard = function (achievement_or_id, x, y)
 		x = toast_graphics.displayGrantedDefaultX
 		y = toast_graphics.displayGrantedDefaultY
 	end
-	draw_card_unsafe(ach, x, y)
-end
-
-local function animate_granted_unsafe(ach, x, y, msec_since_granted, draw_card_func)
-	-- TODO: like for drawing, this needs a bit more care and attention from someone with an art eye
-	draw_card_func(
-		ach,
-		x + 7.0 * math.sin(msec_since_granted / 90.0),
-		y + (msec_since_granted / 10.0)
-	)
-	return msec_since_granted <= toast_graphics.displayGrantedMilliseconds
-end
-
-toast_graphics.animateGranted = function(achievement_or_id, x, y, msec_since_granted, draw_card_func)
-	local ach = resolve_achievement_or_id(achievement_or_id)
-	if not ach then
-		achievements.onUnconfigured("attempt to animate unconfigured achievement '" .. achievement_or_id .. "'", 2)
-		return
-	end
-	if x == nil or y == nil then
-		x = achievements.displayGrantedDefaultX
-		y = achievements.displayGrantedDefaultY
-	end
 	if msec_since_granted == nil then
-		-- for now, the animation will take an equal time in as out, so 'half-time' is a good position to draw unspecified
-		msec_since_granted = toast_graphics.displayGrantedMilliseconds / 2
+		msec_since_granted = 0
 	end
-	if draw_card_func == nil then
-		draw_card_func = draw_card_unsafe
-	end
-	return animate_granted_unsafe(ach, x, y, msec_since_granted, draw_card_func)
+	-- split into 'unsafe' function, so that can be called internally without all the checks above each time
+	return draw_card_unsafe(ach, x, y, msec_since_granted)
 end
 
 local animate_coros = {}
@@ -190,7 +174,7 @@ toast_graphics.updateVisuals = function ()
 end
 
 local last_grant_display_msec = -toast_graphics.displayGrantedDelayNext
-local function start_granted_animation(ach, draw_card_func, animate_func)
+local function start_granted_animation(ach, draw_card_func)
 	draw_card_cache[ach.id] = nil
 	-- tie display-coroutine to achievement-id, so that the system doesn't get confused by rapid grant/revoke
 	animate_coros[ach.id] = coroutine.create(
@@ -203,12 +187,11 @@ local function start_granted_animation(ach, draw_card_func, animate_func)
 			until start_msec > (last_grant_display_msec + toast_graphics.displayGrantedDelayNext)
 			last_grant_display_msec = start_msec
 			local current_msec = start_msec
-			while animate_func(
+			while draw_card_func(
 				ach,
 				toast_graphics.displayGrantedDefaultX,
 				toast_graphics.displayGrantedDefaultY,
-				current_msec - start_msec,
-				draw_card_func
+				current_msec - start_msec
 			) do
 				coroutine.yield()
 				current_msec = playdate.getCurrentTimeMilliseconds()
@@ -219,16 +202,13 @@ end
 
 --[[ Achievement Management Functions ]]--
 
-toast_graphics.grant = function(achievement_id, draw_card_func, animate_func)
+toast_graphics.grant = function(achievement_id, draw_card_func)
 	if achievements.grant(achievement_id) then
 		local ach = achievements.keyedAchievements[achievement_id]
 		if draw_card_func == nil then
 			draw_card_func = draw_card_unsafe
 		end
-		if animate_func == nil then
-			animate_func = animate_granted_unsafe
-		end
-		start_granted_animation(ach, draw_card_func, animate_func)
+		start_granted_animation(ach, draw_card_func)
 	end
 end
 
