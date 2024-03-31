@@ -1,6 +1,6 @@
 local gfx = playdate.graphics
 
-import "../achievements"
+import "../toast_graphics"
 
 -- Copied from the comments in the other file...
 local achievementData = {
@@ -28,7 +28,7 @@ local achievementData = {
     }
 }
 
-achievements.initialize(achievementData)
+toast_graphics.initialize(achievementData)
 
 function playdate.keyPressed(key)
     if key == "f" then
@@ -42,20 +42,20 @@ function playdate.keyPressed(key)
     elseif key == "g" then
         if achievements.granted["test_achievement_2"] then
             print("revoking example achievement 2")
-            achievements.revoke("test_achievement_2")
+            toast_graphics.revoke("test_achievement_2")
         else
             print("granting example achievement 2")
-            achievements.grant("test_achievement_2")
+            toast_graphics.grant("test_achievement_2")
         end
     elseif key == "h" then
         print("granting invalid achievement")
-        achievements.grant("invalid")
+        toast_graphics.grant("invalid")
     elseif key == "j" then
         print("revoking invalid achievement")
-        achievements.revoke("invalid")
+        toast_graphics.revoke("invalid")
     elseif key == "r" then
         print("saving/exporting")
-        achievements.save()
+        toast_graphics.save()
     end
 end
 
