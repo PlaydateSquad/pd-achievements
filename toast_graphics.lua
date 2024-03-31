@@ -250,3 +250,13 @@ toast_graphics.revoke = function(achievement_id)
 		draw_card_cache[achievement_id] = nil
 	end
 end
+
+toast_graphics.isGranted = function(achievement_id)
+	return achievements.granted[achievement_id] ~= nil
+end
+
+toast_graphics.save = function()
+	achievements.save()
+end
+
+return toast_graphics

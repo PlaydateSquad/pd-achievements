@@ -32,7 +32,7 @@ toast_graphics.initialize(achievementData)
 
 function playdate.keyPressed(key)
     if key == "f" then
-        if achievements.granted["test_achievement"] then
+        if toast_graphics.isGranted("test_achievement") then
             print("revoking example achievement 1")
             toast_graphics.revoke("test_achievement")
         else
@@ -40,7 +40,7 @@ function playdate.keyPressed(key)
             toast_graphics.grant("test_achievement")
         end
     elseif key == "g" then
-        if achievements.granted["test_achievement_2"] then
+        if toast_graphics.isGranted("test_achievement_2") then
             print("revoking example achievement 2")
             toast_graphics.revoke("test_achievement_2")
         else
