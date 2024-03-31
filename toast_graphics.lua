@@ -13,20 +13,6 @@ toast_graphics = {
 	iconHeight = 32,
 }
 
--- TODO: Restructure achievements.getLocalPaths into achievements.getPaths
---       So we can ditch the copy of foce_extension we had to make here, _and_
---       so we can also have the shared paths in there for cross-game-shenanigans
-local function force_extension(str, new_ext)
-	local pos = str:reverse():find(".", 0, true)
-	if pos == nil then
-		return str .. "." .. new_ext
-	end
-	if pos == 1 then
-		return str .. new_ext
-	end
-	return str:sub(0, (#str - 1) - (pos - 1)) .. "." .. new_ext
-end
-
 local function set_rounded_mask(img, width, height, round)
 	gfx.pushContext(img:getMaskImage())
 	gfx.clear(gfx.kColorBlack)
@@ -41,7 +27,7 @@ local path_to_image_data = {
 	["*_default_icon"] = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
 	["*_default_locked"] = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
 }
-local function load_images()
+local function load_images(gameID)
 	-- 'load' default icon:
 	-- TODO: art not final
 	gfx.pushContext(path_to_image_data["*_default_icon"].image)
@@ -66,10 +52,11 @@ local function load_images()
 	set_rounded_mask(path_to_image_data["*_default_locked"].image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 
 	-- load images if a file is known, otherwise set defaults
+	local paths_by_reference = achievements.getPaths(gameID, { "icon", "icon_locked" })
 	for key, value in pairs(achievements.keyedAchievements) do
 		if value.icon ~= nil then
 			if path_to_image_data[value.icon] == nil then
-				local filename = force_extension(value.icon, "pdi")
+				local filename = paths_by_reference[value.icon].native
 				path_to_image_data[value.icon] = { image = gfx.image.new(filename), ids = {} }
 			end
 		else
@@ -78,7 +65,7 @@ local function load_images()
 		table.insert(path_to_image_data[value.icon].ids, key)
 		if value.icon_locked ~= nil then
 			if path_to_image_data[value.icon_locked] == nil then
-				local filename = force_extension(value.icon_locked, "pdi")
+				local filename = paths_by_reference[value.icon_locked].native
 				path_to_image_data[value.icon_locked] = { image = gfx.image.new(filename), ids = {} }
 			end
 		else
@@ -90,7 +77,7 @@ end
 
 function toast_graphics.initialize(gamedata, prevent_debug)
 	achievements.initialize(gamedata, prevent_debug)
-	load_images()
+	load_images(achievements.gameData.gameID)
 end
 
 --[[ Achievement Drawing & Animation ]]--

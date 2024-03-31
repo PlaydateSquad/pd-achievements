@@ -164,24 +164,17 @@ function achievements.save()
 	json.encodeToFile(achievement_file_name, false, achievements.granted)
 end
 
--- TODO: Restructure achievements.getLocalPaths into achievements.getPaths
---       So we can ditch the copy of foce_extension we had to make here, _and_
---       so we can also have the shared paths in there for cross-game-shenanigans
-achievements.getLocalPaths = function(variables)
-	local result_set = {}
+achievements.getPaths = function(gameID, variables)
+	local shared_folder = get_shared_images_path(gameID)
+	local result = {}
 	for _, variable in ipairs(variables) do
 		for _, value in pairs(achievements.keyedAchievements) do
 			if value[variable] ~= nil then
-				-- Always compiled to .pdi, but the user doesn't need to be aware of that (like pd.image.new).
-				local filename = force_extension(value[variable], "pdi")
-				result_set[filename] = true
+				local ref = value[variable]
+				local filename = force_extension(value[variable], "pdi") -- Always compiled to .pdi, (so use like pd.image.new).
+				result[ref] = { native = filename, shared = ( shared_folder .. filename ) }
 			end
 		end
-	end
-	-- spoon the set of results into a 'normal' vector
-	local result = {}
-	for filename, _ in pairs(result_set) do
-		table.insert(result, filename)
 	end
 	return result
 end
@@ -256,9 +249,9 @@ local function copy_images_to_shared(gameID, current_build_nr)
 		playdate.file.delete(folder, true)
 	end
 	playdate.file.mkdir(folder)
-	for _, local_path in ipairs(achievements.getLocalPaths({ "icon", "icon_locked" })) do
-		if local_path:sub(1,1) ~= "*" then
-			copy_file(local_path, folder .. local_path)
+	for _, paths in pairs(achievements.getPaths(gameID, { "icon", "icon_locked" })) do
+		if paths.native:sub(1,1) ~= "*" then
+			copy_file(paths.native, paths.shared)
 		end
 	end
 
