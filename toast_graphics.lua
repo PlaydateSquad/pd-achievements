@@ -150,7 +150,7 @@ end
 toast_graphics.drawCard = function(achievement_or_id, x, y, msec_since_granted)
 	local ach = resolve_achievement_or_id(achievement_or_id)
 	if not ach then
-		achievements.onUnconfigured("attempt to draw unconfigured achievement '" .. achievement_or_id .. "'", 2)
+		error("attempt to draw unconfigured achievement '" .. achievement_or_id .. "'", 2)
 		return
 	end
 	if x == nil or y == nil then

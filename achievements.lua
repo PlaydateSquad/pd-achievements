@@ -143,7 +143,6 @@ achievements = {
 	specversion = "0.1+prototype",
 	libversion = "0.2-alpha+prototype",
 
-	onUnconfigured = error,
 	forceSaveOnGrantOrRevoke = false,
 }
 
@@ -330,7 +329,7 @@ end
 achievements.grant = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
-		achievements.onUnconfigured("attempt to grant unconfigured achievement '" .. achievement_id .. "'", 2)
+		error("attempt to grant unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
 	local time, _ = playdate.getSecondsSinceEpoch()
@@ -349,7 +348,7 @@ end
 achievements.revoke = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
-		achievements.onUnconfigured("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
+		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
 	ach.granted_at = false
