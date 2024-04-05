@@ -1,59 +1,61 @@
 local gfx = playdate.graphics
 
-import "../achievements"
+import "../toast_graphics"
 
 -- Copied from the comments in the other file...
 local achievementData = {
-    gameID = "com.yourcompany.yourgame",
+    gameID = "com.example.achievementtest",
     name = "My Awesome Game",
     author = "You, Inc",
-    description = "The next evolution in cranking technology.",
+    description = "The next (r)evolution in cranking technology.",
     achievements = {
         {
             id = "test_achievement",
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "filepath"
+            icon = "test",
+            icon_locked = "test_locked",
         },
         {
             id = "test_achievement_2",
-            name = "Achievement Name",
+            name = "Name Of Achievement",
             description = "Achievement Description",
             is_secret = false,
-            icon = "filepath"
+            icon = nil,
+            icon_locked = nil,
         },
     }
 }
 
-achievements.initialize(achievementData)
+toast_graphics.initialize(achievementData)
 
 function playdate.keyPressed(key)
     if key == "f" then
-        if achievements.granted["test_achievement"] then
+        if toast_graphics.isGranted("test_achievement") then
             print("revoking example achievement 1")
-            achievements.revoke("test_achievement")
+            toast_graphics.revoke("test_achievement")
         else
             print("granting example achievement 1")
-            achievements.grant("test_achievement")
+            toast_graphics.grant("test_achievement")
         end
     elseif key == "g" then
-        if achievements.granted["test_achievement_2"] then
+        if toast_graphics.isGranted("test_achievement_2") then
             print("revoking example achievement 2")
-            achievements.revoke("test_achievement_2")
+            toast_graphics.revoke("test_achievement_2")
         else
             print("granting example achievement 2")
-            achievements.grant("test_achievement_2")
+            toast_graphics.grant("test_achievement_2")
         end
     elseif key == "h" then
         print("granting invalid achievement")
-        achievements.grant("invalid")
+        toast_graphics.grant("invalid")
     elseif key == "j" then
         print("revoking invalid achievement")
-        achievements.revoke("invalid")
+        toast_graphics.revoke("invalid")
     elseif key == "r" then
         print("saving/exporting")
-        achievements.save()
+        toast_graphics.save()
     end
 end
 
@@ -68,5 +70,5 @@ function playdate.update()
     playdate.graphics.drawText("H: grant invalid", 10, 60)
     playdate.graphics.drawText("J: invoke invalid", 10, 80)
     playdate.graphics.drawText("R: save/export data", 10, 100)
-
+    toast_graphics.updateVisuals()
 end
