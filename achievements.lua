@@ -326,6 +326,10 @@ achievements.getInfo = function(achievement_id)
 	return achievements.keyedAchievements[achievement_id] or false
 end
 
+achievements.isGranted = function(achievement_id)
+	return achievements.granted[achievement_id] ~= nil
+end
+
 achievements.grant = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then

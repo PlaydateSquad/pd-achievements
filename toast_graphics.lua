@@ -219,7 +219,7 @@ toast_graphics.revoke = function(achievement_id)
 end
 
 toast_graphics.isGranted = function(achievement_id)
-	return achievements.granted[achievement_id] ~= nil
+	return achievements.isGranted(achievement_id)
 end
 
 toast_graphics.save = function()
