@@ -4,7 +4,53 @@
 	This is an initial prototype implementation in order to help effect a standard.
 	This prototype will have no strong error checks and be small in scope. Any
 	  wider-scope implementation of the standard will be separate.
+
+
+	== API Style Guide ==
+	Behavior is stacked similar to corelibs. Areas of functionality are held in individual files.
+	Public API functions are added to a relevant global table as pascalCase.
+	Private API functions/variables are added to a .internal sub-table as snake_case.
+
+	 == Module Overview ==
+	- achievements.lua      | A single-file library which establishes the basics of the achievement
+		system and allows a single game to enable achievements.
+	- crossgame.lua         | A single-file library which depends on achievements.lua and provides
+		helpers for reading achievement data and related assets from other games.
+	- notifications.lua     | A single-file library which lays the groundwork for highly customizable
+		generic toast notifications. Does not hook into the achievement system directly.
+	- achievementToasts.lua | Depends on achievements.lua and notifications.lua. Provides decorations
+		for achievements.lua functions with preconfigured toast support.
 --]]
+
+--[[ 
+	== Technical Specifications ==
+--]]
+
+---@class achievement_root
+---@field author string The author of the game, as in pdxinfo.
+---@field name string The name of the game, as in pdxinfo.
+---@field description string The description of the game, as in pdxinfo.
+---@field gameID string A unique ID to identify the game. Analogous to BundleID in pdxinfo.
+---@field version string The version string of the game, as in pdxinfo.
+---@field specversion string The version string of the specification used.
+---@field imagePath string The root filepath for a directory of icons used by achievements. Default "achievementIcons"
+---@field defaultIcon string | nil The filepath for the game's default unlocked achievement icon, relative to the value of achievements.imagePath.
+---@field defaultIconLocked string | nil The filepath for the game's default locked achievement icon, relative to the value of achievements.imagePath.
+---@field achievements achievement[] An array of valid achievements for the game.
+
+---@class achievement
+---@field name string The name of the achievement.
+---@field description string The description of the achievement.
+---@field id string A unique ID by which to identify the achievement. Used in various API functions.
+---@field granted_at boolean | number False if the achievement has not been earned, otherwise the Playdate epoch second the achievement was earned at as returned by playdate.getSecondsSinceEpoch().
+---@field is_secret boolean If true, this achievement should not appear in any player-facing lists while the .granted_at field is false.
+---@field icon string | nil The filepath of the achievement's unlocked icon image, relative to the value of achievements.imagePath.
+---@field icon_locked string | nil The filepath of the achievement's locked icon image, relative to the value of achievements.imagePath.
+---@field progress number | nil Current progress towards unlocking the achievement, as x/.progress_max. Should not be set manually under most circumstances.
+---@field progress_max number | nil Maxiumum progress possible towards the achievement before it is to be unlocked.
+---@field progress_is_percentage boolean | false If false, an achievement list should display current progress as a tally "$(progress)/$(progress_max)". If true, it should be displayed as a percentage number (progress/progress_max)*100. Default false.
+---@field score_value number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants score_value/(total scores)% completion. Default 1.
+
 
 -- Right, we're gonna make this easier to change in the future.
 -- Another note: changing the data directory to `/Shared/gameID`
