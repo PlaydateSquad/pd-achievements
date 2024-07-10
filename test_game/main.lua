@@ -10,6 +10,8 @@ local achievementData = {
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
     imagePath = "icons",
+    defaultIcon = "test (default)",
+    -- defaultIconLocked = "test_locked (default)",
     achievements = {
         {
             id = "test_achievement",
