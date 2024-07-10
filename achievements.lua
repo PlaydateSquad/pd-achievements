@@ -67,6 +67,7 @@ achievements = {
 	libversion = "0.2-alpha+prototype",
 
 	forceSaveOnGrantOrRevoke = false,
+	paths = {},
 }
 
 function achievements.paths.get_achievement_folder_root_path(gameID)
