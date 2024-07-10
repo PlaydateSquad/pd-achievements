@@ -113,14 +113,7 @@ local function export_data()
 end
 
 local function dirname(str)
-	local pos = str:reverse():find("/", 0, true)
-	if pos == nil then
-		return "/"
-	end
-	if pos == #str then
-		pos = str:reverse():find("/", 2, true)
-	end
-	return str:sub(0, #str - (pos - 1))
+	return (string.gsub(str, "[^/\\]*$", ""))
 end
 
 local function copy_file(src_path, dest_path)
