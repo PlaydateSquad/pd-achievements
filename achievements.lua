@@ -69,28 +69,6 @@ achievements = {
 	forceSaveOnGrantOrRevoke = false,
 }
 
-local function dirname(str)
-	local pos = str:reverse():find("/", 0, true)
-	if pos == nil then
-		return "/"
-	end
-	if pos == #str then
-		pos = str:reverse():find("/", 2, true)
-	end
-	return str:sub(0, #str - (pos - 1))
-end
-
-local function force_extension(str, new_ext)
-	local pos = str:reverse():find(".", 0, true)
-	if pos == nil then
-		return str .. "." .. new_ext
-	end
-	if pos == 1 then
-		return str .. new_ext
-	end
-	return str:sub(0, (#str - 1) - (pos - 1)) .. "." .. new_ext
-end
-
 local function get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
@@ -132,9 +110,27 @@ local function export_data()
 	local data = achievements.gameData
 	json.encodeToFile(get_achievement_data_file_path(data.gameID), true, data)
 end
-function achievements.save()
-	export_data()
-	json.encodeToFile(achievement_file_name, false, achievements.granted)
+
+local function dirname(str)
+	local pos = str:reverse():find("/", 0, true)
+	if pos == nil then
+		return "/"
+	end
+	if pos == #str then
+		pos = str:reverse():find("/", 2, true)
+	end
+	return str:sub(0, #str - (pos - 1))
+end
+
+local function force_extension(str, new_ext)
+	local pos = str:reverse():find(".", 0, true)
+	if pos == nil then
+		return str .. "." .. new_ext
+	end
+	if pos == 1 then
+		return str .. new_ext
+	end
+	return str:sub(0, (#str - 1) - (pos - 1)) .. "." .. new_ext
 end
 
 achievements.getPaths = function(gameID, variables)
@@ -200,15 +196,43 @@ local function copy_file(src_path, dest_path)
 	in_file:close()
 end
 
-local function copy_images_to_shared(gameID, current_build_nr)
-	-- if >= the current version of the gamedata already exists, no need to re-copy the images
-	local path = get_shared_images_updated_file_path(gameID)
-	if playdate.file.exists(path) and not playdate.file.isdir(path) then
-		local ver_file, err = playdate.file.open(path, playdate.file.kFileRead)
-		if not ver_file then
-			error("Couldn't read version file at '" .. path .. "', because: " .. err, 2)
+local copy_folder
+copy_folder = function(src_path, dest_path, overwrite)
+	if not playdate.file.isdir(src_path) then
+		error("Could not open directory at " .. src_path)
+	end
+
+	if not playdate.file.isdir(dest_path) then
+		if playdate.file.exists(dest_path) then
+			error("Destination '"..subfolder.."' is not a folder.")
+		else
+			playdate.file.mkdir(subfolder)
 		end
-		local ver_str = ver_file:readline() or "0.0.0"
+	else
+		if overwrite == true then
+			playdate.file.delete(dest_path, true)
+			playdate.file.mkdir(dest_path)
+		end
+	end
+
+	for _, node in ipairs(playdate.file.listFiles(src_path)) do
+		if string.sub(node, -1) == "/" then
+			copy_folder(src_path .. node, dest_path .. node)
+		else
+			copy_file(src_path .. node, dest_path .. node)
+		end
+	end
+end
+
+local function export_images(gameID, current_build_nr)
+	-- if >= the current version of the gamedata already exists, no need to re-copy the images
+	local verfile_path = get_shared_images_updated_file_path(gameID)
+	if playdate.file.exists(verfile_path) and not playdate.file.isdir(verfile_path) then
+		local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileRead)
+		if not ver_file then
+			error("Couldn't read version file at '" .. verfile_path .. "', because: " .. err, 2)
+		end
+		local ver_str = ver_file:readline()
 		ver_file:close()
 		local ver = tonumber(ver_str) or -1
 		if ver >= current_build_nr then
@@ -217,21 +241,12 @@ local function copy_images_to_shared(gameID, current_build_nr)
 	end
 
 	-- otherwise, the structure should be copied
-	local folder = get_shared_images_path(gameID)
-	if playdate.file.exists(folder) then
-		playdate.file.delete(folder, true)
-	end
-	playdate.file.mkdir(folder)
-	for _, paths in pairs(achievements.getPaths(gameID, { "icon", "icon_locked" })) do
-		if paths.native:sub(1,1) ~= "*" then
-			copy_file(paths.native, paths.shared)
-		end
-	end
+	copy_folder(achievements.gameData.imagePath, get_shared_images_path(gameID))
 
 	-- also write the version-file
-	local ver_file, err = playdate.file.open(path, playdate.file.kFileWrite)
+	local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileWrite)
 	if not ver_file then
-		error("Couldn't write version file at '" .. path .. "', because: " .. err, 2)
+		error("Couldn't write version file at '" .. verfile_path .. "', because: " .. err, 2)
 	end
 	ver_file:write(tostring(current_build_nr))
 	ver_file:close()
@@ -276,6 +291,8 @@ local function validate_gamedata(ach_root, prevent_debug)
 		ach_root.imagePath = shared_images_subfolder
 	elseif type(ach_root.imagePath) ~= 'string' then
 		error("expected 'imagePath' to be type string, got " .. type(ach.icon), 3)
+	elseif string.sub(ach_root.imagePath, -1) ~= "/" then
+		ach_root.imagePath = ach_root.imagePath .. "/"
 	end
 	if type(ach_root.defaultIcon) ~= 'string' and ach_root.defaultIcon ~= nil then
 		error("expected 'defaultIcon' to be type string, got " .. type(ach_root.defaultIconcon), 3)
@@ -333,6 +350,8 @@ local function validate_achievement(ach)
 	end
 end
 
+---@param gamedata achievement_root
+---@param prevent_debug boolean
 function achievements.initialize(gamedata, prevent_debug)
 	local print = (prevent_debug and donothing) or print
 	print("------")
@@ -355,7 +374,7 @@ function achievements.initialize(gamedata, prevent_debug)
 
 	playdate.file.mkdir(get_achievement_folder_root_path(gamedata.gameID))
 	export_data()
-	copy_images_to_shared(gamedata.gameID, (tonumber(gamedata.buildNumber) or 0))
+	export_images(gamedata.gameID, (tonumber(metadata.buildNumber) or 0))
 
 	print("files exported to /Shared")
 	print("Achievements have been initialized!")
@@ -403,6 +422,11 @@ achievements.revoke = function(achievement_id)
 		achievements.save()
 	end
 	return true
+end
+
+function achievements.save()
+	export_data()
+	json.encodeToFile(achievement_file_name, false, achievements.granted)
 end
 
 --[[ External Game Functions ]]--
