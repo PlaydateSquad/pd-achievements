@@ -172,9 +172,9 @@ copy_folder = function(src_path, dest_path, overwrite)
 
 	if not playdate.file.isdir(dest_path) then
 		if playdate.file.exists(dest_path) then
-			error("Destination '"..subfolder.."' is not a folder.")
+			error("Destination '"..dest_path.."' is not a folder.")
 		else
-			playdate.file.mkdir(subfolder)
+			playdate.file.mkdir(dest_path)
 		end
 	else
 		if overwrite == true then
@@ -209,7 +209,7 @@ local function export_images(gameID, current_build_nr)
 	end
 
 	-- otherwise, the structure should be copied
-	copy_folder(achievements.gameData.imagePath, achievements.paths.get_shared_images_path(gameID))
+	copy_folder(achievements.gameData.imagePath, achievements.paths.get_shared_images_path(gameID), true)
 
 	-- also write the version-file
 	local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileWrite)
