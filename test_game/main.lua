@@ -3,11 +3,13 @@ local gfx = playdate.graphics
 import "../toast_graphics"
 
 -- Copied from the comments in the other file...
+---@type achievement_root
 local achievementData = {
     gameID = "com.example.achievementtest",
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
+    imagePath = "icons",
     achievements = {
         {
             id = "test_achievement",
