@@ -33,7 +33,8 @@
 ---@field gameID string A unique ID to identify the game. Analogous to BundleID in pdxinfo.
 ---@field version string The version string of the game, as in pdxinfo.
 ---@field specversion string The version string of the specification used.
----@field imagePath string The root filepath for a directory of icons used by achievements. Default "achievementIcons"
+---@field libversion string The version string of the Achievement library used.
+---@field imagePath string The root filepath for a directory of icons used by achievements. Default "achievementImages"
 ---@field defaultIcon string | nil The filepath for the game's default unlocked achievement icon, relative to the value of achievements.imagePath.
 ---@field defaultIconLocked string | nil The filepath for the game's default locked achievement icon, relative to the value of achievements.imagePath.
 ---@field achievements achievement[] An array of valid achievements for the game.
@@ -43,7 +44,7 @@
 ---@field description string The description of the achievement.
 ---@field id string A unique ID by which to identify the achievement. Used in various API functions.
 ---@field granted_at boolean | number False if the achievement has not been earned, otherwise the Playdate epoch second the achievement was earned at as returned by playdate.getSecondsSinceEpoch().
----@field is_secret boolean If true, this achievement should not appear in any player-facing lists while the .granted_at field is false.
+---@field is_secret boolean | nil If true, this achievement should not appear in any player-facing lists while the .granted_at field is false. Defaut false.
 ---@field icon string | nil The filepath of the achievement's unlocked icon image, relative to the value of achievements.imagePath.
 ---@field icon_locked string | nil The filepath of the achievement's locked icon image, relative to the value of achievements.imagePath.
 ---@field progress number | nil Current progress towards unlocking the achievement, as x/.progress_max. Should not be set manually under most circumstances.
@@ -51,14 +52,22 @@
 ---@field progress_is_percentage boolean | false If false, an achievement list should display current progress as a tally "$(progress)/$(progress_max)". If true, it should be displayed as a percentage number (progress/progress_max)*100. Default false.
 ---@field score_value number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants score_value/(total scores)% completion. Default 1.
 
+-- [[ == Implementation == ]]
 
--- Right, we're gonna make this easier to change in the future.
--- Another note: changing the data directory to `/Shared/gameID`
---   rather than the previously penciled in `/Shared/Achievements/gameID`
+local metadata <const> = playdate.metadata
+
 local shared_achievement_folder <const> = "/Shared/Data/"
 local achievement_file_name <const> = "Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
 local shared_images_updated_file <const> = "_last_seen_version.txt"
+
+---@diagnostic disable-next-line: lowercase-global
+achievements = {
+	specversion = "0.1+prototype",
+	libversion = "0.2-alpha+prototype",
+
+	forceSaveOnGrantOrRevoke = false,
+}
 
 local function dirname(str)
 	local pos = str:reverse():find("/", 0, true)
@@ -110,16 +119,6 @@ local function get_shared_images_updated_file_path(gameID)
 	local folder = get_shared_images_path(gameID)
 	return folder .. shared_images_updated_file
 end
-
-local metadata <const> = playdate.metadata
-
----@diagnostic disable-next-line: lowercase-global
-achievements = {
-	specversion = "0.1+prototype",
-	libversion = "0.2-alpha+prototype",
-
-	forceSaveOnGrantOrRevoke = false,
-}
 
 local function load_granted_data()
 	local data = json.decodeFile(achievement_file_name)
@@ -239,40 +238,107 @@ local function copy_images_to_shared(gameID, current_build_nr)
 end
 
 local function donothing(...) end
+
+---@param ach_root  achievement_root The game data being validated.
+---@param prevent_debug boolean If false, does not print debug info to the console.
+-- Takes in achievement game data, validates correct data, and sets defaults.
+local function validate_gamedata(ach_root, prevent_debug)
+	local print = (prevent_debug and donothing) or print
+
+	for _, field in ipairs{ "name", "author", "description", } do
+		if ach_root[field] == nil then
+			if playdate.metadata[field] ~= nil then
+				ach_root[field] = playdate.metadata[field]
+				print(field .. ' not configured: defaulting to "' .. ach_root[field] .. '"')
+			else
+				print("WARNING: " .. field .. " not configured AND not present in pxinfo metadata")
+			end
+		elseif type(ach_root[field]) ~= "string" then
+			error("expected '" .. field .. "' to be type string, got " .. type(ach_root[field]), 3)
+		end
+	end
+
+	if ach_root.gameID == nil then
+		ach_root.gameID = string.gsub(metadata.bundleID, "^user%.%d+%.", "")
+		print('gameID not configured: defaulting to "' .. ach_root.gameID .. '"')
+	elseif type(ach_root.gameID) ~= "string" then
+		error("expected 'gameID' to be type string, got ".. type(ach_root.gameID), 3)
+	end
+
+	ach_root.version = metadata.version
+	ach_root.specversion = achievements.specversion
+	ach_root.libversion = achievements.libversion
+	print("game version saved as \"" .. ach_root.version .. "\"")
+	print("specification version saved as \"" .. ach_root.specversion .. "\"")
+	print("library version saved as \"" .. ach_root.libversion .. "\"")
+
+	if ach_root.imagePath == nil then
+		ach_root.imagePath = shared_images_subfolder
+	elseif type(ach_root.imagePath) ~= 'string' then
+		error("expected 'imagePath' to be type string, got " .. type(ach.icon), 3)
+	end
+	if type(ach_root.defaultIcon) ~= 'string' and ach_root.defaultIcon ~= nil then
+		error("expected 'defaultIcon' to be type string, got " .. type(ach_root.defaultIconcon), 3)
+	end
+	if type(ach_root.defaultIconLocked) ~= 'string' and ach_root.defaultIconLocked ~= nil then
+		error("expected 'defaultIconLocked' to be type string, got " .. type(ach_root.defaultIconLocked), 3)
+	end
+	
+	if ach_root.achievements == nil then
+		print("WARNING: no achievements configured")
+		ach_root.achievements = {}
+	elseif type(ach_root.achievements) ~= "table" then
+		error("achievements must be a table", 3)
+	end
+end
+
+---@param ach achievement The achievement being validated.
+-- Takes in an achievement table, validates correct data, and sets defaults.
+local function validate_achievement(ach)
+	for _, key in ipairs{"name", "description", "id",} do
+		local valtype = type(ach[key])
+		if valtype ~= "string" then
+			error(("expected '%s' to be type string, got %s"):format(key, valtype), 3)
+		end
+	end
+
+	if ach.is_secret == nil then
+		ach.is_secret = false
+	elseif type(ach.is_secret) ~= "boolean" then
+		error("expected 'is_secret' to be type boolean, got " .. type(ach.is_secret), 3)
+	end
+
+	if type(ach.icon) ~= 'string' and ach.icon ~= nil then
+		error("expected 'icon' to be type string, got " .. type(ach.icon), 3)
+	end
+	if type(ach.icon_locked) ~= 'string' and ach.icon_locked ~= nil then
+		error("expected 'icon_locked' to be type string, got " .. type(ach.icon_locked), 3)
+	end
+
+	if ach.progress_max then
+		if type(ach.progress_max) ~= 'number' then
+			error("expected 'progress_max' to be type number, got ".. type(ach.progress_max), 3)
+		end
+		if ach.progress_is_percentage == nil then
+			ach.progress_is_percentage = false
+		elseif type(ach.progress_is_percentage) ~= 'boolean' then
+			error("expected 'progress_is_percentage' to be type boolean, got " .. type(ach.progress_is_percentage), 3)
+		end
+	end
+	
+	if ach.score_value == nil then
+		ach.score_value = 1
+	elseif type(ach.score_value) ~= "number" then
+		error("expected 'score_value' to be type number, got ".. type(ach.score_value), 3)
+	end
+end
+
 function achievements.initialize(gamedata, prevent_debug)
 	local print = (prevent_debug and donothing) or print
 	print("------")
 	print("Initializing achievements...")
-	if gamedata.achievements == nil then
-		print("WARNING: no achievements configured")
-		gamedata.achievements = {}
-	elseif type(gamedata.achievements) ~= "table" then
-		error("achievements must be a table", 2)
-	end
-	if gamedata.gameID == nil then
-		gamedata.gameID = string.gsub(metadata.bundleID, "^user%.%d+%.", "")
-		print('gameID not configured: defaulting to "' .. gamedata.gameID .. '"')
-	elseif type(gamedata.gameID) ~= "string" then
-		error("gameID must be a string", 2)
-	end
-	for _, field in ipairs{ "name", "author", "description", "version", "buildNumber", } do
-		if gamedata[field] == nil then
-			if playdate.metadata[field] ~= nil then
-				gamedata[field] = playdate.metadata[field]
-				print(field .. ' not configured: defaulting to "' .. gamedata[field] .. '"')
-			else
-				print("WARNING: " .. field .. " not configured AND not present in pxinfo metadata")
-			end
-		elseif type(gamedata[field]) ~= "string" then
-			error(field .. " must be a string", 2)
-		end
-	end
-	gamedata.version = metadata.version
-	gamedata.specversion = achievements.specversion
-	gamedata.libversion = achievements.libversion
-	print("game version saved as \"" .. gamedata.version .. "\"")
-	print("specification version saved as \"" .. gamedata.specversion .. "\"")
-	print("library version saved as \"" .. gamedata.libversion .. "\"")
+
+	validate_gamedata(gamedata, prevent_debug)
 	achievements.gameData = gamedata
 
 	load_granted_data()
@@ -284,6 +350,7 @@ function achievements.initialize(gamedata, prevent_debug)
 		end
 		achievements.keyedAchievements[ach.id] = ach
 		ach.granted_at = achievements.granted[ach.id] or false
+		validate_achievement(ach)
 	end
 
 	playdate.file.mkdir(get_achievement_folder_root_path(gamedata.gameID))
