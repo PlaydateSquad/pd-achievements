@@ -134,21 +134,6 @@ local function force_extension(str, new_ext)
 	return str:sub(0, (#str - 1) - (pos - 1)) .. "." .. new_ext
 end
 
-achievements.getPaths = function(gameID, variables)
-	local shared_folder = achievements.paths.get_shared_images_path(gameID)
-	local result = {}
-	for _, variable in ipairs(variables) do
-		for _, value in pairs(achievements.keyedAchievements) do
-			if value[variable] ~= nil then
-				local ref = value[variable]
-				local filename = force_extension(value[variable], "pdi") -- Always compiled to .pdi, (so use like pd.image.new).
-				result[ref] = { native = achievements.gameData.imagePath .. filename, shared = ( shared_folder .. filename ) }
-			end
-		end
-	end
-	return result
-end
-
 local function copy_file(src_path, dest_path)
 	-- make sure the source-file exists
 	if not (playdate.file.exists(src_path) or playdate.file.isdir(src_path)) then
