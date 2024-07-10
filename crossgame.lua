@@ -1,0 +1,48 @@
+-- Cross-game data reading module for the PlaydateSquad Achievements library.
+import "./achievements"
+
+local crossgame = {}
+achievements.crossgame = crossgame
+
+-- Returns whether the folder that should contain an Achievements.json exists.
+crossgame.gamePlayed = function(game_id)
+	return playdate.file.isdir(achievements.paths.get_achievement_folder_root_path(game_id))
+end
+
+-- Returns whether an Achievements.json for the given game ID exists.
+crossgame.gameHasAchievements = function(game_id)
+	return playdate.file.exists(achievements.paths.get_achievement_data_file_path(game_id))
+end
+
+crossgame.listGames = function()
+	local games = {}
+	for _, path in ipairs(playdate.file.listFiles(achievements.paths.shared_data_root)) do
+		if string.sub(path, -1) == "/" then
+			local gameid = string.sub(path, 1, -2)
+			if crossgame.gameHasAchievements(gameid) then
+				table.insert(games, gameid)
+			end
+		end
+	end
+	return games
+end
+
+---@param game_id string
+---@return achievement_root
+-- Returns the achievement data for the requested game if it exists. Otherwise returns false and a reason.
+crossgame.getData = function(game_id)
+	if not crossgame.gameHasAchievements then
+		return false, "No achievements file for game '" .. game_id .. "' was found"
+	end
+	local data = json.decodeFile(achievements.paths.get_achievement_data_file_path(game_id))
+	-- Quick sanity check...
+	if not (data.libversion and data.specversion) then
+		return false, "Achievement file was found but not valid."
+	end
+	local keys = {}
+	for _, ach in ipairs(data.achievements) do
+		keys[ach.id] = ach
+	end
+	data.keyedAchievements = keys
+	return data
+end

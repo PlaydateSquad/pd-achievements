@@ -57,7 +57,7 @@
 local metadata <const> = playdate.metadata
 
 local shared_achievement_folder <const> = "/Shared/Data/"
-local achievement_file_name <const> = "Achievements.json"
+local achievement_file_name <const> = "PlaydateSquad_Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
 local shared_images_updated_file <const> = "_last_seen_version.txt"
 
@@ -70,6 +70,7 @@ achievements = {
 	paths = {},
 }
 
+achievements.paths.shared_data_root = shared_achievement_folder
 function achievements.paths.get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
@@ -396,25 +397,5 @@ function achievements.save()
 	export_data()
 	json.encodeToFile(achievement_file_name, false, achievements.granted)
 end
-
---[[ External Game Functions ]]--
-
-achievements.gamePlayed = function(game_id)
-	return playdate.file.isdir(achievements.paths.get_achievement_folder_root_path(game_id))
-end
-
-achievements.gameData = function(game_id)
-	if not achievements.gamePlayed(game_id) then
-		error("No game with ID '" .. game_id .. "' was found", 2)
-	end
-	local data = json.decodeFile(achievements.paths.get_achievement_data_file_path(game_id))
-	local keys = {}
-	for _, ach in ipairs(data.achievements) do
-		keys[ach.id] = ach
-	end
-	data.keyedAchievements = keys
-	return data
-end
-
 
 return achievements
