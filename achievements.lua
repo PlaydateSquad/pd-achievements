@@ -69,32 +69,32 @@ achievements = {
 	forceSaveOnGrantOrRevoke = false,
 }
 
-local function get_achievement_folder_root_path(gameID)
+function achievements.paths.get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
 	local root = string.format(shared_achievement_folder .. "%s/", gameID)
 	return root
 end
-local function get_achievement_data_file_path(gameID)
+function achievements.paths.get_achievement_data_file_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
-	local root = get_achievement_folder_root_path(gameID)
+	local root = achievements.paths.get_achievement_folder_root_path(gameID)
 	return root .. achievement_file_name
 end
-local function get_shared_images_path(gameID)
+function achievements.paths.get_shared_images_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
-	local root = get_achievement_folder_root_path(gameID)
+	local root = achievements.paths.get_achievement_folder_root_path(gameID)
 	return root .. shared_images_subfolder
 end
-local function get_shared_images_updated_file_path(gameID)
+function achievements.paths.get_shared_images_updated_file_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
-	local folder = get_shared_images_path(gameID)
+	local folder = achievements.paths.get_shared_images_path(gameID)
 	return folder .. shared_images_updated_file
 end
 
@@ -108,7 +108,7 @@ end
 
 local function export_data()
 	local data = achievements.gameData
-	json.encodeToFile(get_achievement_data_file_path(data.gameID), true, data)
+	json.encodeToFile(achievements.paths.get_achievement_data_file_path(data.gameID), true, data)
 end
 
 local function dirname(str)
@@ -134,14 +134,14 @@ local function force_extension(str, new_ext)
 end
 
 achievements.getPaths = function(gameID, variables)
-	local shared_folder = get_shared_images_path(gameID)
+	local shared_folder = achievements.paths.get_shared_images_path(gameID)
 	local result = {}
 	for _, variable in ipairs(variables) do
 		for _, value in pairs(achievements.keyedAchievements) do
 			if value[variable] ~= nil then
 				local ref = value[variable]
 				local filename = force_extension(value[variable], "pdi") -- Always compiled to .pdi, (so use like pd.image.new).
-				result[ref] = { native = filename, shared = ( shared_folder .. filename ) }
+				result[ref] = { native = achievements.gameData.imagePath .. filename, shared = ( shared_folder .. filename ) }
 			end
 		end
 	end
@@ -226,7 +226,7 @@ end
 
 local function export_images(gameID, current_build_nr)
 	-- if >= the current version of the gamedata already exists, no need to re-copy the images
-	local verfile_path = get_shared_images_updated_file_path(gameID)
+	local verfile_path = achievements.paths.get_shared_images_updated_file_path(gameID)
 	if playdate.file.exists(verfile_path) and not playdate.file.isdir(verfile_path) then
 		local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileRead)
 		if not ver_file then
@@ -241,7 +241,7 @@ local function export_images(gameID, current_build_nr)
 	end
 
 	-- otherwise, the structure should be copied
-	copy_folder(achievements.gameData.imagePath, get_shared_images_path(gameID))
+	copy_folder(achievements.gameData.imagePath, achievements.paths.get_shared_images_path(gameID))
 
 	-- also write the version-file
 	local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileWrite)
@@ -372,7 +372,7 @@ function achievements.initialize(gamedata, prevent_debug)
 		validate_achievement(ach)
 	end
 
-	playdate.file.mkdir(get_achievement_folder_root_path(gamedata.gameID))
+	playdate.file.mkdir(achievements.paths.get_achievement_folder_root_path(gamedata.gameID))
 	export_data()
 	export_images(gamedata.gameID, (tonumber(metadata.buildNumber) or 0))
 
@@ -432,14 +432,14 @@ end
 --[[ External Game Functions ]]--
 
 achievements.gamePlayed = function(game_id)
-	return playdate.file.isdir(get_achievement_folder_root_path(game_id))
+	return playdate.file.isdir(achievements.paths.get_achievement_folder_root_path(game_id))
 end
 
 achievements.gameData = function(game_id)
 	if not achievements.gamePlayed(game_id) then
 		error("No game with ID '" .. game_id .. "' was found", 2)
 	end
-	local data = json.decodeFile(get_achievement_data_file_path(game_id))
+	local data = json.decodeFile(achievements.paths.get_achievement_data_file_path(game_id))
 	local keys = {}
 	for _, ach in ipairs(data.achievements) do
 		keys[ach.id] = ach
