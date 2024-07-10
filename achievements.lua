@@ -123,17 +123,6 @@ local function dirname(str)
 	return str:sub(0, #str - (pos - 1))
 end
 
-local function force_extension(str, new_ext)
-	local pos = str:reverse():find(".", 0, true)
-	if pos == nil then
-		return str .. "." .. new_ext
-	end
-	if pos == 1 then
-		return str .. new_ext
-	end
-	return str:sub(0, (#str - 1) - (pos - 1)) .. "." .. new_ext
-end
-
 local function copy_file(src_path, dest_path)
 	-- make sure the source-file exists
 	if not (playdate.file.exists(src_path) or playdate.file.isdir(src_path)) then
