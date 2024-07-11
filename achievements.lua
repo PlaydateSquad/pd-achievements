@@ -105,7 +105,8 @@ local function load_granted_data()
 	if not data then
 		data = {}
 	end
-	achievements.granted = data
+	achievements.granted = data.granted_at or {}
+	achievements.progress = data.progress or {}
 end
 
 local function export_data()
@@ -412,10 +413,14 @@ achievements.advanceTo = function(achievement_id, advance_to)
 		error("attempt to progress an achievement without a configured 'progress_max'", 2)
 		return false
 	end
-	ach.progress = math.max(0, math.min(advance_to, ach.progress_max))
-	if ach.progress == progress_max then
+	local progress = math.max(0, math.min(advance_to, ach.progress_max))
+	achievements.progress[achievement_id] = progress
+	ach.progress = progress
+	if progress == ach.progress_max then
+		print("granting achievement")
 		achievements.grant(achievement_id)
-	elseif ach.progress < progess_max and ach.granted_at then
+	elseif (progress < ach.progress_max) and ach.granted_at then
+		print("revoking achievement")
 		achievements.revoke(achievement_id)
 	end
 	return true
@@ -431,13 +436,17 @@ achievements.advance = function(achievement_id, advance_by)
 		error("attempt to progress an achievement without a configured 'progress_max'", 2)
 		return false
 	end
-	local progress = ach.progress or 0
+	local progress = achievements.progress[achievement_id] or 0
 	return achievements.advanceTo(achievement_id, progress + advance_by)
 end
 
 function achievements.save()
 	export_data()
-	json.encodeToFile(achievement_file_name, false, achievements.granted)
+	local save_table = {
+		granted_at = achievements.granted,
+		progress = achievements.progress,
+	}
+	json.encodeToFile(achievement_file_name, false, save_table)
 end
 
 return achievements
