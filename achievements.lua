@@ -166,7 +166,7 @@ local function copy_file(src_path, dest_path)
 end
 
 local copy_folder
-copy_folder = function(src_path, dest_path, overwrite)
+copy_folder = function(src_path, dest_path, overwrite, restrict_extension)
 	if not playdate.file.isdir(src_path) then
 		error("Could not open directory at " .. src_path)
 	end
@@ -188,7 +188,14 @@ copy_folder = function(src_path, dest_path, overwrite)
 		if string.sub(node, -1) == "/" then
 			copy_folder(src_path .. node, dest_path .. node)
 		else
-			copy_file(src_path .. node, dest_path .. node)
+			if restrict_extension then
+				local ext_len = string.len(restrict_extension)
+				if node:sub(-ext_len, -1) == restrict_extension then
+					copy_file(src_path .. node, dest_path .. node)
+				end
+			else
+				copy_file(src_path .. node, dest_path .. node)
+			end
 		end
 	end
 end
@@ -210,7 +217,7 @@ local function export_images(gameID, current_build_nr)
 	end
 
 	-- otherwise, the structure should be copied
-	copy_folder(achievements.gameData.imagePath, achievements.paths.get_shared_images_path(gameID), true)
+	copy_folder(achievements.gameData.imagePath, achievements.paths.get_shared_images_path(gameID), true, ".pdi")
 
 	-- also write the version-file
 	local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileWrite)
