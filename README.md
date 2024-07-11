@@ -29,6 +29,12 @@ local achievementData = {
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
+    -- This field determines the root folder that achievement icons are stored in. Defaults to "AchievementImages/".
+    -- All images in this folder will be copied to /Shared/ for other apps to use.
+    imagePath = "icons/",
+    -- Optionally, these two fields define default icons for achievements.
+    defaultIcon = "icon_default",
+    defaultIconLocked = "icon_locked_default",
     achievements = {
         -- This table should be an array of achievement tables.
         -- Each of these tables stores the data for a single achievement.
@@ -40,10 +46,15 @@ local achievementData = {
             description = "Achievement Description",
             -- Should this achievement appear in viewers if not yet earned?
             is_secret = false,
-            -- The filepath to a .pdi icon for the achievement once granted.
+            -- The filepath to a .pdi icon for the achievement once granted. Optional.
             icon = "my_icon",
-            -- The filepath to a .pdi icon for the achievement before it's granted.
+            -- The filepath to a .pdi icon for the achievement before it's granted. Optional.
             icon_locked = "my_icon_locked",
+            -- These options, if present, handle achievements which require multiple steps to unlock.
+            progress_max = 10,
+            progress_is_percentage = false,
+            -- This option determines how much this achievement matters towards 100%. Set to 0 for achievement to be entirely optional. Default 1.
+            score_value = 3,
         },
         -- Continue configuring additional achievements as needed.
     }
@@ -67,6 +78,22 @@ Returns `true` if the achievement was successfully granted, otherwise `false`.
 Revokes the achievement `achievement_id` from the player. Attempting to revoke an unearned achievement does nothing.
 
 Returns `true` if the achievement was successfully revoked, otherwise `false`.
+
+### achievements.advance(string: achievement_id, int: advance_by)
+
+Increases or decreases the advancement `advancement_id`'s completion score by `advance_by`. Attempting this on an advancement without a `progress_max` set causes an error.
+
+If the advancement's score reaches the max, calls `advancements.grant`. If it falls below the max, calls `advancements.revoke`.
+
+Returns `true` on success, otherwise errors.
+
+### achievements.advanceTo(string: achievement_id, int: advance_to)
+
+Sets the advancement `advancementa_id`'s completion score to `advance_to` Attempting this on an advancement without a `progress_max` set causes an error.
+
+If the advancement's score reaches the max, calls `advancements.grant`. If it falls below the max, calls `advancements.revoke`.
+
+Returns `true` on success, otherwise errors. 
 
 ### achievements.save()
 
