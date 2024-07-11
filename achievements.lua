@@ -400,6 +400,39 @@ achievements.revoke = function(achievement_id)
 	return true
 end
 
+achievements.advanceTo = function(achievement_id, advance_to)
+	local ach = achievements.keyedAchievements[achievement_id]
+	if not ach then
+		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
+		return false
+	end
+	if not ach.progress_max then
+		error("attempt to progress an achievement without a configured 'progress_max'", 2)
+		return false
+	end
+	ach.progress = math.max(0, math.min(advance_to, ach.progress_max))
+	if ach.progress == progress_max then
+		achievements.grant(achievement_id)
+	elseif ach.progress < progess_max and ach.granted_at then
+		achievements.revoke(achievement_id)
+	end
+	return true
+end
+
+achievements.advance = function(achievement_id, advance_by)
+	local ach = achievements.keyedAchievements[achievement_id]
+	if not ach then
+		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
+		return false
+	end
+	if not ach.progress_max then
+		error("attempt to progress an achievement without a configured 'progress_max'", 2)
+		return false
+	end
+	local progress = ach.progress or 0
+	return achievements.advanceTo(achievement_id, progress + advance_by)
+end
+
 function achievements.save()
 	export_data()
 	json.encodeToFile(achievement_file_name, false, achievements.granted)
