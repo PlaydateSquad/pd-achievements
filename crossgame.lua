@@ -39,11 +39,18 @@ crossgame.getData = function(game_id)
 	if not (data.libversion and data.specversion) then
 		return false, "Achievement file was found but not valid."
 	end
+	local completion_total = 0
+	local completion_obtained = 0
 	local keys = {}
 	for _, ach in ipairs(data.achievements) do
 		keys[ach.id] = ach
+		completion_total += score_value
+		if ach.granted_at then
+			completion_obtained += score_value
+		end
 	end
 	data.keyedAchievements = keys
+	data.completionPercentage = completion_obtained / completion_total
 	return data
 end
 
