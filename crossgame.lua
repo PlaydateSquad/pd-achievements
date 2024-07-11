@@ -46,3 +46,13 @@ crossgame.getData = function(game_id)
 	data.keyedAchievements = keys
 	return data
 end
+
+crossgame.loadImage(game_id, filepath)
+	local image_path = achievements.paths.get_shared_images_path(game_id) .. filepath
+	local img, err = gfx.image.new(image_path)
+	if not img then
+		error(("image '%s' could not be loaded: "):format(filename) .. err)
+	else
+		return img
+	end
+end
