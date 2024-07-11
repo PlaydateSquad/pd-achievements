@@ -323,6 +323,8 @@ local function validate_achievement(ach)
 		ach.score_value = 1
 	elseif type(ach.score_value) ~= "number" then
 		error("expected 'score_value' to be type number, got ".. type(ach.score_value), 3)
+	elseif ach.score_value < 0 then
+		error("field 'score_value' cannot be less than 0", 3)
 	end
 end
 
