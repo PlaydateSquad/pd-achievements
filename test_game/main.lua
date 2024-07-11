@@ -29,6 +29,15 @@ local achievementData = {
             icon = nil,
             icon_locked = nil,
         },
+        {
+            id = "test_achievement_3",
+            name = "Name Of Achievement",
+            description = "Achievement Description",
+            is_secret = false,
+            icon = nil,
+            icon_locked = nil,
+            progress_max = 5,
+        },
     }
 }
 
@@ -60,6 +69,12 @@ function playdate.keyPressed(key)
     elseif key == "r" then
         print("saving/exporting")
         toast_graphics.save()
+    elseif key == "x" then
+        print("achiement 3: -1 completion")
+        achievements.advance("test_achievement_3", -1)
+    elseif key == "c" then
+        print("achiement 3: +1 completion")
+        achievements.advance("test_achievement_3", 1)
     end
 end
 
@@ -73,6 +88,8 @@ function playdate.update()
     playdate.graphics.drawText("G: grant/revoke 2", 10, 40)
     playdate.graphics.drawText("H: grant invalid", 10, 60)
     playdate.graphics.drawText("J: invoke invalid", 10, 80)
+    playdate.graphics.drawText("X: achievement 3 progress: -1", 10, 120)
+    playdate.graphics.drawText("C: achievement 3 progress: +1", 10, 140)
     playdate.graphics.drawText("R: save/export data", 10, 100)
     toast_graphics.updateVisuals()
 end
