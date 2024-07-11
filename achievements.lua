@@ -417,10 +417,8 @@ achievements.advanceTo = function(achievement_id, advance_to)
 	achievements.progress[achievement_id] = progress
 	ach.progress = progress
 	if progress == ach.progress_max then
-		print("granting achievement")
 		achievements.grant(achievement_id)
 	elseif (progress < ach.progress_max) and ach.granted_at then
-		print("revoking achievement")
 		achievements.revoke(achievement_id)
 	end
 	return true
