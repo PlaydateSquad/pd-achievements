@@ -1,4 +1,4 @@
-- split crossgame into a new submodule
+- [x] split crossgame into a new submodule
     - function to list IDs of all played games with an Achievements.json
         - detect via folders with an Achievements.json
     - load data from ID'd game into useful format
@@ -12,7 +12,7 @@
     - allow game to configure "hidden achievement" icon
         - should the standard have default icons built-in for readers, or should the reader implement this?
 
-- optional data fields for achievements
+- [x] optional data fields for achievements
     - achievement progress fields
         - max_progress
         - current_progress
