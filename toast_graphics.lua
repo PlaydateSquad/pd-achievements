@@ -68,11 +68,6 @@ local function create_default_images()
 	set_rounded_mask(path_to_image_data["*_default_locked"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 end
 
-function toast_graphics.initialize(gamedata, prevent_debug)
-	achievements.initialize(gamedata, prevent_debug)
-	create_default_images()
-end
-
 --[[ Achievement Drawing & Animation ]]--
 
 local function resolve_achievement_or_id(achievement_or_id)
@@ -198,8 +193,14 @@ end
 -- Yes, this is now decorating the base functions in-place.
 -- This is by far the easier option to understand.
 
+local original_init = achievements.initialize
 local original_grant = achievements.grant
 local original_revoke = achievements.revoke
+
+function achievements.initialize(gamedata, prevent_debug)
+	original_init(gamedata, prevent_debug)
+	create_default_images()
+end
 
 achievements.grant = function(achievement_id, draw_card_func)
 	local result = original_grant(achievement_id)
