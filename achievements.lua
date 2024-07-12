@@ -4,107 +4,140 @@
 	This is an initial prototype implementation in order to help effect a standard.
 	This prototype will have no strong error checks and be small in scope. Any
 	  wider-scope implementation of the standard will be separate.
+
+
+	== API Style Guide ==
+	Behavior is stacked similar to corelibs. Areas of functionality are held in individual files.
+	Public API functions are added to a relevant global table as pascalCase.
+	Private API functions/variables are added to a .internal sub-table as snake_case.
+
+	 == Module Overview ==
+	- achievements.lua      | A single-file library which establishes the basics of the achievement
+		system and allows a single game to enable achievements.
+	- crossgame.lua         | A single-file library which depends on achievements.lua and provides
+		helpers for reading achievement data and related assets from other games.
+	- notifications.lua     | A single-file library which lays the groundwork for highly customizable
+		generic toast notifications. Does not hook into the achievement system directly.
+	- achievementToasts.lua | Depends on achievements.lua and notifications.lua. Provides decorations
+		for achievements.lua functions with preconfigured toast support.
 --]]
 
--- Right, we're gonna make this easier to change in the future.
--- Another note: changing the data directory to `/Shared/gameID`
---   rather than the previously penciled in `/Shared/Achievements/gameID`
-local shared_achievement_folder <const> = "/Shared/Data/"
+--[[ 
+	== Technical Specifications ==
+--]]
+
+---@class achievement_root
+---@field author string The author of the game, as in pdxinfo.
+---@field name string The name of the game, as in pdxinfo.
+---@field description string The description of the game, as in pdxinfo.
+---@field gameID string A unique ID to identify the game. Analogous to BundleID in pdxinfo.
+---@field version string The version string of the game, as in pdxinfo.
+---@field specversion string The version string of the specification used.
+---@field libversion string The version string of the Achievement library used.
+---@field defaultIcon string | nil The filepath for the game's default unlocked achievement icon, relative to the value of achievements.imagePath.
+---@field defaultIconLocked string | nil The filepath for the game's default locked achievement icon, relative to the value of achievements.imagePath.
+---@field secretIcon string | nil The filepath for the game's 'hidden achievement' icon.
+---@field achievements achievement[] An array of valid achievements for the game.
+---@field completionPercentage float The current 100%-completion percentage of a game as a float 0..1. Only calculated when loading a game's data through the crossgame module.
+---@field keyedAchievements { [string]: achievement} All configured achievements for the game, indexed by string keys. Automatically assembled by achievements.initialize and crossgame.loadData.
+
+---@class achievement
+---@field name string The name of the achievement.
+---@field description string The description of the achievement.
+---@field id string A unique ID by which to identify the achievement. Used in various API functions.
+---@field granted_at boolean | number False if the achievement has not been earned, otherwise the Playdate epoch second the achievement was earned at as returned by playdate.getSecondsSinceEpoch().
+---@field is_secret boolean | nil If true, this achievement should not appear in any player-facing lists while the .granted_at field is false. Defaut false.
+---@field icon string | nil The filepath of the achievement's unlocked icon image, relative to the value of achievements.imagePath.
+---@field icon_locked string | nil The filepath of the achievement's locked icon image, relative to the value of achievements.imagePath.
+---@field progress number | nil Current progress towards unlocking the achievement, as x/.progress_max. Should not be set manually under most circumstances.
+---@field progress_max number | nil Maxiumum progress possible towards the achievement before it is to be unlocked.
+---@field progress_is_percentage boolean | false If false, an achievement list should display current progress as a tally "$(progress)/$(progress_max)". If true, it should be displayed as a percentage number (progress/progress_max)*100. Default false.
+---@field score_value number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants score_value/(total scores)% completion. Default 1.
+
+-- [[ == Implementation == ]]
+
+local metadata <const> = playdate.metadata
+
+local shared_achievement_folder <const> = "/Shared/PDSquad_Achievements/"
 local achievement_file_name <const> = "Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
 local shared_images_updated_file <const> = "_last_seen_version.txt"
 
-local function dirname(str)
-	local pos = str:reverse():find("/", 0, true)
-	if pos == nil then
-		return "/"
-	end
-	if pos == #str then
-		pos = str:reverse():find("/", 2, true)
-	end
-	return str:sub(0, #str - (pos - 1))
-end
+---@diagnostic disable-next-line: lowercase-global
+achievements = {
+	specversion = "0.2",
+	libversion = "0.3-alpha",
+	flag_is_playdatesquad_api = true,
 
-local function force_extension(str, new_ext)
-	local pos = str:reverse():find(".", 0, true)
-	if pos == nil then
-		return str .. "." .. new_ext
-	end
-	if pos == 1 then
-		return str .. new_ext
-	end
-	return str:sub(0, (#str - 1) - (pos - 1)) .. "." .. new_ext
-end
+	forceSaveOnGrantOrRevoke = false,
+	paths = {},
+}
 
-local function get_achievement_folder_root_path(gameID)
+achievements.paths.shared_data_root = shared_achievement_folder
+function achievements.paths.get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
 	local root = string.format(shared_achievement_folder .. "%s/", gameID)
 	return root
 end
-local function get_achievement_data_file_path(gameID)
+function achievements.paths.get_achievement_data_file_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
-	local root = get_achievement_folder_root_path(gameID)
+	local root = achievements.paths.get_achievement_folder_root_path(gameID)
 	return root .. achievement_file_name
 end
-local function get_shared_images_path(gameID)
+function achievements.paths.get_shared_images_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
-	local root = get_achievement_folder_root_path(gameID)
+	local root = achievements.paths.get_achievement_folder_root_path(gameID)
 	return root .. shared_images_subfolder
 end
-local function get_shared_images_updated_file_path(gameID)
+function achievements.paths.get_shared_images_updated_file_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
 	end
-	local folder = get_shared_images_path(gameID)
+	local folder = achievements.paths.get_shared_images_path(gameID)
 	return folder .. shared_images_updated_file
 end
-
-local metadata <const> = playdate.metadata
-
----@diagnostic disable-next-line: lowercase-global
-achievements = {
-	specversion = "0.1+prototype",
-	libversion = "0.2-alpha+prototype",
-
-	forceSaveOnGrantOrRevoke = false,
-}
 
 local function load_granted_data()
 	local data = json.decodeFile(achievement_file_name)
 	if not data then
 		data = {}
 	end
-	achievements.granted = data
+	achievements.granted = data.granted_at or {}
+	achievements.progress = data.progress or {}
 end
 
 local function export_data()
 	local data = achievements.gameData
-	json.encodeToFile(get_achievement_data_file_path(data.gameID), true, data)
-end
-function achievements.save()
-	export_data()
-	json.encodeToFile(achievement_file_name, false, achievements.granted)
+	json.encodeToFile(achievements.paths.get_achievement_data_file_path(data.gameID), true, data)
 end
 
-achievements.getPaths = function(gameID, variables)
-	local shared_folder = get_shared_images_path(gameID)
-	local result = {}
-	for _, variable in ipairs(variables) do
-		for _, value in pairs(achievements.keyedAchievements) do
-			if value[variable] ~= nil then
-				local ref = value[variable]
-				local filename = force_extension(value[variable], "pdi") -- Always compiled to .pdi, (so use like pd.image.new).
-				result[ref] = { native = filename, shared = ( shared_folder .. filename ) }
+local function dirname(str)
+	return (string.gsub(str, "[^/\\]*$", ""))
+end
+local function force_extension(str, new_ext)
+	return str:gsub("%.%w+$", "") .. new_ext
+end
+
+-- Give this the names of the fields to copy as extra arguments and it'll return all the values as a set.
+local function crawlImagePaths(...)
+	local filepaths = {}
+	local desired_fields = {...}
+	for _, fieldname in ipairs(desired_fields) do
+		for _, achievement_data in pairs(achievements.keyedAchievements) do
+			if achievement_data[fieldname] ~= nil then
+				 -- Images are always compiled to .pdi, so we need the real runtime filename for copy.
+				 -- We're using a set here as an easy way to prevent duplications.
+				filepaths[force_extension(achievement_data[fieldname], ".pdi")] = true
 			end
 		end
 	end
-	return result
+	return filepaths
 end
 
 local function copy_file(src_path, dest_path)
@@ -155,15 +188,15 @@ local function copy_file(src_path, dest_path)
 	in_file:close()
 end
 
-local function copy_images_to_shared(gameID, current_build_nr)
+local function export_images(gameID, current_build_nr)
 	-- if >= the current version of the gamedata already exists, no need to re-copy the images
-	local path = get_shared_images_updated_file_path(gameID)
-	if playdate.file.exists(path) and not playdate.file.isdir(path) then
-		local ver_file, err = playdate.file.open(path, playdate.file.kFileRead)
+	local verfile_path = achievements.paths.get_shared_images_updated_file_path(gameID)
+	if playdate.file.exists(verfile_path) and not playdate.file.isdir(verfile_path) then
+		local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileRead)
 		if not ver_file then
-			error("Couldn't read version file at '" .. path .. "', because: " .. err, 2)
+			error("Couldn't read version file at '" .. verfile_path .. "', because: " .. err, 2)
 		end
-		local ver_str = ver_file:readline() or "0.0.0"
+		local ver_str = ver_file:readline()
 		ver_file:close()
 		local ver = tonumber(ver_str) or -1
 		if ver >= current_build_nr then
@@ -172,61 +205,132 @@ local function copy_images_to_shared(gameID, current_build_nr)
 	end
 
 	-- otherwise, the structure should be copied
-	local folder = get_shared_images_path(gameID)
-	if playdate.file.exists(folder) then
-		playdate.file.delete(folder, true)
+
+	local shared_path = achievements.paths.get_shared_images_path(gameID)
+	-- This is a set, so the iteration is a little different than usual.
+	for filename, _ in pairs(crawlImagePaths("icon", "icon_locked")) do
+		copy_file(filename, shared_path .. filename)
 	end
-	playdate.file.mkdir(folder)
-	for _, paths in pairs(achievements.getPaths(gameID, { "icon", "icon_locked" })) do
-		if paths.native:sub(1,1) ~= "*" then
-			copy_file(paths.native, paths.shared)
+	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked", "secretIcon"} do
+		local asset_path = achievements.gameData[metadata_asset]
+		if asset_path then
+			asset_path = force_extension(asset_path, ".pdi")
+			copy_file(asset_path, shared_path .. asset_path)
 		end
 	end
-
+		
 	-- also write the version-file
-	local ver_file, err = playdate.file.open(path, playdate.file.kFileWrite)
+	local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileWrite)
 	if not ver_file then
-		error("Couldn't write version file at '" .. path .. "', because: " .. err, 2)
+		error("Couldn't write version file at '" .. verfile_path .. "', because: " .. err, 2)
 	end
 	ver_file:write(tostring(current_build_nr))
 	ver_file:close()
 end
 
 local function donothing(...) end
+
+---@param ach_root  achievement_root The game data being validated.
+---@param prevent_debug boolean If false, does not print debug info to the console.
+-- Takes in achievement game data, validates correct data, and sets defaults.
+local function validate_gamedata(ach_root, prevent_debug)
+	local print = (prevent_debug and donothing) or print
+
+	for _, field in ipairs{ "name", "author", "description", "version", } do
+		if ach_root[field] == nil then
+			if playdate.metadata[field] ~= nil then
+				ach_root[field] = playdate.metadata[field]
+				print(field .. ' not configured: defaulting to "' .. ach_root[field] .. '"')
+			else
+				print("WARNING: " .. field .. " not configured AND not present in pxinfo metadata")
+			end
+		elseif type(ach_root[field]) ~= "string" then
+			error("expected '" .. field .. "' to be type string, got " .. type(ach_root[field]), 3)
+		end
+	end
+
+	if ach_root.gameID == nil then
+		ach_root.gameID = string.gsub(metadata.bundleID, "^user%.%d+%.", "")
+		print('gameID not configured: defaulting to "' .. ach_root.gameID .. '"')
+	elseif type(ach_root.gameID) ~= "string" then
+		error("expected 'gameID' to be type string, got ".. type(ach_root.gameID), 3)
+	end
+
+	ach_root.specversion = achievements.specversion
+	ach_root.libversion = achievements.libversion
+	print("game version saved as \"" .. ach_root.version .. "\"")
+	print("specification version saved as \"" .. ach_root.specversion .. "\"")
+	print("library version saved as \"" .. ach_root.libversion .. "\"")
+
+	if type(ach_root.defaultIcon) ~= 'string' and ach_root.defaultIcon ~= nil then
+		error("expected 'defaultIcon' to be type string, got " .. type(ach_root.defaultIconcon), 3)
+	end
+	if type(ach_root.defaultIconLocked) ~= 'string' and ach_root.defaultIconLocked ~= nil then
+		error("expected 'defaultIconLocked' to be type string, got " .. type(ach_root.defaultIconLocked), 3)
+	end
+	if type(ach_root.secretIcon) ~= 'string' and ach_root.secretIcon ~= nil then
+		error("expected 'secretIcon' to be type string, got " .. type(ach_root.secretIcon), 3)
+	end
+	
+	if ach_root.achievements == nil then
+		print("WARNING: no achievements configured")
+		ach_root.achievements = {}
+	elseif type(ach_root.achievements) ~= "table" then
+		error("achievements must be a table", 3)
+	end
+end
+
+---@param ach achievement The achievement being validated.
+-- Takes in an achievement table, validates correct data, and sets defaults.
+local function validate_achievement(ach)
+	for _, key in ipairs{"name", "description", "id",} do
+		local valtype = type(ach[key])
+		if valtype ~= "string" then
+			error(("expected '%s' to be type string, got %s"):format(key, valtype), 3)
+		end
+	end
+
+	if ach.is_secret == nil then
+		ach.is_secret = false
+	elseif type(ach.is_secret) ~= "boolean" then
+		error("expected 'is_secret' to be type boolean, got " .. type(ach.is_secret), 3)
+	end
+
+	if type(ach.icon) ~= 'string' and ach.icon ~= nil then
+		error("expected 'icon' to be type string, got " .. type(ach.icon), 3)
+	end
+	if type(ach.icon_locked) ~= 'string' and ach.icon_locked ~= nil then
+		error("expected 'icon_locked' to be type string, got " .. type(ach.icon_locked), 3)
+	end
+
+	if ach.progress_max then
+		if type(ach.progress_max) ~= 'number' then
+			error("expected 'progress_max' to be type number, got ".. type(ach.progress_max), 3)
+		end
+		if ach.progress_is_percentage == nil then
+			ach.progress_is_percentage = false
+		elseif type(ach.progress_is_percentage) ~= 'boolean' then
+			error("expected 'progress_is_percentage' to be type boolean, got " .. type(ach.progress_is_percentage), 3)
+		end
+	end
+	
+	if ach.score_value == nil then
+		ach.score_value = 1
+	elseif type(ach.score_value) ~= "number" then
+		error("expected 'score_value' to be type number, got ".. type(ach.score_value), 3)
+	elseif ach.score_value < 0 then
+		error("field 'score_value' cannot be less than 0", 3)
+	end
+end
+
+---@param gamedata achievement_root
+---@param prevent_debug boolean
 function achievements.initialize(gamedata, prevent_debug)
 	local print = (prevent_debug and donothing) or print
 	print("------")
 	print("Initializing achievements...")
-	if gamedata.achievements == nil then
-		print("WARNING: no achievements configured")
-		gamedata.achievements = {}
-	elseif type(gamedata.achievements) ~= "table" then
-		error("achievements must be a table", 2)
-	end
-	if gamedata.gameID == nil then
-		gamedata.gameID = string.gsub(metadata.bundleID, "^user%.%d+%.", "")
-		print('gameID not configured: defaulting to "' .. gamedata.gameID .. '"')
-	elseif type(gamedata.gameID) ~= "string" then
-		error("gameID must be a string", 2)
-	end
-	for _, field in ipairs{ "name", "author", "description", "version", "buildNumber", } do
-		if gamedata[field] == nil then
-			if playdate.metadata[field] ~= nil then
-				gamedata[field] = playdate.metadata[field]
-				print(field .. ' not configured: defaulting to "' .. gamedata[field] .. '"')
-			else
-				print("WARNING: " .. field .. " not configured AND not present in pxinfo metadata")
-			end
-		elseif type(gamedata[field]) ~= "string" then
-			error(field .. " must be a string", 2)
-		end
-	end
-	gamedata.version = metadata.version
-	gamedata.specversion = achievements.specversion
-	gamedata.libversion = achievements.libversion
-	print("game version saved as \"" .. gamedata.version .. "\"")
-	print("specification version saved as \"" .. gamedata.specversion .. "\"")
-	print("library version saved as \"" .. gamedata.libversion .. "\"")
+
+	validate_gamedata(gamedata, prevent_debug)
 	achievements.gameData = gamedata
 
 	load_granted_data()
@@ -238,11 +342,12 @@ function achievements.initialize(gamedata, prevent_debug)
 		end
 		achievements.keyedAchievements[ach.id] = ach
 		ach.granted_at = achievements.granted[ach.id] or false
+		validate_achievement(ach)
 	end
 
-	playdate.file.mkdir(get_achievement_folder_root_path(gamedata.gameID))
+	playdate.file.mkdir(achievements.paths.get_achievement_folder_root_path(gamedata.gameID))
 	export_data()
-	copy_images_to_shared(gamedata.gameID, (tonumber(gamedata.buildNumber) or 0))
+	export_images(gamedata.gameID, (tonumber(metadata.buildNumber) or 0))
 
 	print("files exported to /Shared")
 	print("Achievements have been initialized!")
@@ -292,24 +397,48 @@ achievements.revoke = function(achievement_id)
 	return true
 end
 
---[[ External Game Functions ]]--
-
-achievements.gamePlayed = function(game_id)
-	return playdate.file.isdir(get_achievement_folder_root_path(game_id))
+achievements.advanceTo = function(achievement_id, advance_to)
+	local ach = achievements.keyedAchievements[achievement_id]
+	if not ach then
+		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
+		return false
+	end
+	if not ach.progress_max then
+		error("attempt to progress an achievement without a configured 'progress_max'", 2)
+		return false
+	end
+	local progress = math.max(0, math.min(advance_to, ach.progress_max))
+	achievements.progress[achievement_id] = progress
+	ach.progress = progress
+	if progress == ach.progress_max then
+		achievements.grant(achievement_id)
+	elseif (progress < ach.progress_max) and ach.granted_at then
+		achievements.revoke(achievement_id)
+	end
+	return true
 end
 
-achievements.gameData = function(game_id)
-	if not achievements.gamePlayed(game_id) then
-		error("No game with ID '" .. game_id .. "' was found", 2)
+achievements.advance = function(achievement_id, advance_by)
+	local ach = achievements.keyedAchievements[achievement_id]
+	if not ach then
+		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
+		return false
 	end
-	local data = json.decodeFile(get_achievement_data_file_path(game_id))
-	local keys = {}
-	for _, ach in ipairs(data.achievements) do
-		keys[ach.id] = ach
+	if not ach.progress_max then
+		error("attempt to progress an achievement without a configured 'progress_max'", 2)
+		return false
 	end
-	data.keyedAchievements = keys
-	return data
+	local progress = achievements.progress[achievement_id] or 0
+	return achievements.advanceTo(achievement_id, progress + advance_by)
 end
 
+function achievements.save()
+	export_data()
+	local save_table = {
+		granted_at = achievements.granted,
+		progress = achievements.progress,
+	}
+	json.encodeToFile(achievement_file_name, false, save_table)
+end
 
 return achievements

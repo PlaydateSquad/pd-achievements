@@ -1,10 +1,13 @@
-import "achievements"
+-- Toast animation display module for the PlaydateSquad Achievements library.
+if not (achievements and achievements.flag_is_playdatesquad_api) then
+	error("Achievements 'toast_graphics' module must be loaded after the base PlaydateSquad achievement library.")
+end
 import "CoreLibs/graphics"
 
 local gfx <const> = playdate.graphics
 
 ---@diagnostic disable-next-line: lowercase-global
-toast_graphics = {
+local toast_graphics = {
 	displayGrantedMilliseconds = 2000,
 	displayGrantedDefaultX = 20,
 	displayGrantedDefaultY = 0,
@@ -12,6 +15,7 @@ toast_graphics = {
 	iconWidth = 32,
 	iconHeight = 32,
 }
+achievements.toast_graphics = toast_graphics
 
 local function set_rounded_mask(img, width, height, round)
 	gfx.pushContext(img:getMaskImage())
@@ -24,24 +28,36 @@ end
 -- make 'defaults' start with a *, so they can't show up in the file system, so any file-name the user can choose is valid
 -- since lua's variable naming is more restrictive than the file-systems, we need to set them as strings
 local path_to_image_data = {
-	["*_default_icon"] = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
-	["*_default_locked"] = { image = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight), ids = {} },
+	["*_default_icon"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
+	["*_default_locked"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
 }
-local function load_images(gameID)
+local function get_image(path)
+	if not path_to_image_data[path] then
+		local img, err = gfx.image.new(path)
+		if not img then
+			error(("image '%s' could not be loaded: "):format(path) .. err)
+		else
+			path_to_image_data[path] = img
+		end
+	end
+	return path_to_image_data[path]
+end
+
+local function create_default_images()
 	-- 'load' default icon:
 	-- TODO: art not final
-	gfx.pushContext(path_to_image_data["*_default_icon"].image)
+	gfx.pushContext(path_to_image_data["*_default_icon"])
 	gfx.clear(gfx.kColorWhite)
 	gfx.setColor(gfx.kColorBlack)
 	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
 	gfx.fillRect(14, 6, 4, 12)
 	gfx.fillRect(14, 22, 4, 4)
 	gfx.popContext()
-	set_rounded_mask(path_to_image_data["*_default_icon"].image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
+	set_rounded_mask(path_to_image_data["*_default_icon"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 
 	-- 'load' default locked icon:
 	-- TODO: art not final
-	gfx.pushContext(path_to_image_data["*_default_locked"].image)
+	gfx.pushContext(path_to_image_data["*_default_locked"])
 	gfx.clear(gfx.kColorWhite)
 	gfx.setColor(gfx.kColorBlack)
 	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
@@ -49,35 +65,7 @@ local function load_images(gameID)
 	gfx.drawCircleInRect(12, 7, 8, 8)
 	gfx.fillRect(9, 12, 14, 14)
 	gfx.popContext()
-	set_rounded_mask(path_to_image_data["*_default_locked"].image, toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
-
-	-- load images if a file is known, otherwise set defaults
-	local paths_by_reference = achievements.getPaths(gameID, { "icon", "icon_locked" })
-	for key, value in pairs(achievements.keyedAchievements) do
-		if value.icon ~= nil then
-			if path_to_image_data[value.icon] == nil then
-				local filename = paths_by_reference[value.icon].native
-				path_to_image_data[value.icon] = { image = gfx.image.new(filename), ids = {} }
-			end
-		else
-			value.icon = "*_default_icon"
-		end
-		table.insert(path_to_image_data[value.icon].ids, key)
-		if value.icon_locked ~= nil then
-			if path_to_image_data[value.icon_locked] == nil then
-				local filename = paths_by_reference[value.icon_locked].native
-				path_to_image_data[value.icon_locked] = { image = gfx.image.new(filename), ids = {} }
-			end
-		else
-			value.icon_locked = "*_default_locked"
-		end
-		table.insert(path_to_image_data[value.icon_locked].ids, key)
-	end
-end
-
-function toast_graphics.initialize(gamedata, prevent_debug)
-	achievements.initialize(gamedata, prevent_debug)
-	load_images(achievements.gameData.gameID)
+	set_rounded_mask(path_to_image_data["*_default_locked"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 end
 
 --[[ Achievement Drawing & Animation ]]--
@@ -119,12 +107,12 @@ local function draw_card_unsafe(ach, x, y, msec_since_granted)
 				gfx.setColor(gfx.kColorWhite)
 				gfx.drawRoundRect(0, 0, 360, 40, 3, 3)
 				-- TODO: either do these next 2 separately, or make the entire card into an animation
-				local select_icon = ach.icon_locked
+				local select_icon = ach.icon_locked or achievements.gameData.defaultIconLocked or "*_default_locked"
 				if ach.granted_at then
-					select_icon = ach.icon
+					select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
 				end
-				path_to_image_data[select_icon].image:draw(4, 4)
-				path_to_image_data[select_icon].image:draw(324, 4)
+				get_image(select_icon):draw(4, 4)
+				get_image(select_icon):draw(324, 4)
 				gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
 				-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
 				gfx.drawTextInRect(ach.name, 40, 14, 292, 60, nil, "...", kTextAlignment.center)
@@ -202,28 +190,34 @@ end
 
 --[[ Achievement Management Functions ]]--
 
-toast_graphics.grant = function(achievement_id, draw_card_func)
-	if achievements.grant(achievement_id) then
+-- Yes, this is now decorating the base functions in-place.
+-- This is by far the easier option to understand.
+
+local original_init = achievements.initialize
+local original_grant = achievements.grant
+local original_revoke = achievements.revoke
+
+function achievements.initialize(gamedata, prevent_debug)
+	original_init(gamedata, prevent_debug)
+	create_default_images()
+end
+
+achievements.grant = function(achievement_id, draw_card_func)
+	local result = original_grant(achievement_id)
+	if result then
 		local ach = achievements.keyedAchievements[achievement_id]
 		if draw_card_func == nil then
 			draw_card_func = draw_card_unsafe
 		end
 		start_granted_animation(ach, draw_card_func)
 	end
+	return result
 end
 
-toast_graphics.revoke = function(achievement_id)
-	if achievements.revoke(achievement_id) then
+achievements.revoke = function(achievement_id)
+	local result = original_revoke(achievement_id)
+	if result then
 		draw_card_cache[achievement_id] = nil
 	end
+	return result
 end
-
-toast_graphics.isGranted = function(achievement_id)
-	return achievements.isGranted(achievement_id)
-end
-
-toast_graphics.save = function()
-	achievements.save()
-end
-
-return toast_graphics
