@@ -22,16 +22,17 @@ This function logs relevant initialization information to the console unless the
 To configure your game, define a table containing the following format and pass it to this function:
 
 ```lua
+---@type achievement_root
 local achievementData = {
     -- These fields are equivalent to the matching fields in your game's pdxinfo metadata.
     -- All are reconfigurable in case a game has multiple release editions which wish to share achievement data.
     -- They will be automatically filled in from the metadata if not defined here.
-    gameID = "com.example.yourgame",
+    gameID = "com.example.yourgame", -- equivalent to bundleID
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
     version = "1.0.0",
-    -- Optionally, these two fields define default icons for achievements.
+    -- The filepaths to default icon images for granted and ungranted achievements. Optional.
     defaultIcon = "icon_default",
     defaultIconLocked = "icon_locked_default",
     -- The filepath to an icon image for locked achievements which are marked as secret. Optional.
@@ -51,7 +52,7 @@ local achievementData = {
             icon = "my_icon",
             -- The filepath to an icon image for the achievement before it's granted. Optional.
             icon_locked = "my_icon_locked",
-            -- These options, if present, handle achievements which require multiple steps to unlock.
+            -- These options, if present, make your achievement require multiple steps to unlock.
             progress_max = 10,
             progress_is_percentage = false,
             -- This option determines how much this achievement matters towards 100%. Set to 0 for achievement to be entirely optional. Default 1.
@@ -72,27 +73,31 @@ be written to, rather than bundleID, to keep things consistent.
 
 Grants the achievement `achievement_id` to the player. Attempting to grant a previously earned achievement does nothing.
 
+If your achievement has a `progress_max` field, use `achievements.advance` or `achievements.advanceTo` instead. 
+
 Returns `true` if the achievement was successfully granted, otherwise `false`.
 
 ### achievements.revoke(string: achievement_id)
 
 Revokes the achievement `achievement_id` from the player. Attempting to revoke an unearned achievement does nothing.
 
+If your achievement has a `progress_max` field, use `achievements.advance` or `achievements.advanceTo` instead. 
+
 Returns `true` if the achievement was successfully revoked, otherwise `false`.
 
 ### achievements.advance(string: achievement_id, int: advance_by)
 
-Increases or decreases the advancement `advancement_id`'s completion score by `advance_by`. Attempting this on an advancement without a `progress_max` set causes an error.
+Increases or decreases the achievement `achievement_id`'s completion score by `advance_by`. Attempting this on an achievement without a `progress_max` set causes an error.
 
-If the advancement's score reaches the max, calls `advancements.grant`. If it falls below the max, calls `advancements.revoke`.
+If the achievement's score reaches the max, this calls `achievements.grant`. If it falls below the max, this calls `achievements.revoke`.
 
 Returns `true` on success, otherwise errors.
 
 ### achievements.advanceTo(string: achievement_id, int: advance_to)
 
-Sets the advancement `advancementa_id`'s completion score to `advance_to` Attempting this on an advancement without a `progress_max` set causes an error.
+Sets the achievement `achievement_id`'s completion score to `advance_to` Attempting this on an achievement without a `progress_max` set causes an error.
 
-If the advancement's score reaches the max, calls `advancements.grant`. If it falls below the max, calls `advancements.revoke`.
+If the achievement's score reaches the max, this calls `achievements.grant`. If it falls below the max, this calls `achievements.revoke`.
 
 Returns `true` on success, otherwise errors. 
 
@@ -106,11 +111,11 @@ Returns `true` if the achievement has been earned by the player, returns `false`
 
 ### `bool: achievements.forceSaveOnGrantOrRevoke`
 
-If this flag is set to `true` then `achievements.save()` will be run every time an achievement is newly granted or revoked. Defaults to `false`.
+If this flag is set to `true` then `achievements.save()` will be automatically run every time an achievement is newly granted or revoked. Defaults to `false`.
 
 ## Crossgame Module
 
-Adds helper functions for dealing with data written by other games.
+Adds helper functions for dealing with data written by other games. To use it, add `crossgame.lua` to your project and import it after `achievements.lua`.
 
 Needs to be filled out through the development of a full reader.
 
@@ -130,58 +135,57 @@ TODO: Better document exactly what's in the standard and what parts need to be f
 
 ## Toasts Module
 
-To use toasts when achievements are granted, add `toast_graphics.lua` to your project and import it. This will create a global variable named `toast_graphics` containing the module.
+To use toasts when achievements are granted, add `toast_graphics.lua` to your project and import it after `achievements.lua`
+
+> ## NOTICE:
+> This module will automatically import `Corelibs/graphics` when loaded.
 
 There are several values which can be configured (this may break some things):
 
-### `int: toast_graphics.displayGrantedMilliseconds`
+### `int: achievements.toast_graphics.displayGrantedMilliseconds`
 How long should a toast animation last? Default: 2000
 
-### `int: toast_graphics.displayGrantedDefaultX`
+### `int: achievements.toast_graphics.displayGrantedDefaultX`
 What X coordinate should a toast animation draw at? Default: 20
 
-### `int: toast_graphics.displayGrantedDefaultY`
+### `int: achievements.toast_graphics.displayGrantedDefaultY`
 What Y coordinate should a toast animation draw at? Default: 0
 
-### `int: toast_graphics.displayGrantedDelayNext`
+### `int: achievements.toast_graphics.displayGrantedDelayNext`
 How many milliseconds should pass after a toast begins before another one can begin playing? Default: 400
 
-### `int: iconWidth`
+### `int: achievements.toast_graphics.iconWidth`
 How wide are the achievement icons? Default: 32
 
-### `int: iconHeight`
+### `int: achievements.toast_graphics.iconHeight`
 How tall are the achievement icons? Default: 32
 
 **[TODO]: The size of icons should really be set in the standard rather than configured here.**
 
-### Wrappers:
+> ## **NOTICE:**
+> `toast_graphics.lua` Adds additional functionality to the basic `achievements.grant` function. While using it, refer to the below documentation instead of the original.
 
-`toast_graphics` provides wrappers around the following basic functions:
-- `achievements.initialize` -> `toast_graphics.initialize`
-- `achievements.grant`      -> `toast_graphics.grant`
-- `achievements.revoke`     -> `toast_graphics.revoke`
-- `achievments.isGranted`   -> `toast_graphics.isGranted`
-- `achievements.save`       -> `toast_graphics.save`
+### achievements.grant(string: achievement_id, function: draw_card_func)
 
-When using this module, these wrappers should be used instead of the originals.
+Grants the achievement `achievement_id` to the player. Attempting to grant a previously earned achievement does nothing.
 
+This also queues up a toast notification to be drawn to the screen.
 
-### toast_graphics.grant(string: achievement_id, function: draw_card_func)
-
-Like `achievements.grant`, this function grants the achievement `achievement_id` to the player. It also queues up a toast for drawing. 
-
-The new argument `draw_card_func` optionally takes a function which will be called each frame in order to draw the achievement toast to the screen. The function must take the following arguments:
+The optional argument `draw_card_func` takes a function which will be called each frame in order to draw the achievement toast to the screen. The function must take the following arguments:
 
 - **`ach`**:  The achievement's internal data as configured during initialization.
 - **`x`**: The base x coordinate the card should be drawn at.
 - **`y`**: The base y coordinate the toast should be drawn at.
 - **`elapsed_miliseconds`**: The amount of time which has passed since the toast began.
 
-The function should return `true` while the animation is ongoing and `false` once it has ended.
+The function passed to `draw_card_func` should return `true` while the animation is ongoing and `false` once it has ended. If a function is not provided, the included default will be used.
 
-### toast_graphics.drawCard(achievement_or_id, x, y, elapsed_msec)
+Returns `true` if the achievement was successfully granted, otherwise `false`.
+
+
+### achievements.toast_graphics.drawCard(achievement_or_id, x, y, elapsed_msec)
 
 Draws a card using the default toast animation at `x` and `y`, at `elapsed_msec` into the animation. `achievement_or_id` can be either a string achievement ID or an achievement's internal data. `x` and `y` default to the module's configured x/y locations. `elapsed_msec` defaults to 0.
 
-### toast_graphics.updateVisuals()
+### achievements.toast_graphics.updateVisuals()
 Updates currently drawing toasts. Should be called once per frame as part of the global update loop.
