@@ -1,10 +1,13 @@
-import "achievements"
+-- Toast animation display module for the PlaydateSquad Achievements library.
+if not (achievements and achievements.flag_is_playdatesquad_api) then
+	error("Achievements 'toast_graphics' module must be loaded after the base PlaydateSquad achievement library.")
+end
 import "CoreLibs/graphics"
 
 local gfx <const> = playdate.graphics
 
 ---@diagnostic disable-next-line: lowercase-global
-toast_graphics = {
+local toast_graphics = {
 	displayGrantedMilliseconds = 2000,
 	displayGrantedDefaultX = 20,
 	displayGrantedDefaultY = 0,
@@ -12,6 +15,7 @@ toast_graphics = {
 	iconWidth = 32,
 	iconHeight = 32,
 }
+achievements.toast_graphics = toast_graphics
 
 local function set_rounded_mask(img, width, height, round)
 	gfx.pushContext(img:getMaskImage())
