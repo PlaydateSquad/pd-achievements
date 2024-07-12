@@ -4,14 +4,9 @@ import "./achievements"
 local crossgame = {}
 achievements.crossgame = crossgame
 
--- Returns whether the folder that should contain an Achievements.json exists.
+-- Returns whether a game has any listed achievement data.
 crossgame.gamePlayed = function(game_id)
 	return playdate.file.isdir(achievements.paths.get_achievement_folder_root_path(game_id))
-end
-
--- Returns whether an Achievements.json for the given game ID exists.
-crossgame.gameHasAchievements = function(game_id)
-	return playdate.file.exists(achievements.paths.get_achievement_data_file_path(game_id))
 end
 
 crossgame.listGames = function()
@@ -19,9 +14,7 @@ crossgame.listGames = function()
 	for _, path in ipairs(playdate.file.listFiles(achievements.paths.shared_data_root)) do
 		if string.sub(path, -1) == "/" then
 			local gameid = string.sub(path, 1, -2)
-			if crossgame.gameHasAchievements(gameid) then
-				table.insert(games, gameid)
-			end
+			table.insert(games, gameid)
 		end
 	end
 	return games
