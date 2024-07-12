@@ -38,6 +38,8 @@
 ---@field defaultIconLocked string | nil The filepath for the game's default locked achievement icon, relative to the value of achievements.imagePath.
 ---@field secretIcon string | nil The filepath for the game's 'hidden achievement' icon.
 ---@field achievements achievement[] An array of valid achievements for the game.
+---@field completionPercentage float The current 100%-completion percentage of a game as a float 0..1. Only calculated when loading a game's data through the crossgame module.
+---@field keyedAchievements { [string]: achievement} All configured achievements for the game, indexed by string keys. Automatically assembled by achievements.initialize and crossgame.loadData.
 
 ---@class achievement
 ---@field name string The name of the achievement.
