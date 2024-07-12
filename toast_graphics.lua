@@ -195,28 +195,28 @@ end
 
 --[[ Achievement Management Functions ]]--
 
-toast_graphics.grant = function(achievement_id, draw_card_func)
-	if achievements.grant(achievement_id) then
+-- Yes, this is now decorating the base functions in-place.
+-- This is by far the easier option to understand.
+
+local original_grant = achievements.grant
+local original_revoke = achievements.revoke
+
+achievements.grant = function(achievement_id, draw_card_func)
+	local result = original_grant(achievement_id)
+	if result then
 		local ach = achievements.keyedAchievements[achievement_id]
 		if draw_card_func == nil then
 			draw_card_func = draw_card_unsafe
 		end
 		start_granted_animation(ach, draw_card_func)
 	end
+	return result
 end
 
-toast_graphics.revoke = function(achievement_id)
-	if achievements.revoke(achievement_id) then
+achievements.revoke = function(achievement_id)
+	local result = original_revoke(achievement_id)
+	if result then
 		draw_card_cache[achievement_id] = nil
 	end
+	return result
 end
-
-toast_graphics.isGranted = function(achievement_id)
-	return achievements.isGranted(achievement_id)
-end
-
-toast_graphics.save = function()
-	achievements.save()
-end
-
-return toast_graphics
