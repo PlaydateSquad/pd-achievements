@@ -24,8 +24,8 @@ end
 ---@return achievement_root
 -- Returns the achievement data for the requested game if it exists. Otherwise returns false and a reason.
 crossgame.getData = function(game_id)
-	if not crossgame.gameHasAchievements then
-		return false, "No achievements file for game '" .. game_id .. "' was found"
+	if not crossgame.gamePlayed then
+		return false, "No achievement data for game '" .. game_id .. "' was found."
 	end
 	local data = json.decodeFile(achievements.paths.get_achievement_data_file_path(game_id))
 	-- Quick sanity check...
@@ -50,9 +50,5 @@ end
 crossgame.loadImage(game_id, filepath)
 	local image_path = achievements.paths.get_shared_images_path(game_id) .. filepath
 	local img, err = gfx.image.new(image_path)
-	if not img then
-		error(("image '%s' could not be loaded: "):format(filename) .. err)
-	else
-		return img
-	end
+	return img, err
 end
