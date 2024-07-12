@@ -67,6 +67,7 @@ local shared_images_updated_file <const> = "_last_seen_version.txt"
 achievements = {
 	specversion = "0.1+prototype",
 	libversion = "0.2-alpha+prototype",
+	flag_is_playdatesquad_api = true,
 
 	forceSaveOnGrantOrRevoke = false,
 	paths = {},

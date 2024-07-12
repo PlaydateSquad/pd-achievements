@@ -1,5 +1,7 @@
 -- Cross-game data reading module for the PlaydateSquad Achievements library.
-import "./achievements"
+if not (achievements and achievements.flag_is_playdatesquad_api) then
+	error("Achievements 'crossgame' module must be loaded after the base PlaydateSquad achievement library.")
+end
 
 local crossgame = {}
 achievements.crossgame = crossgame
