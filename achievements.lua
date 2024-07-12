@@ -267,8 +267,8 @@ local function validate_gamedata(ach_root, prevent_debug)
 	if type(ach_root.defaultIconLocked) ~= 'string' and ach_root.defaultIconLocked ~= nil then
 		error("expected 'defaultIconLocked' to be type string, got " .. type(ach_root.defaultIconLocked), 3)
 	end
-	if type(ach_root.secretIcon) ~= 'string' and ach_root.defaultIconLocked ~= nil then
-		error("expected 'defaultIconLocked' to be type string, got " .. type(ach_root.defaultIconLocked), 3)
+	if type(ach_root.secretIcon) ~= 'string' and ach_root.secretIcon ~= nil then
+		error("expected 'secretIcon' to be type string, got " .. type(ach_root.secretIcon), 3)
 	end
 	
 	if ach_root.achievements == nil then
