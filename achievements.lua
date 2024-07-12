@@ -235,7 +235,7 @@ local function donothing(...) end
 local function validate_gamedata(ach_root, prevent_debug)
 	local print = (prevent_debug and donothing) or print
 
-	for _, field in ipairs{ "name", "author", "description", } do
+	for _, field in ipairs{ "name", "author", "description", "version", } do
 		if ach_root[field] == nil then
 			if playdate.metadata[field] ~= nil then
 				ach_root[field] = playdate.metadata[field]
@@ -255,7 +255,6 @@ local function validate_gamedata(ach_root, prevent_debug)
 		error("expected 'gameID' to be type string, got ".. type(ach_root.gameID), 3)
 	end
 
-	ach_root.version = metadata.version
 	ach_root.specversion = achievements.specversion
 	ach_root.libversion = achievements.libversion
 	print("game version saved as \"" .. ach_root.version .. "\"")

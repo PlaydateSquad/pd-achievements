@@ -23,13 +23,14 @@ To configure your game, define a table containing the following format and pass 
 
 ```lua
 local achievementData = {
-    -- These four fields are equivalent to the matching fields in your game's pdxinfo metadata.
+    -- These fields are equivalent to the matching fields in your game's pdxinfo metadata.
+    -- All are reconfigurable in case a game has multiple release editions which wish to share achievement data.
     -- They will be automatically filled in from the metadata if not defined here.
     gameID = "com.example.yourgame",
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
-    -- This field determines the root folder that achievement icons are stored in. Defaults to "AchievementImages/".
+    version = "1.0.0",
     -- Optionally, these two fields define default icons for achievements.
     defaultIcon = "icon_default",
     defaultIconLocked = "icon_locked_default",
