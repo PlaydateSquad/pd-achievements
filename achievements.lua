@@ -65,8 +65,8 @@ local shared_images_updated_file <const> = "_last_seen_version.txt"
 
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
-	specversion = "0.1+prototype",
-	libversion = "0.2-alpha+prototype",
+	specversion = "0.2",
+	libversion = "0.3-alpha",
 	flag_is_playdatesquad_api = true,
 
 	forceSaveOnGrantOrRevoke = false,
