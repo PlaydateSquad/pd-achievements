@@ -30,8 +30,6 @@ local achievementData = {
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
     -- This field determines the root folder that achievement icons are stored in. Defaults to "AchievementImages/".
-    -- All images in this folder will be copied to /Shared/ for other apps to use.
-    imagePath = "icons/",
     -- Optionally, these two fields define default icons for achievements.
     defaultIcon = "icon_default",
     defaultIconLocked = "icon_locked_default",

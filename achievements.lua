@@ -34,7 +34,6 @@
 ---@field version string The version string of the game, as in pdxinfo.
 ---@field specversion string The version string of the specification used.
 ---@field libversion string The version string of the Achievement library used.
----@field imagePath string The root filepath for a directory of icons used by achievements. Default "achievementImages"
 ---@field defaultIcon string | nil The filepath for the game's default unlocked achievement icon, relative to the value of achievements.imagePath.
 ---@field defaultIconLocked string | nil The filepath for the game's default locked achievement icon, relative to the value of achievements.imagePath.
 ---@field achievements achievement[] An array of valid achievements for the game.
@@ -117,6 +116,25 @@ end
 local function dirname(str)
 	return (string.gsub(str, "[^/\\]*$", ""))
 end
+local function force_extension(str, new_ext)
+	return str:gsub("%.%w+$", "") .. new_ext
+end
+
+-- Give this the names of the fields to copy as extra arguments and it'll return all the values as a set.
+local function crawlImagePaths(...)
+	local filepaths = {}
+	local desired_fields = {...}
+	for _, fieldname in ipairs(desired_fields) do
+		for _, achievement_data in pairs(achievements.keyedAchievements) do
+			if achievement_data[fieldname] ~= nil then
+				 -- Images are always compiled to .pdi, so we need the real runtime filename for copy.
+				 -- We're using a set here as an easy way to prevent duplications.
+				filepaths[force_extension(achievement_data[fieldname], ".pdi")] = true
+			end
+		end
+	end
+	return filepaths
+end
 
 local function copy_file(src_path, dest_path)
 	-- make sure the source-file exists
@@ -166,41 +184,6 @@ local function copy_file(src_path, dest_path)
 	in_file:close()
 end
 
-local copy_folder
-copy_folder = function(src_path, dest_path, overwrite, restrict_extension)
-	if not playdate.file.isdir(src_path) then
-		error("Could not open directory at " .. src_path)
-	end
-
-	if not playdate.file.isdir(dest_path) then
-		if playdate.file.exists(dest_path) then
-			error("Destination '"..dest_path.."' is not a folder.")
-		else
-			playdate.file.mkdir(dest_path)
-		end
-	else
-		if overwrite == true then
-			playdate.file.delete(dest_path, true)
-			playdate.file.mkdir(dest_path)
-		end
-	end
-
-	for _, node in ipairs(playdate.file.listFiles(src_path)) do
-		if string.sub(node, -1) == "/" then
-			copy_folder(src_path .. node, dest_path .. node)
-		else
-			if restrict_extension then
-				local ext_len = string.len(restrict_extension)
-				if node:sub(-ext_len, -1) == restrict_extension then
-					copy_file(src_path .. node, dest_path .. node)
-				end
-			else
-				copy_file(src_path .. node, dest_path .. node)
-			end
-		end
-	end
-end
-
 local function export_images(gameID, current_build_nr)
 	-- if >= the current version of the gamedata already exists, no need to re-copy the images
 	local verfile_path = achievements.paths.get_shared_images_updated_file_path(gameID)
@@ -218,8 +201,20 @@ local function export_images(gameID, current_build_nr)
 	end
 
 	-- otherwise, the structure should be copied
-	copy_folder(achievements.gameData.imagePath, achievements.paths.get_shared_images_path(gameID), true, ".pdi")
 
+	local shared_path = achievements.paths.get_shared_images_path(gameID)
+	-- This is a set, so the iteration is a little different than usual.
+	for filename, _ in pairs(crawlImagePaths("icon", "icon_locked")) do
+		copy_file(filename, shared_path .. filename)
+	end
+	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked"} do
+		local asset_path = achievements.gameData[metadata_asset]
+		if asset_path then
+			asset_path = force_extension(asset_path, ".pdi")
+			copy_file(asset_path, shared_path .. asset_path)
+		end
+	end
+		
 	-- also write the version-file
 	local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileWrite)
 	if not ver_file then
@@ -264,13 +259,6 @@ local function validate_gamedata(ach_root, prevent_debug)
 	print("specification version saved as \"" .. ach_root.specversion .. "\"")
 	print("library version saved as \"" .. ach_root.libversion .. "\"")
 
-	if ach_root.imagePath == nil then
-		ach_root.imagePath = shared_images_subfolder
-	elseif type(ach_root.imagePath) ~= 'string' then
-		error("expected 'imagePath' to be type string, got " .. type(ach.icon), 3)
-	elseif string.sub(ach_root.imagePath, -1) ~= "/" then
-		ach_root.imagePath = ach_root.imagePath .. "/"
-	end
 	if type(ach_root.defaultIcon) ~= 'string' and ach_root.defaultIcon ~= nil then
 		error("expected 'defaultIcon' to be type string, got " .. type(ach_root.defaultIconcon), 3)
 	end

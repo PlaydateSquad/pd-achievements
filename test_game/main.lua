@@ -9,8 +9,7 @@ local achievementData = {
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
-    imagePath = "icons",
-    defaultIcon = "default/test (default)",
+    defaultIcon = "icons/default/test (default)",
     -- defaultIconLocked = "default/test_locked (default)",
     achievements = {
         {
@@ -18,8 +17,8 @@ local achievementData = {
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "test",
-            icon_locked = "test_locked",
+            icon = "icons/test",
+            icon_locked = "icons/test_locked",
         },
         {
             id = "test_achievement_2",

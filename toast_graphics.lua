@@ -29,10 +29,9 @@ local path_to_image_data = {
 }
 local function get_image(path)
 	if not path_to_image_data[path] then
-		local filename = achievements.gameData.imagePath .. path
-		local img, err = gfx.image.new(filename)
+		local img, err = gfx.image.new(path)
 		if not img then
-			error(("image '%s' could not be loaded: "):format(filename) .. err)
+			error(("image '%s' could not be loaded: "):format(path) .. err)
 		else
 			path_to_image_data[path] = img
 		end
