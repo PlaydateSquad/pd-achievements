@@ -33,6 +33,8 @@ local achievementData = {
     -- Optionally, these two fields define default icons for achievements.
     defaultIcon = "icon_default",
     defaultIconLocked = "icon_locked_default",
+    -- The filepath to an icon image for locked achievements which are marked as secret. Optional.
+    secretIcon = "my_icon_hidden",
     achievements = {
         -- This table should be an array of achievement tables.
         -- Each of these tables stores the data for a single achievement.
@@ -44,9 +46,9 @@ local achievementData = {
             description = "Achievement Description",
             -- Should this achievement appear in viewers if not yet earned?
             is_secret = false,
-            -- The filepath to a .pdi icon for the achievement once granted. Optional.
+            -- The filepath to an icon image for the achievement once granted. Optional.
             icon = "my_icon",
-            -- The filepath to a .pdi icon for the achievement before it's granted. Optional.
+            -- The filepath to an icon image for the achievement before it's granted. Optional.
             icon_locked = "my_icon_locked",
             -- These options, if present, handle achievements which require multiple steps to unlock.
             progress_max = 10,

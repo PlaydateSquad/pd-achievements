@@ -36,6 +36,7 @@
 ---@field libversion string The version string of the Achievement library used.
 ---@field defaultIcon string | nil The filepath for the game's default unlocked achievement icon, relative to the value of achievements.imagePath.
 ---@field defaultIconLocked string | nil The filepath for the game's default locked achievement icon, relative to the value of achievements.imagePath.
+---@field secretIcon string | nil The filepath for the game's 'hidden achievement' icon.
 ---@field achievements achievement[] An array of valid achievements for the game.
 
 ---@class achievement
@@ -207,7 +208,7 @@ local function export_images(gameID, current_build_nr)
 	for filename, _ in pairs(crawlImagePaths("icon", "icon_locked")) do
 		copy_file(filename, shared_path .. filename)
 	end
-	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked"} do
+	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked", "secretIcon"} do
 		local asset_path = achievements.gameData[metadata_asset]
 		if asset_path then
 			asset_path = force_extension(asset_path, ".pdi")
@@ -263,6 +264,9 @@ local function validate_gamedata(ach_root, prevent_debug)
 		error("expected 'defaultIcon' to be type string, got " .. type(ach_root.defaultIconcon), 3)
 	end
 	if type(ach_root.defaultIconLocked) ~= 'string' and ach_root.defaultIconLocked ~= nil then
+		error("expected 'defaultIconLocked' to be type string, got " .. type(ach_root.defaultIconLocked), 3)
+	end
+	if type(ach_root.secretIcon) ~= 'string' and ach_root.defaultIconLocked ~= nil then
 		error("expected 'defaultIconLocked' to be type string, got " .. type(ach_root.defaultIconLocked), 3)
 	end
 	
