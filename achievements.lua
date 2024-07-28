@@ -1,10 +1,10 @@
 
 --[[
-	==prototype achievements library==
-	This is an initial prototype implementation in order to help effect a standard.
-	This prototype will have no strong error checks and be small in scope. Any
-	  wider-scope implementation of the standard will be separate.
-
+	==PlaydateSquad Achievements Library - Alpha==
+	This was originally a prototype implementation, but is now being built for 
+	  full use in real games.
+	Basic error checking is provided. Functionality is implemented as a series
+	  of single-file modules. Only Lua or Lua/C games are supported at the moment.
 
 	== API Style Guide ==
 	Behavior is stacked similar to corelibs. Areas of functionality are held in individual files.
@@ -16,6 +16,8 @@
 		system and allows a single game to enable achievements.
 	- crossgame.lua         | A single-file library which depends on achievements.lua and provides
 		helpers for reading achievement data and related assets from other games.
+	NOTE: At the moment the below two files are only roughly planned. At the moment their behavior
+	  is consolidated in the file toast_graphics.lua
 	- notifications.lua     | A single-file library which lays the groundwork for highly customizable
 		generic toast notifications. Does not hook into the achievement system directly.
 	- achievementToasts.lua | Depends on achievements.lua and notifications.lua. Provides decorations
