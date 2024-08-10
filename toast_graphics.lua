@@ -17,6 +17,12 @@ local toast_graphics = {
 }
 achievements.toast_graphics = toast_graphics
 
+local details = {
+	-- pre-define B64 strings, used below (see end of file)
+	b64_default_icon = nil,
+	b64_default_locked = nil,
+}
+
 local function set_rounded_mask(img, width, height, round)
 	gfx.pushContext(img:getMaskImage())
 	gfx.clear(gfx.kColorBlack)
@@ -43,27 +49,137 @@ local function get_image(path)
 	return path_to_image_data[path]
 end
 
+local base64 <const> = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local lookup_base64 = table.create(0, 65)
+local lookup_base64_reverse = table.create(65, 0)
+local i_b64 = 0
+for ch in base64:gmatch(".") do
+    lookup_base64[ch] = i_b64
+	lookup_base64_reverse[i_b64] = ch
+    i_b64 += 1
+end
+
+local function b64ToBytes(str_b64)
+	local max_6bit <const> = 63
+	local res_table = {}
+	local bitcount = 0
+	local part_a = 0
+	local bitmask_a = max_6bit
+	for ch in str_b64:gmatch(".") do
+		bitcount += 6
+		local mod8 = bitcount % 8
+		local part_b = part_a       -- b is the first one read
+		part_a = lookup_base64[ch]  -- a is the current 'head'
+		if part_a == nil then
+			error("out-of-charset character '"..ch.."' in base-64 near position "..(bitcount//6))
+			part_a = lookup_base64["A"]
+		end
+		local bitmask_b = max_6bit - bitmask_a
+		bitmask_a = (1 << (6 - mod8)) - 1
+		if mod8 ~= 6 then
+			local next_byte = (part_a & bitmask_a) + ((part_b & bitmask_b) << 2)
+			table.insert(res_table, string.pack("B", next_byte))
+		end
+	end
+	return table.concat(res_table, "")
+end
+
+-- --[[
+local function bytesToB64(str_bytes)
+	local max_8bit <const> = 255
+	local res_table = table.create(#str_bytes, 0)
+	local bitcount = 0
+	local leftover = 0
+	for ch in str_bytes:gmatch(".") do
+		bitcount += 8
+		local nmod6 = ((bitcount - 1) % 6) + 1
+		local bitmask_a = (1 << nmod6) - 1
+		local bitmask_b = max_8bit - bitmask_a
+		local byte = string.unpack("B", ch)
+		local val_6bits = ((byte & bitmask_b) >> 2) + leftover
+		leftover = (byte & bitmask_a)
+		table.insert(res_table, lookup_base64_reverse[val_6bits])
+		if bitcount % 24 == 0 then
+			table.insert(res_table, lookup_base64_reverse[leftover])
+			leftover = 0
+		end
+	end
+	return table.concat(res_table, "")
+end
+
+local function imageToB64(image)
+	-- set some constants
+	local pattern_dim <const> = 8
+	local pat_format = ""
+	for i_pat = 1,pattern_dim,1 do
+		pat_format = pat_format.."B"
+	end
+
+	-- convert the image to pattern-blocks, then add that to bytes
+	local bytes = ""
+	for start_y = 0, toast_graphics.iconHeight, pattern_dim do
+		for start_x = 0, (toast_graphics.iconWidth - pattern_dim), pattern_dim do
+			gfx.setPattern(image, start_x, start_y)
+			local pattern = gfx.getColor()  -- since we've just set a pattern, this'll return that, instead of a color
+			bytes = bytes..string.pack(pat_format, table.unpack(pattern))
+		end
+	end
+	return bytesToB64(bytes)  -- once the accumulated bytes are converted to b64, return
+end
+-- ]]--
+
+local function parse_and_draw_b64(str_b64)
+	-- set some constants
+	local pattern_dim <const> = 8
+
+	-- get all bytes from the string in a format that can be iterated over
+	local byte_str = b64ToBytes(str_b64)
+
+	-- iterate over all bytes (draw an 8x8 block each time we've got enough)
+	local start_x = 0
+	local start_y = 0
+	local pattern = {}
+	for ch in byte_str:gmatch(".") do
+		local byte = string.unpack("B", ch)
+		table.insert(pattern, byte)
+		if #pattern == pattern_dim then
+			-- if the pattern-buffer is full then draw & empty it
+			gfx.setPattern(pattern)
+			gfx.fillRect(start_x, start_y, pattern_dim, pattern_dim)
+			pattern = {}
+			-- (re)set position
+			start_x += pattern_dim
+			if start_x >= toast_graphics.iconWidth then
+				start_y += pattern_dim
+				start_x = 0
+			end
+		end
+	end
+	gfx.setColor(gfx.kColorBlack)  -- unset pattern
+end
+
 local function create_default_images()
-	-- 'load' default icon:
-	-- TODO: art not final
+	--[[
+	-- BEGIN TEMP TEST (remove!)
+	details.b64_default_icon = imageToB64(get_image(achievements.gameData.defaultIcon))
+	details.b64_default_locked = imageToB64(get_image(achievements.gameData.defaultIconLocked))
+	-- END TEMP TEST
+	]]--
+
+	if details.b64_default_icon == nil or details.b64_default_locked == nil then
+		error("'create default images' called before assignment of image strings")
+		return
+	end
+
+	-- load default icon:
 	gfx.pushContext(path_to_image_data["*_default_icon"])
-	gfx.clear(gfx.kColorWhite)
-	gfx.setColor(gfx.kColorBlack)
-	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
-	gfx.fillRect(14, 6, 4, 12)
-	gfx.fillRect(14, 22, 4, 4)
+	parse_and_draw_b64(details.b64_default_icon)
 	gfx.popContext()
 	set_rounded_mask(path_to_image_data["*_default_icon"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 
-	-- 'load' default locked icon:
-	-- TODO: art not final
+	-- load default locked icon:
 	gfx.pushContext(path_to_image_data["*_default_locked"])
-	gfx.clear(gfx.kColorWhite)
-	gfx.setColor(gfx.kColorBlack)
-	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
-	gfx.setLineWidth(3)
-	gfx.drawCircleInRect(12, 7, 8, 8)
-	gfx.fillRect(9, 12, 14, 14)
+	parse_and_draw_b64(details.b64_default_locked)
 	gfx.popContext()
 	set_rounded_mask(path_to_image_data["*_default_locked"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 end
@@ -221,3 +337,11 @@ achievements.revoke = function(achievement_id)
 	end
 	return result
 end
+
+--[[ In-file definition of images (via b64) ]]--
+
+-- *** AUTOGENERATED FROM HERE ON, DON'T ALTER BY HAND *** --
+
+details.b64_default_icon = ""
+
+details.b64_default_locked = ""
