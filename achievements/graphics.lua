@@ -1,6 +1,6 @@
 -- Toast animation display module for the PlaydateSquad Achievements library.
 if not (achievements and achievements.flag_is_playdatesquad_api) then
-	error("Achievements 'toast_graphics' module must be loaded after the base PlaydateSquad achievement library.")
+	error("Achievements 'graphics' module must be loaded after the base PlaydateSquad achievement library.")
 end
 import "CoreLibs/graphics"
 
