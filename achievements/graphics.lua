@@ -188,8 +188,8 @@ local function draw_card_unsafe(ach, x, y, msec_since_granted)
 					-- NOTE: icon_locked instead of icon_secret isn't a typo, since if specified, it's the same
 					select_icon = ach.icon_locked or achievements.gameData.secretIcon or "*_default_secret"
 				end
-				get_image(select_icon):draw(4, 4)
-				get_image(select_icon):draw(324, 4)
+				toast_graphics.get_image(select_icon):draw(4, 4)
+				toast_graphics.get_image(select_icon):draw(324, 4)
 				gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
 				-- TODO: get our own font in here, so we don't use the font users have set outside of the lib
 				gfx.drawTextInRect(ach.name, 40, 14, 292, 60, nil, "...", kTextAlignment.center)
