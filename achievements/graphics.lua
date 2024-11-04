@@ -28,8 +28,8 @@ end
 -- make 'defaults' start with a *, so they can't show up in the file system, so any file-name the user can choose is valid
 -- since lua's variable naming is more restrictive than the file-systems, we need to set them as strings
 local path_to_image_data = {
-	["*_default_icon"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
-	["*_default_locked"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
+	["*_default_icon"] = gfx.image.new("achievements/graphics/achievement-unlock"),
+	["*_default_locked"] = gfx.imagetable.new("achievements/graphics/achievement-lock"):getImage(1),
 }
 function toast_graphics.get_image(path)
 	if not path_to_image_data[path] then
@@ -41,31 +41,6 @@ function toast_graphics.get_image(path)
 		end
 	end
 	return path_to_image_data[path]
-end
-
-local function create_default_images()
-	-- 'load' default icon:
-	-- TODO: art not final
-	gfx.pushContext(path_to_image_data["*_default_icon"])
-	gfx.clear(gfx.kColorWhite)
-	gfx.setColor(gfx.kColorBlack)
-	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
-	gfx.fillRect(14, 6, 4, 12)
-	gfx.fillRect(14, 22, 4, 4)
-	gfx.popContext()
-	set_rounded_mask(path_to_image_data["*_default_icon"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
-
-	-- 'load' default locked icon:
-	-- TODO: art not final
-	gfx.pushContext(path_to_image_data["*_default_locked"])
-	gfx.clear(gfx.kColorWhite)
-	gfx.setColor(gfx.kColorBlack)
-	gfx.drawRoundRect(2, 2, toast_graphics.iconWidth - 4, toast_graphics.iconHeight - 4, 3)
-	gfx.setLineWidth(3)
-	gfx.drawCircleInRect(12, 7, 8, 8)
-	gfx.fillRect(9, 12, 14, 14)
-	gfx.popContext()
-	set_rounded_mask(path_to_image_data["*_default_locked"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 end
 
 --[[ Achievement Drawing & Animation ]]--
@@ -193,14 +168,8 @@ end
 -- Yes, this is now decorating the base functions in-place.
 -- This is by far the easier option to understand.
 
-local original_init = achievements.initialize
 local original_grant = achievements.grant
 local original_revoke = achievements.revoke
-
-function achievements.initialize(gamedata, prevent_debug)
-	original_init(gamedata, prevent_debug)
-	create_default_images()
-end
 
 achievements.grant = function(achievement_id, draw_card_func)
 	local result = original_grant(achievement_id)
