@@ -1,8 +1,5 @@
 .vscode/
 *.pdx
-test_game/achievements/achievement-lock-table-32-32.png
-test_game/achievements/achievement-secret-table-32-32.png
-test_game/achievements/achievement-unlock.png
-test_game/achievements/achievements.lua
+test_game/achievements/*
 test_game/achievements/crossgame.lua
 test_game/achievements/toast_graphics.lua
