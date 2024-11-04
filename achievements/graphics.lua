@@ -181,6 +181,7 @@ local function draw_card_unsafe(ach, x, y, msec_since_granted)
 				gfx.setImageDrawMode(gfx.kDrawModeCopy)
 				gfx.setColor(gfx.kColorWhite)
 				gfx.drawRoundRect(0, 0, 360, 40, 3, 3)
+				-- TODO: either do these next 2 separately, or make the entire card into an animation
 				local select_icon = ach.icon_locked or achievements.gameData.defaultIconLocked or "*_default_locked"
 				if ach.granted_at then
 					select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
