@@ -18,7 +18,7 @@ local achievementData = {
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "test",
+            icon = "achievements/achievement-unlock",
             icon_locked = "test_locked",
         },
         {
@@ -43,6 +43,55 @@ local achievementData = {
 
 achievements.initialize(achievementData)
 
+local sheet = gfx.imagetable.new("achievements/achievement-lock")
+function animate_unlock(ach, x, y, elapsed)
+    local msec_threshhold = 50
+    local frames = math.floor(elapsed / msec_threshhold)
+    if frames < 24 then
+        frames = math.floor(frames / 2)
+    end
+    if frames <= 4 then
+        sheet:drawImage(frames, 300, 10)
+    elseif frames > 4 and frames <= 8 then
+        sheet:drawImage(5 - (frames - 5), 300, 10)
+    elseif frames >= 9 and frames < 12 then
+        sheet:drawImage(6, 300, 10)
+    elseif frames >= 24 and frames < (24 + 16) then
+        gfx.setClipRect(300, 10, 32, 32)
+        local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+        achievements.toast_graphics.get_image(select_icon):draw(300, 10)
+        sheet:drawImage(6, 300, 10 + ((frames - 24) * 2))
+        gfx.clearClipRect()
+    elseif frames >= (24 + 16) and frames < 70 then
+        local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+        achievements.toast_graphics.get_image(select_icon):draw(300, 10)
+    elseif frames >= 70 then
+        return false
+    end
+    return true
+end
+
+local sheet = gfx.imagetable.new("achievements/achievement-secret")
+function animate_secret(ach, x, y, elapsed)
+    local msec_threshhold = 200
+    local frames = math.floor(elapsed / msec_threshhold)
+    local offset = (frames % 2 == 0) and 2 or 1
+    -- gfx.setClipRect(300, 10, 32, 32)
+    if frames <= 6 then
+        sheet:drawImage(offset, 300, 10)
+    elseif frames > 6 and frames <= 20 then
+        local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+        achievements.toast_graphics.get_image(select_icon):draw(300, 10)
+        sheet:getImage(offset):drawFaded(300, 10, 1-((frames - 6)/14), gfx.image.kDitherTypeBayer8x8)
+    elseif frames <= 30 then
+        local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+        achievements.toast_graphics.get_image(select_icon):draw(300, 10)
+    else
+        return false
+    end
+    return true
+end
+
 function playdate.keyPressed(key)
     if key == "f" then
         if achievements.isGranted("test_achievement") then
@@ -50,7 +99,7 @@ function playdate.keyPressed(key)
             achievements.revoke("test_achievement")
         else
             print("granting example achievement 1")
-            achievements.grant("test_achievement")
+            achievements.grant("test_achievement", animate_unlock)
         end
     elseif key == "g" then
         if achievements.isGranted("test_achievement_2") then
@@ -58,7 +107,7 @@ function playdate.keyPressed(key)
             achievements.revoke("test_achievement_2")
         else
             print("granting example achievement 2")
-            achievements.grant("test_achievement_2")
+            achievements.grant("test_achievement_2", animate_secret)
         end
     elseif key == "h" then
         print("granting invalid achievement")
@@ -79,11 +128,12 @@ function playdate.keyPressed(key)
 end
 
 gfx.setColor(gfx.kColorBlack)
-playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
 
 function playdate.update()
     gfx.fillRect(0, 0, 400, 240)
     playdate.drawFPS(0,0)
+    gfx.pushContext()
+    playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
     playdate.graphics.drawText("F: grant/revoke 1", 10, 20)
     playdate.graphics.drawText("G: grant/revoke 2", 10, 40)
     playdate.graphics.drawText("H: grant invalid", 10, 60)
@@ -91,5 +141,6 @@ function playdate.update()
     playdate.graphics.drawText("X: achievement 3 progress: -1", 10, 120)
     playdate.graphics.drawText("C: achievement 3 progress: +1", 10, 140)
     playdate.graphics.drawText("R: save/export data", 10, 100)
+    gfx.popContext()
     achievements.toast_graphics.updateVisuals()
 end
