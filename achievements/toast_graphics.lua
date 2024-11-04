@@ -31,7 +31,7 @@ local path_to_image_data = {
 	["*_default_icon"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
 	["*_default_locked"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
 }
-local function get_image(path)
+function toast_graphics.get_image(path)
 	if not path_to_image_data[path] then
 		local img, err = gfx.image.new(path)
 		if not img then

@@ -1,7 +1,7 @@
 local gfx = playdate.graphics
 
-import "../achievements"
-import "../toast_graphics"
+import "achievements/achievements"
+import "achievements/toast_graphics"
 
 -- Copied from the comments in the other file...
 ---@type achievement_root

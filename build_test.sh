@@ -5,6 +5,10 @@
 echo -n "using Playdate-SDK: "
 $PLAYDATE_SDK_PATH/bin/pdc --version || { echo "Playdate-SDK not found! Set the PLAYDATE_SDK_PATH environment variable first!"; exit 1; }
 
+echo "copying achievement library to test-game"
+rm -r ./test_game/achievements
+cp -a ./achievements ./test_game/achievements
+
 echo "building test-game"
 $PLAYDATE_SDK_PATH/bin/pdc ./test_game ./test_game.pdx
 
