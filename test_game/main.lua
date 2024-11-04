@@ -1,7 +1,6 @@
 local gfx = playdate.graphics
 
-import "achievements/achievements"
-import "achievements/toast_graphics"
+import "achievements/all"
 
 -- Copied from the comments in the other file...
 ---@type achievement_root
@@ -18,7 +17,7 @@ local achievementData = {
             name = "Achievement Name",
             description = "Achievement Description",
             is_secret = false,
-            icon = "achievements/achievement-unlock",
+            icon = "achievements/graphics/achievement-unlock",
             icon_locked = "test_locked",
         },
         {
@@ -43,7 +42,7 @@ local achievementData = {
 
 achievements.initialize(achievementData)
 
-local sheet = gfx.imagetable.new("achievements/achievement-lock")
+local sheet = gfx.imagetable.new("achievements/graphics/achievement-lock")
 function animate_unlock(ach, x, y, elapsed)
     local msec_threshhold = 50
     local frames = math.floor(elapsed / msec_threshhold)
@@ -71,7 +70,7 @@ function animate_unlock(ach, x, y, elapsed)
     return true
 end
 
-local sheet = gfx.imagetable.new("achievements/achievement-secret")
+local sheet = gfx.imagetable.new("achievements/graphics/achievement-secret")
 function animate_secret(ach, x, y, elapsed)
     local msec_threshhold = 200
     local frames = math.floor(elapsed / msec_threshhold)
