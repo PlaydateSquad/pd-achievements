@@ -39,9 +39,9 @@ crossgame.getData = function(game_id)
 	local keys = {}
 	for _, ach in ipairs(data.achievements) do
 		keys[ach.id] = ach
-		completion_total += score_value
+		completion_total = completion_total + score_value
 		if ach.granted_at then
-			completion_obtained += score_value
+			completion_obtained = completion_obtained + score_value
 		end
 	end
 	data.keyedAchievements = keys
@@ -49,7 +49,7 @@ crossgame.getData = function(game_id)
 	return data
 end
 
-crossgame.loadImage(game_id, filepath)
+function crossgame.loadImage(game_id, filepath)
 	local image_path = achievements.paths.get_shared_images_path(game_id) .. filepath
 	local img, err = gfx.image.new(image_path)
 	return img, err
