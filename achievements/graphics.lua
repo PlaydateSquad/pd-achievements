@@ -14,6 +14,9 @@ local toast_graphics = {
 	displayGrantedDelayNext = 400,
 	iconWidth = 32,
 	iconHeight = 32,
+	toasts = {},
+	-- TEMPORARY: Needs refactored
+	default_toast = function() end,
 }
 achievements.graphics = toast_graphics
 
@@ -230,6 +233,60 @@ toast_graphics.drawCard = function(achievement_or_id, x, y, msec_since_granted)
 	return draw_card_unsafe(ach, x, y, msec_since_granted)
 end
 
+
+-- TEMPORARY: This whole thing needs to be refactored and made prettier.
+local toasts = toast_graphics.toasts
+toasts.falling_card = draw_card_unsafe
+
+local sheet = gfx.imagetable.new("achievements/graphics/achievement-secret")
+function toasts.secret(ach, x, y, elapsed)
+    local msec_threshhold = 200
+    local frames = math.floor(elapsed / msec_threshhold)
+    local offset = (frames % 2 == 0) and 2 or 1
+    -- gfx.setClipRect(300, 10, 32, 32)
+    if frames <= 6 then
+        sheet:drawImage(offset, 300, 10)
+    elseif frames > 6 and frames <= 20 then
+        local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+        achievements.graphics.get_image(select_icon):draw(300, 10)
+        sheet:getImage(offset):drawFaded(300, 10, 1-((frames - 6)/14), gfx.image.kDitherTypeBayer8x8)
+    elseif frames <= 30 then
+        local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+        achievements.graphics.get_image(select_icon):draw(300, 10)
+    else
+        return false
+    end
+    return true
+end
+
+local sheet = gfx.imagetable.new("achievements/graphics/achievement-lock")
+function toasts.unlock(ach, x, y, elapsed)
+    local msec_threshhold = 50
+    local frames = math.floor(elapsed / msec_threshhold)
+    if frames < 24 then
+        frames = math.floor(frames / 2)
+    end
+    if frames <= 4 then
+        sheet:drawImage(frames, 300, 10)
+    elseif frames > 4 and frames <= 8 then
+        sheet:drawImage(5 - (frames - 5), 300, 10)
+    elseif frames >= 9 and frames < 12 then
+        sheet:drawImage(6, 300, 10)
+    elseif frames >= 24 and frames < (24 + 16) then
+        gfx.setClipRect(300, 10, 32, 32)
+        local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+        achievements.graphics.get_image(select_icon):draw(300, 10)
+        sheet:drawImage(6, 300, 10 + ((frames - 24) * 2))
+        gfx.clearClipRect()
+    elseif frames >= (24 + 16) and frames < 70 then
+        local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+        achievements.graphics.get_image(select_icon):draw(300, 10)
+    elseif frames >= 70 then
+        return false
+    end
+    return true
+end
+
 local animate_coros = {}
 local animate_queue = {}
 local last_grant_display_msec = -toast_graphics.displayGrantedDelayNext
@@ -298,7 +355,7 @@ achievements.grant = function(achievement_id, draw_card_func)
 	if result then
 		local ach = achievements.keyedAchievements[achievement_id]
 		if draw_card_func == nil then
-			draw_card_func = draw_card_unsafe
+			draw_card_func = toast_graphics.default_toast
 		end
 		start_granted_animation(ach, draw_card_func)
 	end
