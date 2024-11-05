@@ -15,7 +15,7 @@ local toast_graphics = {
 	iconWidth = 32,
 	iconHeight = 32,
 }
-achievements.toast_graphics = toast_graphics
+achievements.graphics = toast_graphics
 
 local details = {
 	-- NOTE: Please don't edit the auto-generated part below by hand (unless you really know what you're doing); use the 'embed_images' script(s) instead.
