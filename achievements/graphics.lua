@@ -15,7 +15,7 @@ local toast_graphics = {
 	iconWidth = 32,
 	iconHeight = 32,
 }
-achievements.toast_graphics = toast_graphics
+achievements.graphics = toast_graphics
 
 local function set_rounded_mask(img, width, height, round)
 	gfx.pushContext(img:getMaskImage())

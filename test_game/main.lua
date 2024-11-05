@@ -58,12 +58,12 @@ function animate_unlock(ach, x, y, elapsed)
     elseif frames >= 24 and frames < (24 + 16) then
         gfx.setClipRect(300, 10, 32, 32)
         local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
-        achievements.toast_graphics.get_image(select_icon):draw(300, 10)
+        achievements.graphics.get_image(select_icon):draw(300, 10)
         sheet:drawImage(6, 300, 10 + ((frames - 24) * 2))
         gfx.clearClipRect()
     elseif frames >= (24 + 16) and frames < 70 then
         local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
-        achievements.toast_graphics.get_image(select_icon):draw(300, 10)
+        achievements.graphics.get_image(select_icon):draw(300, 10)
     elseif frames >= 70 then
         return false
     end
@@ -80,11 +80,11 @@ function animate_secret(ach, x, y, elapsed)
         sheet:drawImage(offset, 300, 10)
     elseif frames > 6 and frames <= 20 then
         local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
-        achievements.toast_graphics.get_image(select_icon):draw(300, 10)
+        achievements.graphics.get_image(select_icon):draw(300, 10)
         sheet:getImage(offset):drawFaded(300, 10, 1-((frames - 6)/14), gfx.image.kDitherTypeBayer8x8)
     elseif frames <= 30 then
         local select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
-        achievements.toast_graphics.get_image(select_icon):draw(300, 10)
+        achievements.graphics.get_image(select_icon):draw(300, 10)
     else
         return false
     end
@@ -141,5 +141,5 @@ function playdate.update()
     playdate.graphics.drawText("C: achievement 3 progress: +1", 10, 140)
     playdate.graphics.drawText("R: save/export data", 10, 100)
     gfx.popContext()
-    achievements.toast_graphics.updateVisuals()
+    achievements.graphics.updateVisuals()
 end
