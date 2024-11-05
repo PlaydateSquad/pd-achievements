@@ -231,27 +231,28 @@ toast_graphics.drawCard = function(achievement_or_id, x, y, msec_since_granted)
 end
 
 local animate_coros = {}
+local animate_queue = {}
+local last_grant_display_msec = -toast_graphics.displayGrantedDelayNext
 toast_graphics.updateVisuals = function ()
-	for achievement_id, coro_func in pairs(animate_coros) do
-		if not coroutine.resume(coro_func) then
-			animate_coros[achievement_id] = nil
+	if animate_queue[1] then
+		-- Delay until it's time to start drawing.
+		-- NOTE: use getCurrentTimeMilliseconds here (regardless of time granted), since that'll take into account game-pausing.
+		if playdate.getCurrentTimeMilliseconds() > last_grant_display_msec + toast_graphics.displayGrantedDelayNext then
+			local coro_func = animate_coros[animate_queue[1]]
+			if not coroutine.resume(coro_func) then
+				animate_coros[animate_queue[1]] = nil
+				table.remove(animate_queue, 1)
+				last_grant_display_msec = playdate.getCurrentTimeMilliseconds()
+			end
 		end
 	end
 end
 
-local last_grant_display_msec = -toast_graphics.displayGrantedDelayNext
 local function start_granted_animation(ach, draw_card_func)
 	draw_card_cache[ach.id] = nil
-	-- tie display-coroutine to achievement-id, so that the system doesn't get confused by rapid grant/revoke
-	animate_coros[ach.id] = coroutine.create(
+	local coro = coroutine.create(
 		function ()
-			-- NOTE: use getCurrentTimeMilliseconds here (regardless of time granted), since that'll take into account game-pausing.
-			local start_msec = 0
-			repeat
-				start_msec = playdate.getCurrentTimeMilliseconds()
-				coroutine.yield()
-			until start_msec > (last_grant_display_msec + toast_graphics.displayGrantedDelayNext)
-			last_grant_display_msec = start_msec
+			local start_msec = playdate.getCurrentTimeMilliseconds()
 			local current_msec = start_msec
 			while draw_card_func(
 				ach,
@@ -264,6 +265,18 @@ local function start_granted_animation(ach, draw_card_func)
 			end
 		end
 	)
+	-- tie display-coroutine to achievement-id, so that the system doesn't get confused by rapid grant/revoke
+	-- also nsure there's only one instance of achievement-id in the queue.
+	if animate_coros[ach.id] then
+		for i, v in ipairs(animate_queue) do
+			if v == ach.id then
+				table.remove(animate_queue, i)
+				break
+			end
+		end
+	end
+	animate_coros[ach.id] = coro
+	table.insert(animate_queue, ach.id)
 end
 
 --[[ Achievement Management Functions ]]--
