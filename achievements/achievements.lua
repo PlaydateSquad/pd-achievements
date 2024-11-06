@@ -307,10 +307,10 @@ local function validate_achievement(ach)
 		if type(ach.progress_max) ~= 'number' then
 			error("expected 'progress_max' to be type number, got ".. type(ach.progress_max), 3)
 		end
-		if type(ach.progress) ~= 'number' then
-			error("expected 'progress' to be type number, got ".. type(ach.progress_max), 3)
-		elseif ach.progress == nil then
+		if ach.progress == nil then
 			ach.progress = 0
+		elseif type(ach.progress) ~= 'number' then
+			error("expected 'progress' to be type number, got ".. type(ach.progress), 3)
 		end
 		if ach.progress_is_percentage == nil then
 			ach.progress_is_percentage = false
