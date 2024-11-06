@@ -4,6 +4,7 @@ if not (achievements and achievements.flag_is_playdatesquad_api) then
 end
 
 local crossgame = {}
+local gfx <const> = playdate.graphics
 achievements.crossgame = crossgame
 
 -- Returns whether a game has any listed achievement data.
@@ -39,9 +40,9 @@ crossgame.getData = function(game_id)
 	local keys = {}
 	for _, ach in ipairs(data.achievements) do
 		keys[ach.id] = ach
-		completion_total = completion_total + score_value
+		completion_total = completion_total + ach.score_value
 		if ach.granted_at then
-			completion_obtained = completion_obtained + score_value
+			completion_obtained = completion_obtained + ach.score_value
 		end
 	end
 	data.keyedAchievements = keys
