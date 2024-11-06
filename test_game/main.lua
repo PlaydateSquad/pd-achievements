@@ -67,11 +67,15 @@ end
 
 import "CoreLibs/ui"
 import "generate_data"
+import "simple_viewer"
 
 local main_screen = playdate.ui.gridview.new(0, 20)
 local options = {
     {"GENERATE RANDOM DATA", function() 
         CHANGE_SCENE("GENERATE_DATA")
+    end},
+    {"GO TO BASIC VIEWER", function()
+        CHANGE_SCENE("simple_viewer")
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then
