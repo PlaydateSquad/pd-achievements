@@ -18,6 +18,7 @@ function generate_game_data(numgames, achievements_min, achievements_max)
     local prog_min, prog_max = 5, 20
     remove_generated_game_data()
     local base_id <const> = "com.example.achievementtest_generated_"
+	playdate.resetElapsedTime()
     for i = 1, numgames do
         local gamedata = {
             gameID = base_id .. i,
@@ -74,6 +75,11 @@ function generate_game_data(numgames, achievements_min, achievements_max)
                 ach.progress_is_percentage = true
             end
             table.insert(gamedata.achievements, ach)
+			local time_taken = playdate.getElapsedTime()
+			if time_taken > 8 then
+				playdate.resetElapsedTime()
+				coroutine.yield()
+			end
         end
         -- End generating achievement data.
         playdate.file.mkdir(achievements.paths.get_achievement_folder_root_path(gamedata.gameID))
@@ -118,6 +124,7 @@ Scenes.GENERATE_DATA = {
     AButtonDown = function()
         gfx.clear()
         gfx.drawText("generating random game data...", 20, 20)
+		playdate.display.flush()
         print("generating random game data...")
         generate_game_data(numgame, achmin, achmax)
         print("done")
