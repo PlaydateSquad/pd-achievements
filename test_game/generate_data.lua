@@ -123,6 +123,9 @@ Scenes.GENERATE_DATA = {
         print("done")
         CHANGE_SCENE("MAIN_DEBUG")
     end,
+	BButtonDown = function()
+		CHANGE_SCENE("MAIN_DEBUG")
+	end,
     update = function()
         if playdate.buttonIsPressed("left") then
             left_repeat += 1
