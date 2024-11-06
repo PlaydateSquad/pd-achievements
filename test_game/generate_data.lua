@@ -101,6 +101,7 @@ function data_generate_screen:drawCell(section, row, column, selected, x, y, wid
     })[row], x + 10, y)
 end
 local left_repeat, right_repeat = 0, 0
+local just_pressed_a = false
 increment_numbers = function(by)
     local sel = data_generate_screen:getSelectedRow()
     if sel == 1 then
@@ -114,6 +115,7 @@ end
 Scenes.GENERATE_DATA = {
     enter = function()
         left_repeat, right_repeat = 0, 0
+        just_pressed_a = false
     end,
     downButtonDown = function()
         data_generate_screen:selectNextRow(true)
@@ -122,18 +124,21 @@ Scenes.GENERATE_DATA = {
         data_generate_screen:selectPreviousRow(true)
     end,
     AButtonDown = function()
-        gfx.clear()
-        gfx.drawText("generating random game data...", 20, 20)
-		playdate.display.flush()
-        print("generating random game data...")
-        generate_game_data(numgame, achmin, achmax)
-        print("done")
-        CHANGE_SCENE("MAIN_DEBUG")
+        just_pressed_a = true
     end,
 	BButtonDown = function()
 		CHANGE_SCENE("MAIN_DEBUG")
 	end,
     update = function()
+        if just_pressed_a then
+            gfx.clear()
+            gfx.drawText("generating random game data...", 20, 20)
+            playdate.display.flush()
+            print("generating random game data...")
+            generate_game_data(numgame, achmin, achmax)
+            print("done")
+            CHANGE_SCENE("MAIN_DEBUG")
+        end
         if playdate.buttonIsPressed("left") then
             left_repeat += 1
             if left_repeat == 1 or left_repeat > 30 then
