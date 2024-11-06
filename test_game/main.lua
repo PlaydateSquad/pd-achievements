@@ -43,8 +43,37 @@ local achievementData = {
 achievements.initialize(achievementData)
 achievements.graphics.default_toast = achievements.graphics.toasts.falling_card
 
-function playdate.keyPressed(key)
-    if key == "f" then
+gfx.setColor(gfx.kColorBlack)
+
+Scenes = {}
+Scenes.fallback = {
+    update = function()
+        playdate.graphics.clear()
+        playdate.graphics.drawText("error: please switch to an actual scene", 10, 20)
+    end
+}
+local CURRENT_SCENE = "fallback"
+
+function CHANGE_SCENE(new_scene, ...)
+    assert(type(new_scene) == "string", "argument[1] 'new_scene' must be a string")
+    assert(Scenes[new_scene], "attempt to switch to an invalid scene: " .. new_scene)
+    playdate.inputHandlers.pop()
+    playdate.inputHandlers.push(Scenes[new_scene])
+    CURRENT_SCENE = Scenes[new_scene]
+    if Scenes[new_scene].enter then
+        Scenes[new_scene].enter(...)
+    end
+end
+
+import "CoreLibs/ui"
+import "generate_data"
+
+local main_screen = playdate.ui.gridview.new(0, 20)
+local options = {
+    {"GENERATE RANDOM DATA", function() 
+        CHANGE_SCENE("GENERATE_DATA")
+    end},
+    {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then
             print("revoking example achievement 1")
             achievements.revoke("test_achievement")
@@ -52,7 +81,8 @@ function playdate.keyPressed(key)
             print("granting example achievement 1")
             achievements.grant("test_achievement", achievements.graphics.toasts.unlock)
         end
-    elseif key == "g" then
+    end},
+    {"grant/revoke 2", function() 
         if achievements.isGranted("test_achievement_2") then
             print("revoking example achievement 2")
             achievements.revoke("test_achievement_2")
@@ -60,38 +90,60 @@ function playdate.keyPressed(key)
             print("granting example achievement 2")
             achievements.grant("test_achievement_2", achievements.graphics.toasts.secret)
         end
-    elseif key == "h" then
+    end},
+    {"grant invalid", function() 
         print("granting invalid achievement")
         achievements.grant("invalid")
-    elseif key == "j" then
+    end},
+    {"revoke invalid", function() 
         print("revoking invalid achievement")
         achievements.revoke("invalid")
-    elseif key == "r" then
+    end},
+    {"save/export data", function() 
         print("saving/exporting")
         achievements.save()
-    elseif key == "x" then
+    end},
+    {"achievement 3 progress -1", function() 
         print("achiement 3: -1 completion")
         achievements.advance("test_achievement_3", -1)
-    elseif key == "c" then
+    end},
+    {"achievement 3 progress +1", function() 
         print("achiement 3: +1 completion")
         achievements.advance("test_achievement_3", 1)
+    end},
+}
+main_screen:setNumberOfRows(#options)
+function main_screen:drawCell(section, row, column, selected, x, y, width, height)
+    gfx.pushContext()
+    gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+    gfx.setColor(gfx.kColorWhite)
+    if selected then
+        gfx.fillCircleInRect(x, y + (height/2) - 3, 6, 6, 3)
     end
+    playdate.graphics.drawText(options[row][1], x + 10, y)
+    gfx.popContext()
 end
-
-gfx.setColor(gfx.kColorBlack)
+Scenes.MAIN_DEBUG = {
+    downButtonDown = function()
+        main_screen:selectNextRow(true)
+    end,
+    upButtonDown = function()
+        main_screen:selectPreviousRow(true)
+    end,
+    AButtonDown = function()
+        options[main_screen:getSelectedRow()][2]()
+    end,
+    update = function()
+        gfx.fillRect(0, 0, 400, 240)
+        main_screen:drawInRect(10, 10, 390, 230)
+        playdate.drawFPS(0,0)
+        achievements.graphics.updateVisuals()
+    end
+}
 
 function playdate.update()
-    gfx.fillRect(0, 0, 400, 240)
-    playdate.drawFPS(0,0)
-    gfx.pushContext()
-    playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-    playdate.graphics.drawText("F: grant/revoke 1", 10, 20)
-    playdate.graphics.drawText("G: grant/revoke 2", 10, 40)
-    playdate.graphics.drawText("H: grant invalid", 10, 60)
-    playdate.graphics.drawText("J: invoke invalid", 10, 80)
-    playdate.graphics.drawText("X: achievement 3 progress: -1", 10, 120)
-    playdate.graphics.drawText("C: achievement 3 progress: +1", 10, 140)
-    playdate.graphics.drawText("R: save/export data", 10, 100)
-    gfx.popContext()
-    achievements.graphics.updateVisuals()
+    CURRENT_SCENE.update()
+    playdate.timer.updateTimers()
 end
+
+CHANGE_SCENE("MAIN_DEBUG")
