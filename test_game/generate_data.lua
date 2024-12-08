@@ -26,8 +26,8 @@ function generate_game_data(numgames, achievements_min, achievements_max)
             author = "Procedural Generation",
             description = "Auto-generated random game data for achievement viewer testing. (#" .. i ..")",
             version = "0.0.0",
-            specversion = achievements.specversion,
-            libversion = achievements.libversion,
+            specVersion = achievements.specVersion,
+            libVersion = achievements.libVersion,
             achievements = {},
         }
         -- Begin generating achievement data.
@@ -38,9 +38,9 @@ function generate_game_data(numgames, achievements_min, achievements_max)
                 id = "generated_achievement_" .. achievement_number,
                 name = "Generated Achievement " .. achievement_number,
                 description = "Auto-generated random achievement for achievement viewer testing.",
-                granted_at = false,
-                is_secret = false,
-                score_value = math.random(score_min, score_max),
+                grantedAt = false,
+                isSecret = false,
+                scoreValue = math.random(score_min, score_max),
             }
             --[[
                 Testing, in order:
@@ -56,23 +56,23 @@ function generate_game_data(numgames, achievements_min, achievements_max)
             local achievement_type = math.random(1, 8)
             -- Every other category is granted.
             if achievement_type % 2 == 0 then
-                ach.granted_at = playdate.getSecondsSinceEpoch()
+                ach.grantedAt = playdate.getSecondsSinceEpoch()
             end
             -- Secret achievements
             if achievement_type == 3 or achievement_type == 4 then
-                ach.is_secret = true
+                ach.isSecret = true
             end
             -- Progress-based achievements
             if achievement_type > 4 then
-                ach.progress_max = math.random(prog_min, prog_max)
-                ach.progress = math.random(0, ach.progress_max - 1)
+                ach.progressMax = math.random(prog_min, prog_max)
+                ach.progress = math.random(0, ach.progressMax - 1)
                 -- Ensure continuity between completion and progress.
-                if ach.granted_at then
-                    ach.progress = ach.progress_max
+                if ach.grantedAt then
+                    ach.progress = ach.progressMax
                 end
             end
             if achievement_type > 6 then
-                ach.progress_is_percentage = true
+                ach.progressIsPercentage = true
             end
             table.insert(gamedata.achievements, ach)
 			local time_taken = playdate.getElapsedTime()
