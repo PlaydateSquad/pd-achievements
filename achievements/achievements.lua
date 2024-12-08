@@ -65,8 +65,8 @@ local shared_images_updated_file <const> = "_last_seen_version.txt"
 
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
-	specversion = "0.2",
-	libversion = "0.3-alpha",
+	specVersion = "0.2",
+	libVersion = "0.3-alpha",
 	flag_is_playdatesquad_api = true,
 
 	forceSaveOnGrantOrRevoke = false,
@@ -256,8 +256,8 @@ local function validate_gamedata(ach_root, prevent_debug)
 		error("expected 'gameID' to be type string, got ".. type(ach_root.gameID), 3)
 	end
 
-	ach_root.specVersion = achievements.specversion
-	ach_root.libVersion = achievements.libversion
+	ach_root.specVersion = achievements.specVersion
+	ach_root.libVersion = achievements.libVersion
 	print("game version saved as \"" .. ach_root.version .. "\"")
 	print("specification version saved as \"" .. ach_root.specVersion .. "\"")
 	print("library version saved as \"" .. ach_root.libVersion .. "\"")
