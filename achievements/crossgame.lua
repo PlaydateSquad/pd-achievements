@@ -40,9 +40,9 @@ crossgame.getData = function(game_id)
 	local keys = {}
 	for _, ach in ipairs(data.achievements) do
 		keys[ach.id] = ach
-		completion_total = completion_total + ach.score_value
-		if ach.granted_at then
-			completion_obtained = completion_obtained + ach.score_value
+		completion_total = completion_total + ach.scoreValue
+		if ach.grantedAt then
+			completion_obtained = completion_obtained + ach.scoreValue
 		end
 	end
 	data.keyedAchievements = keys
