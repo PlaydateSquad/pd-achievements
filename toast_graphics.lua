@@ -14,14 +14,16 @@ local toast_graphics = {
 	displayGrantedDelayNext = 400,
 	iconWidth = 32,
 	iconHeight = 32,
+	forceRoundIconCorners = false,
 }
 achievements.toast_graphics = toast_graphics
 
 local details = {
 	-- NOTE: Please don't edit the auto-generated part below by hand (unless you really know what you're doing); use the 'embed_images' script(s) instead.
 	-- #START AUTOGEN# --
-	b64_default_icon = "ABTDPHPHAN3g84wAAAgAAAHOBRwwz284BCGGBCHDgnX//4ADBDHDAAABH//+ns4w88ww8MH/P/vfn/f+HAwA4AAgMMAAAAAA4cAIAAAAgww9jAMOHOfz4DHf/8gQMM48AwwwukNMAwwB4959Y9g8nzxjADQgYDDD/DHGAAA4+0",
-	b64_default_locked = "GFLAAEPH45zs/AAAAAH/fzwIAAwwz0+8BCGAAAHDgn3zcYQz8fTj49/AwkscnksY+8wx87zn4Tz///f/HBxB48wz8/xAwwwA+cIRIDHHJ7XPzz8OTSwAwDABg5wQ8c59wgAAOAFAwwwvb/94ZcEwA9/i///g4iCA/f3//PJ5eB",
+	b64_default_icon = "AcfAQQTAQRBA/DAA/////Dw/AAw///vPA8OCAyCCgiSJTRfPTRdMT8/589w4+888DH////f/fPvSs+yysuCyMScGRTRAQQQA/ea7PjPHABB/f++885gAgMSi4iCCACCCQQQAQQQAfDADBHf/AAw/Awwg+8OAA8PAACCCACCC/CA",
+	b64_default_locked = "AcfAQQQBQTDA/DAA//vBAAw/AAAAgwwAA8OCACCCACSDQTTATTfPTDAAAAw/////wwwAA8ww88DCACCCACCCcSfPTTfPTTfP5zzDw73n573z8/z39/ww8cCCACCCACCCTTfPTTQAfDw/////AAw/A8ww88AAA8PAACCCACCC/CA",
+	b64_default_secret = "AcfAQQQFQRHA/DAAAAAAwBw/AAgAgggDA8OCACiig6SBQRQAQQQATjBBADDHDf+9gxwAw4wwfsvCgCCCACCCgSRAQQQAQQRB/NOPBDDDAjh/f+wgwwgAg9CCACCCAiiCRTRFQQQAfDwBABBBAAw/AgDAAAAAA8PA4iiiACCC/CA",
 	-- #END AUTOGEN# --
 	-- Additional variables may be added to details below/(around) if needed though, as long as the start/end lines and in-between aren't altered.
 }
@@ -127,13 +129,16 @@ local function create_default_images()
 	gfx.pushContext(path_to_image_data["*_default_icon"])
 	parse_and_draw_b64(details.b64_default_icon)
 	gfx.popContext()
-	set_rounded_mask(path_to_image_data["*_default_icon"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
 
 	-- load default locked icon:
 	gfx.pushContext(path_to_image_data["*_default_locked"])
 	parse_and_draw_b64(details.b64_default_locked)
 	gfx.popContext()
-	set_rounded_mask(path_to_image_data["*_default_locked"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
+
+	if toast_graphics.forceRoundIconCorners then
+		set_rounded_mask(path_to_image_data["*_default_icon"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
+		set_rounded_mask(path_to_image_data["*_default_locked"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
+	end
 end
 
 --[[ Achievement Drawing & Animation ]]--
