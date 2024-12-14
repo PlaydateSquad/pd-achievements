@@ -14,7 +14,6 @@ local toast_graphics = {
 	displayGrantedDelayNext = 400,
 	iconWidth = 32,
 	iconHeight = 32,
-	forceRoundIconCorners = false,
 }
 achievements.toast_graphics = toast_graphics
 
@@ -134,11 +133,6 @@ local function create_default_images()
 	gfx.pushContext(path_to_image_data["*_default_locked"])
 	parse_and_draw_b64(details.b64_default_locked)
 	gfx.popContext()
-
-	if toast_graphics.forceRoundIconCorners then
-		set_rounded_mask(path_to_image_data["*_default_icon"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
-		set_rounded_mask(path_to_image_data["*_default_locked"], toast_graphics.iconWidth, toast_graphics.iconHeight, 3)
-	end
 end
 
 --[[ Achievement Drawing & Animation ]]--
