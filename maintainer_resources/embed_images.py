@@ -1,13 +1,15 @@
 try:
 	from PIL import Image
 except Exception as ex:
-	print(f"original exception message: {str(ex)}")
-	print()
-	print("You need to have the PIL/Pillow (image handling) module installed in python. You can do so by `python -m pip install Pillow`.")
-	print("If you have, but still get this message, see the original error message printed above.")
+	print(f"original exception message: {str(ex)}", file=sys.stderr)
+	print(file=sys.stderr)
+	print("You need to have the PIL/Pillow (image handling) module installed in python.", file=sys.stderr)
+	print("You can do so on most systems by `python -m pip install Pillow`.", file=sys.stderr)
+	print("If you have, but still get this message, see the original error message printed above.", file=sys.stderr)
 	exit(1)
 import argparse
 from os import path
+import sys
 
 
 _BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
@@ -52,24 +54,56 @@ def _getPattern(img: Image, sx: int, sy: int, wx: int, wy: int) -> list[int]:
 	return bytelist
 
 
-def embedImagesToFile(variable_to_image_table: dict[str, str], lua_filename: str) -> None:
+def _getAlphaImage(img: Image) -> Image:
+	if "A" in img.getbands():
+		return img.getchannel("A")
+	elif "P" in img.getbands():
+		img.apply_transparency()
+		alpha_pal = [(a < 127) for a in img.getpalette("RGBA")[3::4]]
+		if not any(alpha_pal):
+			return None
+		has_transpatent_pixels = False
+		result = Image.new("L", (img.width, img.height))
+		for y in range(0, img.height):
+			for x in range(0, img.width):
+				p = img.getpixel((x, y))
+				result.putpixel((x, y), 0 if alpha_pal[p] else 255)
+				has_transpatent_pixels |= alpha_pal[p]
+		if not has_transpatent_pixels:
+			return None
+		return result
+	else:
+		return None
+
+
+def _convertToBase64(variable_to_image_table: dict[str, str]) -> (dict[str, str], dict[str, str]):
 	b64_per_variable = {}
+	opacity_b64_per_variable = {}
 	for variable, image_filename in variable_to_image_table.items():
 		imgbytes = []
+		alphabytes = []
 		try:
 			with Image.open(image_filename, "r") as original_img:
 				img = original_img.convert("L")
+				alpha_img = _getAlphaImage(original_img)
 				for y in range(0, img.height, _PATTERN_DIM):
 					for x in range(0, img.width, _PATTERN_DIM):
-						pattbytes = _getPattern(img, x, y, _PATTERN_DIM, _PATTERN_DIM)
-						imgbytes += pattbytes
+						imgbytes += _getPattern(img, x, y, _PATTERN_DIM, _PATTERN_DIM)
+						if alpha_img != None:
+							alphabytes += _getPattern(alpha_img, x, y, _PATTERN_DIM, _PATTERN_DIM)
 		except Exception as ex:
-			print(f"Can't open or read image from {image_filename}, because '{str(ex)}'.")
+			print(f"Can't open or read image from {image_filename}, because '{str(ex)}'.", file=sys.stderr)
 			exit(1)
 		b64_per_variable[variable] = _bytesToB64(imgbytes)
+		if len(alphabytes) > 0:
+			opacity_b64_per_variable[variable] = _bytesToB64(alphabytes)
+	return b64_per_variable, opacity_b64_per_variable
+
+
+def _embedBase64StringsToFile(b64_per_var: dict[str, str], opacity_b64_per_var: dict[str, str], lua_file: str) -> None:
 	writes=[]
 	try:
-		with open(lua_filename, "r") as code:
+		with open(lua_file, "r") as code:
 			reads = code.readlines()
 			stage = 0
 			for line in reads:
@@ -79,46 +113,61 @@ def embedImagesToFile(variable_to_image_table: dict[str, str], lua_filename: str
 					writes.append(line)
 				elif stage == 1:
 					writes.append(f"\t-- {_START_AUTOGEN_TEXT} --\n")
-					for variable, b64 in b64_per_variable.items():
-						writes.append(f'\t{variable} = "{b64}",\n')
+					for var, b64 in b64_per_var.items():
+						alpha_b64_str = ("" if var not in opacity_b64_per_var
+							else f',\n\t\talpha = "{opacity_b64_per_var[var]}"')
+						writes.append(f'\t{var} = {{ pattern = "{b64}"{alpha_b64_str} }},\n')
 					writes.append(f"\t-- {_END_AUTOGEN_TEXT} --\n")
 					stage = 2
 				elif stage == 2:
 					if _END_AUTOGEN_TEXT in line:
 						stage = 0
 	except Exception as ex:
-		print(f"Can't open or read code from {toast_lua_filename}, because '{str(ex)}'.")
+		print(f"Can't open or read code from {lua_file}, because '{str(ex)}'.", file=sys.stderr)
 		exit(1)
 	try:
-		with open(lua_filename, "w") as code:
+		with open(lua_file, "w") as code:
 			code.writelines(writes)
 	except Exception as ex:
-		print(f"Can't open or write code to {toast_lua_filename}, because '{str(ex)}'.")
+		print(f"Can't open or write code to {lua_file}, because '{str(ex)}'.", file=sys.stderr)
 		exit(1)
 
 
 if __name__ == "__main__":
-	# Parse args:
+	# Argument parser:
 	parser = argparse.ArgumentParser(
                     prog="embed_images",
-                    description="""Takes 32x32 pixel images (png-format) and (after converting to 1-bit)
-						embeds them into lua code between start- and end-markers,
-						as a list of comma separated lines of string assignments to variables.""",
-                    epilog="""Used for the communvity achievement library for the Panic! Playdate handheld.\n
+                    description=f"""Takes 32x32 pixel images (png-format) and (after converting to 1-bit) embeds them
+						within a lua table as lines (`\\t<variable name> = "<base-64 string>",\\n`). The insertion is
+						done between lines that contain these: start- and end-markers: `{_START_AUTOGEN_TEXT}`
+						`{_END_AUTOGEN_TEXT}`. Repeat the image file argument (`-f ...` or `--image-file ...`) for
+						multiple image/variable pairs. (Old values will be overwritten, so using multiple arguments is
+						the only way to put more than one in.) Prints to stdout if `-e` or `--embed-into` isn't given.
+						""",
+                    epilog="""Used for the community achievement library for the Panic! Playdate handheld.\n
 						This code isn't made or endorsed by Panic!\nUse at your own risk.""")
-	parser.add_argument("-f", "--image-file", nargs=2, action="append", type=str, required = True, metavar=("FILENAME", "VARIABLE-NAME"))
-	parser.add_argument("-e", "--embed-into", action="store", type=str, required = True, metavar="FILENAME")
+	parser.add_argument("-f", "--image-file", nargs=2, action="append", type=str, required = True,
+		metavar=("<image filename>", "<lua-table variable-name>"))
+	parser.add_argument("-e", "--embed-into", action="store", type=str, metavar="<lua filename>")
 	args = parser.parse_args()
+
+	# Parse image-file/variable pairs:
 	varname_to_imagefile = {}
 	try:
 		for input_info in args.image_file:
 			if len(input_info) < 2:
 				input_info.append(path.basename(input_info[0]).split(".")[0])
-				print(f"WARNING: No variable-name specified for {input_info[0]}, attempt to fetch from filename (= '{input_info[1]}').")
 			varname_to_imagefile[input_info[1]] = input_info[0]
 	except Exception as _:
 		parser.print_usage()
 		exit(1)
 
 	# Action!:
-	embedImagesToFile(varname_to_imagefile, args.embed_into)
+	b64_per_variable, opacity_b64_per_variable = _convertToBase64(varname_to_imagefile)
+	if args.embed_into != None:
+		_embedBase64StringsToFile(b64_per_variable, opacity_b64_per_variable, args.embed_into)
+	else:
+		for variable, b64 in b64_per_variable.items():
+			print(f'{variable}.pattern  =  "{b64}"')
+		for variable, b64 in opacity_b64_per_variable.items():
+			print(f'{variable}.alpha    =  "{b64}"')

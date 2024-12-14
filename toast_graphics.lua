@@ -20,9 +20,9 @@ achievements.toast_graphics = toast_graphics
 local details = {
 	-- NOTE: Please don't edit the auto-generated part below by hand (unless you really know what you're doing); use the 'embed_images' script(s) instead.
 	-- #START AUTOGEN# --
-	b64_default_icon = "AcfAQQTAQRBA/DAA/////Dw/AAw///vPA8OCAyCCgiSJTRfPTRdMT8/589w4+888DH////f/fPvSs+yysuCyMScGRTRAQQQA/ea7PjPHABB/f++885gAgMSi4iCCACCCQQQAQQQAfDADBHf/AAw/Awwg+8OAA8PAACCCACCC/CA",
-	b64_default_locked = "AcfAQQQBQTDA/DAA//vBAAw/AAAAgwwAA8OCACCCACSDQTTATTfPTDAAAAw/////wwwAA8ww88DCACCCACCCcSfPTTfPTTfP5zzDw73n573z8/z39/ww8cCCACCCACCCTTfPTTQAfDw/////AAw/A8ww88AAA8PAACCCACCC/CA",
-	b64_default_secret = "AcfAQQQFQRHA/DAAAAAAwBw/AAgAgggDA8OCACiig6SBQRQAQQQATjBBADDHDf+9gxwAw4wwfsvCgCCCACCCgSRAQQQAQQRB/NOPBDDDAjh/f+wgwwgAg9CCACCCAiiCRTRFQQQAfDwBABBBAAw/AgDAAAAAA8PA4iiiACCC/CA",
+	b64_default_icon = { pattern = "AcfAQQTAQRBA/DAA/////Dw/AAw///vPA8OCAyCCgiSJTRfPTRdMT8/589w4+888DH////f/fPvSs+yysuCyMScGRTRAQQQA/ea7PjPHABB/f++885gAgMSi4iCCACCCQQQAQQQAfDADBHf/AAw/Awwg+8OAA8PAACCCACCC/CA" },
+	b64_default_locked = { pattern = "AcfAQQQBQTDA/DAA//vBAAw/AAAAgwwAA8OCACCCACSDQTTATTfPTDAAAAw/////wwwAA8ww88DCACCCACCCcSfPTTfPTTfP5zzDw73n573z8/z39/ww8cCCACCCACCCTTfPTTQAfDw/////AAw/A8ww88AAA8PAACCCACCC/CA" },
+	b64_default_secret = { pattern = "AcfAQQQFQRHA/DAAAAAAwBw/AAgAgggDA8OCACiig6SBQRQAQQQATjBBADDHDf+9gxwAw4wwfsvCgCCCACCCgSRAQQQAQQRB/NOPBDDDAjh/f+wgwwgAg9CCACCCAiiCRTRFQQQAfDwBABBBAAw/AgDAAAAAA8PA4iiiACCC/CA" },
 	-- #END AUTOGEN# --
 	-- Additional variables may be added to details below/(around) if needed though, as long as the start/end lines and in-between aren't altered.
 }
@@ -118,21 +118,25 @@ local function parse_and_draw_b64(str_b64)
 	gfx.setColor(gfx.kColorBlack)  -- unset pattern
 end
 
-local function create_default_images()
-	if details.b64_default_icon == nil or details.b64_default_locked == nil then
-		error("'create default images' called before assignment of image strings")
+local function create_default_image(path, icon_def)
+	if icon_def.pattern == nil then
+		error("please run the 'embed images' script to fill values for '"..path.."'")
 		return
 	end
-
-	-- load default icon:
-	gfx.pushContext(path_to_image_data["*_default_icon"])
-	parse_and_draw_b64(details.b64_default_icon)
+	local icon_data = path_to_image_data[path]
+	gfx.pushContext(icon_data)
+	parse_and_draw_b64(icon_def.pattern)
 	gfx.popContext()
+	if icon_def.alpha ~= nil then
+		gfx.pushContext(icon_data:getMaskImage())
+		parse_and_draw_b64(icon_def.alpha)
+		gfx.popContext()
+	end
+end
 
-	-- load default locked icon:
-	gfx.pushContext(path_to_image_data["*_default_locked"])
-	parse_and_draw_b64(details.b64_default_locked)
-	gfx.popContext()
+local function create_default_images()
+	create_default_image("*_default_icon", details.b64_default_icon)
+	create_default_image("*_default_locked", details.b64_default_locked)
 end
 
 --[[ Achievement Drawing & Animation ]]--
