@@ -31,6 +31,8 @@ def _bytesToB64(bytelist: list[int]) -> str:
 		if bitcount % 24 == 0:
 			result.append(_BASE64[leftover])
 			leftover = 0
+	if bitcount % 24 != 0:
+		result.append(_BASE64[leftover])
 	return "".join(result)
 
 
@@ -39,7 +41,7 @@ def _getPattern(img: Image, sx: int, sy: int, wx: int, wy: int) -> list[int]:
 	bit=0
 	nextbyte=0
 	for y in range(sy, sy + wy):
-		for x in range(sx, sx + wx):
+		for x in range(sx + wx - 1, sx - 1, -1):
 			bwpixel = 1 if img.getpixel((x,y)) >= 127 else 0
 			nextbyte += bwpixel << bit
 			bit+=1
