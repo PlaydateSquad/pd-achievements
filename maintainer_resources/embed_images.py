@@ -55,25 +55,11 @@ def _getPattern(img: Image, sx: int, sy: int, wx: int, wy: int) -> list[int]:
 
 
 def _getAlphaImage(img: Image) -> Image:
-	if "A" in img.getbands():
-		return img.getchannel("A")
-	elif "P" in img.getbands():
+	# Returns the alpha-channel of the image as as separate greyscale image, if there's any translucent pixels.
+	if any([(band in "AP") for band in img.getbands()]):
 		img.apply_transparency()
-		alpha_pal = [(a < 127) for a in img.getpalette("RGBA")[3::4]]
-		if not any(alpha_pal):
-			return None
-		has_transpatent_pixels = False
-		result = Image.new("L", (img.width, img.height))
-		for y in range(0, img.height):
-			for x in range(0, img.width):
-				p = img.getpixel((x, y))
-				result.putpixel((x, y), 0 if alpha_pal[p] else 255)
-				has_transpatent_pixels |= alpha_pal[p]
-		if not has_transpatent_pixels:
-			return None
-		return result
-	else:
-		return None
+		res = img.convert("RGBA").getchannel("A")
+		return res if any([c[1] < 0xFF for c in res.getcolors()]) else None
 
 
 def _convertToBase64(variable_to_image_table: dict[str, str]) -> (dict[str, str], dict[str, str]):
