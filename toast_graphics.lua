@@ -70,6 +70,7 @@ local function b64ToBytes(str_b64)
 	local part_a = 0
 	local bitmask_a = max_6bit
 	for ch in str_b64:gmatch(".") do
+		-- parse and paste the next 6-bit value into the next byte(s)
 		bitcount += 6
 		local mod8 = bitcount % 8
 		local part_b = part_a       -- b is the first one read
@@ -80,6 +81,7 @@ local function b64ToBytes(str_b64)
 		end
 		local bitmask_b = max_6bit - bitmask_a
 		bitmask_a = (1 << (6 - mod8)) - 1
+		-- write the next byte, unless the last 6-bit value didn't fill up the current output-byte completely
 		if mod8 ~= 6 then
 			local next_byte = (part_a & bitmask_a) + ((part_b & bitmask_b) << 2)
 			table.insert(res_table, string.pack("B", next_byte))
