@@ -40,6 +40,7 @@ end
 local path_to_image_data = {
 	["*_default_icon"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
 	["*_default_locked"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
+	["*_default_secret"] = gfx.image.new(toast_graphics.iconWidth, toast_graphics.iconHeight),
 }
 local function get_image(path)
 	if not path_to_image_data[path] then
@@ -139,6 +140,7 @@ end
 local function create_default_images()
 	create_default_image("*_default_icon", details.b64_default_icon)
 	create_default_image("*_default_locked", details.b64_default_locked)
+	create_default_image("*_default_secret", details.b64_default_secret)
 end
 
 --[[ Achievement Drawing & Animation ]]--
@@ -179,10 +181,12 @@ local function draw_card_unsafe(ach, x, y, msec_since_granted)
 				gfx.setImageDrawMode(gfx.kDrawModeCopy)
 				gfx.setColor(gfx.kColorWhite)
 				gfx.drawRoundRect(0, 0, 360, 40, 3, 3)
-				-- TODO: either do these next 2 separately, or make the entire card into an animation
 				local select_icon = ach.icon_locked or achievements.gameData.defaultIconLocked or "*_default_locked"
 				if ach.granted_at then
 					select_icon = ach.icon or achievements.gameData.defaultIcon or "*_default_icon"
+				elseif ach.is_secret then
+					-- NOTE: icon_locked instead of icon_secret isn't a typo, since if specified, it's the same
+					select_icon = ach.icon_locked or achievements.gameData.secretIcon or "*_default_secret"
 				end
 				get_image(select_icon):draw(4, 4)
 				get_image(select_icon):draw(324, 4)
