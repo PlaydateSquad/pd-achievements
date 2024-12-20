@@ -3,8 +3,6 @@
 - path-getting functions now reside in a sub-table where other files can access them.
 	- also exposed the root directory path where game-specific folders are placed, for crossgame module.
 
-- changed location of exported data to /Shared/PlaydateSquad_Achievements/(game_id)/ to make data overlaps much less likely.
-
 - re-order and simplify assorted functions for simplicity and readability
 	- various string manipulations changed from manual loops to pattern-replace
 	- images-in-use copying altered and partially simplified.
@@ -51,6 +49,8 @@
 	- toast coroutines now wait starting after the last one finishes instead of after the last one begins, meaning they no longer draw over each other.
 	- added `achievements.graphics.toasts` table to hold any default toast animations packed in with the library
 	- added `achievements.graphics.default_toast` value, which sets the default animation used when none is provided
+
+- @gurtt: change data key names to camelCase
 
 intended upcoming tasks:
 - [ ] make my experimental icon animations actually look good
