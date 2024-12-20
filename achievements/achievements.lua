@@ -58,7 +58,9 @@
 
 -- [[ == Implementation == ]]
 
-local shared_achievement_folder <const> = "/Shared/PDSquad_Achievements/"
+local metadata <const> = playdate.metadata
+
+local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
 local shared_images_updated_file <const> = "_last_seen_version.txt"
