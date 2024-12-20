@@ -58,8 +58,6 @@
 
 -- [[ == Implementation == ]]
 
-local metadata <const> = playdate.metadata
-
 local shared_achievement_folder <const> = "/Shared/PDSquad_Achievements/"
 local achievement_file_name <const> = "Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
@@ -252,7 +250,7 @@ local function validate_gamedata(ach_root, prevent_debug)
 	end
 
 	if ach_root.gameID == nil then
-		ach_root.gameID = string.gsub(metadata.bundleID, "^user%.%d+%.", "")
+		ach_root.gameID = string.gsub(playdate.metadata.bundleID, "^user%.%d+%.", "")
 		print('gameID not configured: defaulting to "' .. ach_root.gameID .. '"')
 	elseif type(ach_root.gameID) ~= "string" then
 		error("expected 'gameID' to be type string, got ".. type(ach_root.gameID), 3)
@@ -349,7 +347,7 @@ function achievements.initialize(gamedata, prevent_debug)
 
 	playdate.file.mkdir(achievements.paths.get_achievement_folder_root_path(gamedata.gameID))
 	export_data()
-	export_images(gamedata.gameID, (tonumber(metadata.buildNumber) or 0))
+	export_images(gamedata.gameID, (tonumber(playdate.metadata.buildNumber) or 0))
 
 	print("files exported to /Shared")
 	print("Achievements have been initialized!")
