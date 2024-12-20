@@ -46,13 +46,13 @@
 ---@field description string The description of the achievement.
 ---@field id string A unique ID by which to identify the achievement. Used in various API functions.
 ---@field grantedAt boolean | number False if the achievement has not been earned, otherwise the Playdate epoch second the achievement was earned at as returned by playdate.getSecondsSinceEpoch().
----@field isSecret boolean | nil If true, this achievement should not appear in any player-facing lists while the .granted_at field is false. Defaut false.
+---@field isSecret boolean | nil If true, this achievement should not appear in any player-facing lists while the .grantedAt field is false. Defaut false.
 ---@field icon string | nil The filepath of the achievement's unlocked icon image, relative to the value of achievements.imagePath.
 ---@field iconLocked string | nil The filepath of the achievement's locked icon image, relative to the value of achievements.imagePath.
----@field progress number | nil Current progress towards unlocking the achievement, as x/.progress_max. Should not be set manually under most circumstances.
+---@field progress number | nil Current progress towards unlocking the achievement, as x/.progressMax. Should not be set manually under most circumstances.
 ---@field progressMax number | nil Maxiumum progress possible towards the achievement before it is to be unlocked.
----@field progressIsPercentage boolean | false If false, an achievement list should display current progress as a tally "$(progress)/$(progress_max)". If true, it should be displayed as a percentage number (progress/progress_max)*100. Default false.
----@field scoreValue number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants score_value/(total scores)% completion. Default 1.
+---@field progressIsPercentage boolean | false If false, an achievement list should display current progress as a tally "$(progress)/$(progressMax)". If true, it should be displayed as a percentage number (progress/progressMax)*100. Default false.
+---@field scoreValue number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants scoreValue/(total scores)% completion. Default 1.
 
 -- [[ == Implementation == ]]
 
@@ -108,7 +108,7 @@ local function load_granted_data()
 	if not data then
 		data = {}
 	end
-	achievements.granted = data.granted_at or {}
+	achievements.granted = data.grantedAt or {}
 	achievements.progress = data.progress or {}
 end
 
@@ -208,7 +208,7 @@ local function export_images(gameID, current_build_nr)
 
 	local shared_path = achievements.paths.get_shared_images_path(gameID)
 	-- This is a set, so the iteration is a little different than usual.
-	for filename, _ in pairs(crawlImagePaths("icon", "icon_locked")) do
+	for filename, _ in pairs(crawlImagePaths("icon", "iconLocked")) do
 		copy_file(filename, shared_path .. filename)
 	end
 	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked", "secretIcon"} do
@@ -293,19 +293,19 @@ local function validate_achievement(ach)
 	if ach.isSecret == nil then
 		ach.isSecret = false
 	elseif type(ach.isSecret) ~= "boolean" then
-		error("expected 'is_secret' to be type boolean, got " .. type(ach.isSecret), 3)
+		error("expected 'isSecret' to be type boolean, got " .. type(ach.isSecret), 3)
 	end
 
 	if type(ach.icon) ~= 'string' and ach.icon ~= nil then
 		error("expected 'icon' to be type string, got " .. type(ach.icon), 3)
 	end
 	if type(ach.iconLocked) ~= 'string' and ach.iconLocked ~= nil then
-		error("expected 'icon_locked' to be type string, got " .. type(ach.iconLocked), 3)
+		error("expected 'iconLocked' to be type string, got " .. type(ach.iconLocked), 3)
 	end
 
 	if ach.progressMax then
 		if type(ach.progressMax) ~= 'number' then
-			error("expected 'progress_max' to be type number, got ".. type(ach.progressMax), 3)
+			error("expected 'progressMax' to be type number, got ".. type(ach.progressMax), 3)
 		end
 		if ach.progress == nil then
 			ach.progress = 0
@@ -315,16 +315,16 @@ local function validate_achievement(ach)
 		if ach.progressIsPercentage == nil then
 			ach.progressIsPercentage = false
 		elseif type(ach.progressIsPercentage) ~= 'boolean' then
-			error("expected 'progress_is_percentage' to be type boolean, got " .. type(ach.progressIsPercentage), 3)
+			error("expected 'progressIsPercentage' to be type boolean, got " .. type(ach.progressIsPercentage), 3)
 		end
 	end
 	
 	if ach.scoreValue == nil then
 		ach.scoreValue = 1
 	elseif type(ach.scoreValue) ~= "number" then
-		error("expected 'score_value' to be type number, got ".. type(ach.scoreValue), 3)
+		error("expected 'scoreValue' to be type number, got ".. type(ach.scoreValue), 3)
 	elseif ach.scoreValue < 0 then
-		error("field 'score_value' cannot be less than 0", 3)
+		error("field 'scoreValue' cannot be less than 0", 3)
 	end
 end
 
@@ -376,11 +376,11 @@ achievements.grant = function(achievement_id)
 		return false
 	end
 	local time, _ = playdate.getSecondsSinceEpoch()
-	if ach.granted_at ~= false and ach.granted_at <= ( time ) then
+	if ach.grantedAt ~= false and ach.grantedAt <= ( time ) then
 		return false
 	end
 	achievements.granted[achievement_id] = ( time )
-	ach.granted_at = time
+	ach.grantedAt = time
 
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
@@ -394,7 +394,7 @@ achievements.revoke = function(achievement_id)
 		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
-	ach.granted_at = false
+	ach.grantedAt = false
 	achievements.granted[achievement_id] = nil
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
@@ -408,16 +408,16 @@ achievements.advanceTo = function(achievement_id, advance_to)
 		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
-	if not ach.progress_max then
-		error("attempt to progress an achievement without a configured 'progress_max'", 2)
+	if not ach.progressMax then
+		error("attempt to progress an achievement without a configured 'progressMax'", 2)
 		return false
 	end
-	local progress = math.max(0, math.min(advance_to, ach.progress_max))
+	local progress = math.max(0, math.min(advance_to, ach.progressMax))
 	achievements.progress[achievement_id] = progress
 	ach.progress = progress
-	if progress == ach.progress_max then
+	if progress == ach.progressMax then
 		achievements.grant(achievement_id)
-	elseif (progress < ach.progress_max) and ach.granted_at then
+	elseif (progress < ach.progressMax) and ach.grantedAt then
 		achievements.revoke(achievement_id)
 	end
 	return true
@@ -429,8 +429,8 @@ achievements.advance = function(achievement_id, advance_by)
 		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
-	if not ach.progress_max then
-		error("attempt to progress an achievement without a configured 'progress_max'", 2)
+	if not ach.progressMax then
+		error("attempt to progress an achievement without a configured 'progressMax'", 2)
 		return false
 	end
 	local progress = achievements.progress[achievement_id] or 0
@@ -440,7 +440,7 @@ end
 function achievements.save()
 	export_data()
 	local save_table = {
-		granted_at = achievements.granted,
+		grantedAt = achievements.granted,
 		progress = achievements.progress,
 	}
 	json.encodeToFile(achievement_file_name, false, save_table)
