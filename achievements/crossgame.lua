@@ -32,7 +32,7 @@ crossgame.getData = function(game_id)
 	end
 	local data = json.decodeFile(achievements.paths.get_achievement_data_file_path(game_id))
 	-- Quick sanity check...
-	if not (data.libversion and data.specversion) then
+	if not (data.libVersion and data.specVersion) then
 		return false, "Achievement file was found but not valid."
 	end
 	local completion_total = 0
