@@ -9,4 +9,4 @@ python  ./maintainer_resources/embed_images.py \
 	--image-file  ./maintainer_resources/achievement-unlock.png    b64_default_icon    \
 	--image-file  ./maintainer_resources/achievement-lock.png      b64_default_locked  \
 	--image-file  ./maintainer_resources/achievement-secret.png    b64_default_secret  \
-	--embed-into  ./toast_graphics.lua
+	--embed-into  ./achievements/graphics.lua

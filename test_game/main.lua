@@ -17,7 +17,7 @@ local achievementData = {
             name = "Achievement Name",
             description = "Achievement Description",
             isSecret = false,
-            icon = "achievements/graphics/achievement-unlock",
+            -- icon = "achievements/graphics/achievement-unlock",
             iconLocked = "test_locked",
         },
         {

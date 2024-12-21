@@ -38,11 +38,10 @@
 
 - bumped versions and removed prototype tag
 
-- moved files into a /achievements library folder so assets can be included
+- moved files into a /achievements library folder
 	- renamed `toast_graphics.lua` to `graphics.lua`
 	- renamed the internal table to `achievements.graphics` to match
-	- added Modem's fancy icons + my animation edit to `/achievements/graphics/`
-	- removed procedurally generated default icons and switched to Modem's
+	- added my animation edit of Modem's icons to `/achievements/graphics/`
 	- added an `/achievements/all.lua` file which imports everything else for ease of use
 
 - cleaned up graphics section a little bit
@@ -51,6 +50,7 @@
 	- added `achievements.graphics.default_toast` value, which sets the default animation used when none is provided
 
 - @gurtt: change data key names to camelCase
+- @bremco: embed Modem's fancy default assets in graphics.lua as base64
 
 intended upcoming tasks:
 - [ ] make my experimental icon animations actually look good

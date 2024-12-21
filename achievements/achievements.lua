@@ -16,12 +16,8 @@
 		system and allows a single game to enable achievements.
 	- crossgame.lua         | A single-file library which depends on achievements.lua and provides
 		helpers for reading achievement data and related assets from other games.
-	NOTE: At the moment the below two files are only roughly planned. At the moment their behavior
-	  is consolidated in the file toast_graphics.lua
-	- notifications.lua     | A single-file library which lays the groundwork for highly customizable
-		generic toast notifications. Does not hook into the achievement system directly.
-	- achievementToasts.lua | Depends on achievements.lua and notifications.lua. Provides decorations
-		for achievements.lua functions with preconfigured toast support.
+    - graphics.lua          | A single-file library which depends on achievements.lua and provides
+        graphics-related functionality, primarily notifications and default icons.
 --]]
 
 --[[ 
@@ -57,8 +53,6 @@
 ---@field scoreValue number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants scoreValue/(total scores)% completion. Default 1.
 
 -- [[ == Implementation == ]]
-
-local metadata <const> = playdate.metadata
 
 local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"

@@ -1,4 +1,5 @@
 local crossgame <const> = achievements.crossgame
+local graphics <const> = achievements.graphics
 local gfx <const> = playdate.graphics
 
 local scene = {}
@@ -53,9 +54,10 @@ end
 scene_game = {}
 Scenes.simple_viewer_game = scene_game
 local achievement_view
-local fallbackico = gfx.image.new("achievements/graphics/achievement-unlock")
-local fallbackicolocked = gfx.imagetable.new("achievements/graphics/achievement-lock"):getImage(1)
-local fallbackicosecret = gfx.imagetable.new("achievements/graphics/achievement-secret"):getImage(1)
+
+local fallbackico = graphics.get_image("*_default_icon")
+local fallbackicolocked = graphics.get_image("*_default_locked")
+local fallbackicosecret = graphics.get_image("*_default_secret")
 
 function scene_game.enter(game_data)
 	achievement_view = playdate.ui.gridview.new(0, 65)
