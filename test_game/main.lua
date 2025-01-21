@@ -82,6 +82,9 @@ local options = {
     {"GO TO FANCY VIEWER", function()
 	achievementsViewer.launch(crossgame.getData("com.jonsimantov.crankycove"))
     end},
+    {"toast", function()
+	achievementsViewer.toast("complete_chapter_1", crossgame.getData("com.jonsimantov.crankycove"))
+    end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then
             print("revoking example achievement 1")
