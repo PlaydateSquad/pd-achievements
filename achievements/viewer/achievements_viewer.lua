@@ -251,7 +251,8 @@ function av.sortCards()
 		       return true
 		    elseif m.achievementData[b].grantedAt and not m.achievementData[a].grantedAt then
 		       return false
-		    elseif m.achievementData[a].grantedAt and m.achievementData[b].grantedAt then
+		    elseif m.achievementData[a].grantedAt and m.achievementData[b].grantedAt and
+		       m.achievementData[a].grantedAt ~= m.achievementData[b].grantedAt then
 		       return m.achievementData[a].grantedAt > m.achievementData[b].grantedAt
 		    else
 		       return m.additionalAchievementData[a].idx <  m.additionalAchievementData[b].idx
@@ -844,6 +845,17 @@ function av.updateToast()
    end
 end
 
+function av.abortToasts()
+   if not m or not m.toasting then
+      return
+   end
+   if m.toastAnim > TOAST_ANIM_IN_SECONDS + TOAST_ANIM_CHECKBOX_SECONDS and
+      m.toastAnim < TOAST_ANIM_PAUSE_SECONDS + TOAST_ANIM_IN_SECONDS + TOAST_ANIM_CHECKBOX_SECONDS then
+      m.toastAnim = TOAST_ANIM_PAUSE_SECONDS + TOAST_ANIM_IN_SECONDS + TOAST_ANIM_PAUSE_SECONDS
+      m.toastQueue = {}
+   end
+end
+
 function av.toast(achievementId, gameData, assetPath)
    if not m then
       av.initialize(gameData, assetPath or savedAssetPath or "achievements/viewer")
@@ -873,6 +885,8 @@ end
 achievementsViewer = {
    initialize = av.initialize,
    launch = av.launch,
-   toast = av.toast
+   toast = av.toast,
+   abortToasts = av.abortToasts,
+   getCache = function() return persistentCache end
 }
 achievementViewer = achievementsViewer  -- typos yay
