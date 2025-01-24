@@ -733,7 +733,8 @@ end
 function av.drawScrollbar(x, y)
    if m.maxScroll == nil or m.maxScroll <= CARD_SPACING then return end
 
-   local barPageFrac = 400 / (m.maxScroll+400)
+   local barPageFrac = SCREEN_HEIGHT / (m.maxScroll+SCREEN_HEIGHT)
+   barPageFrac = math.max(barPageFrac, 0.25)
    local barPosFrac = (m.scroll) / (m.maxScroll)
 
    gfx.pushContext()
@@ -766,7 +767,7 @@ function av.drawCards(x, y, animating)
 
 
    local scrollBarX = x + m.title.x + math.max(m.c.TITLE_WIDTH, m.c.CARD_WIDTH) + SCROLLBAR_SPACING
-   local scrollBarHidden = 400
+   local scrollBarHidden = SCREEN_WIDTH + SCROLLBAR_SPACING
    local animFrac
    if animating > 0 then
       animFrac = SCROLLBAR_EASING_IN(m.rawAnimFrac, 0, 1, 1)
