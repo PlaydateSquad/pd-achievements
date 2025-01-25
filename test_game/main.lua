@@ -69,7 +69,6 @@ import "CoreLibs/ui"
 import "generate_data"
 import "simple_viewer"
 import "achievements/viewer/achievements_viewer"
-local crossgame <const> = achievements.crossgame
 
 local main_screen = playdate.ui.gridview.new(0, 20)
 local options = {
