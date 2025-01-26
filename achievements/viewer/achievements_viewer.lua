@@ -1018,7 +1018,7 @@ function av.launch(config)
 
    m.backdropImage = config.disableBackground and nil or gfx.getDisplayImage()
    av.clearCaches()
-   av.launched = true
+   m.launched = true
    
    av.backupUserSettings()
 
@@ -1147,6 +1147,10 @@ function av.toast(achievementId, config)
    playdate.update = av.updateToast
 end
 
+function av.hasLaunched()
+   return m and m.launched
+end
+
 function av.isToasting()
    return m and m.toasting
 end
@@ -1161,6 +1165,7 @@ end
 achievementsViewer = {
    initialize = av.initialize,
    launch = av.launch,
+   hasLaunched = av.hasLaunched,
    toast = av.toast,
    isToasting = av.isToasting,
    abortToasts = av.abortToasts,
