@@ -14,6 +14,7 @@ local defaultConfig = {
 
    soundVolume = 1,  -- 0 to 1, or call achievementsViewer.setSoundVolume() instead
    sortOrder = "default",  -- sort order default, recent, or progress
+   summaryMode = "count",  -- how to summarize achievements: "count", "percent", "score", or "none"
 
    disableBackground = false,  -- disable the automatically captured background
    updateFunction = function() end,  -- this will be called every frame when the viewer is blocking the screen
@@ -60,6 +61,8 @@ local TITLE_HEIGHT_SMALL <const> = math.floor(64)
 local TITLE_LOCK_Y <const> = 19  -- lock in position at this point, or negative to not
 local TITLE_SPACING <const> = CARD_SPACING
 local TITLE_PERCENTAGE_TEXT <const> = "%s completed"
+local TITLE_COUNT_TEXT <const> = "Completed: %s / %s"
+local TITLE_SCORE_TEXT <const> = "Completion score: %s / %s"
 local TITLE_HELP_TEXT_MARGIN <const> = 4
 local TITLE_ARROW_X_MARGIN <const> = 16
 local TITLE_ARROW_Y_MARGIN <const> = 6
@@ -324,6 +327,7 @@ function av.reinitialize(config)
    m.scrollSpeed = 0
    m.title = { x = SCREEN_WIDTH/2 - m.c.TITLE_WIDTH/2, y = 0, hidden = false }
    m.card = { }
+   m.numCompleted = 0
    m.possibleScore = 0
    m.completionScore = 0
    for i = 1,#m.gameData.achievements do
@@ -332,6 +336,7 @@ function av.reinitialize(config)
       m.possibleScore += achScore
       if data.grantedAt then
 	 m.completionScore += achScore
+	 m.numCompleted += 1
       end
       m.card[i] = {
 	 x = SCREEN_WIDTH / 2 - m.c.CARD_WIDTH / 2,
@@ -494,14 +499,24 @@ function av.drawTitle(x, y)
 
       font = m.fonts.status
       gfx.setFont(font)
-      local pctImg
-      if m.completionPercentage then
-	 local pct = tostring(math.floor(0.5 + 100 * m.completionPercentage)) .. "%"
-	 pctImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
+      local summaryImg
+      if m.config.summaryMode == "percent" or m.config.summaryMode == "percentage" then
+	 local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
+	 summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
+      elseif m.config.summaryMode == "count" then
+	 summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
+						      tostring(m.numCompleted or 0),
+						      tostring(#m.gameData.achievements or 0)),
+					m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
+      elseif m.config.summaryMode == "score" then
+	 summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
+						      tostring(m.completionScore or 0),
+						      tostring(m.possibleScore or 0)),
+					m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
       end
-      if pctImg then
-	 pctImg:draw(LAYOUT_MARGIN,
-		     height - TITLE_HELP_TEXT_MARGIN - pctImg.height)
+      if summaryImg then
+	 summaryImg:draw(LAYOUT_MARGIN,
+		     height - TITLE_HELP_TEXT_MARGIN - summaryImg.height)
       end
    end
    -- updateMinimally still does these
