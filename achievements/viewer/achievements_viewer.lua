@@ -1203,7 +1203,6 @@ function av.updateToast()
       m.toasting = false
       playdate.update = m.toastBackupPlaydateUpdate
       m.toastBackupPlaydateUpdate = nil
-      playdate.display.setRefreshRate(30)
       m.currentToast = nil
       av.destroy()
    end
