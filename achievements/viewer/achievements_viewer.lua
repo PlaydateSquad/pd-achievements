@@ -9,7 +9,7 @@ local gfx <const> = playdate.graphics
 local defaultConfig = {
    gameData = nil, -- get the game data directly from the achievements library
    assetPath = "achievements/viewer/",
-   smallMode = false,  -- use shorter cards (only room for 1-line description)
+   smallMode = false,  -- use shorter cards (which only have room for a 1-line description instead of 2)
    darkMode = true,  -- show dark cards instead of light cards
 
    soundVolume = 1,  -- 0 to 1, or call achievementsViewer.setSoundVolume() instead
@@ -21,6 +21,8 @@ local defaultConfig = {
 
    -- special options for toasts
    toastShadowColor = gfx.kColorBlack, -- set to white if rendering on a dark background
+   toastMiniMode = false,  -- render a mini-toast instead of a full-sized toast -- smaller font and no description.
+   toastAnimateIcon = true,  -- animate the checkbox and the icon changing over
 }
 
 local FADE_AMOUNT <const> = 0.5
@@ -98,16 +100,25 @@ local TOAST_HEIGHT_LARGE <const> = 90
 local TOAST_HEIGHT_SMALL <const> = 76
 local TOAST_SPACING <const> = 20
 local TOAST_TEXT <const> = "Achievement unlocked!"
+local TOAST_WIDTH_MINI <const> = 184
+local TOAST_HEIGHT_MINI <const> = 44
+local TOAST_MARGIN_MINI <const> = 6
+local TOAST_SPACING_MINI <const> = 7
 
 local TOAST_START_X_LARGE <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_LARGE / 2
 local TOAST_START_X_SMALL <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_SMALL / 2
+local TOAST_START_X_MINI <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_MINI / 2
 local TOAST_START_Y_LARGE <const> = SCREEN_HEIGHT
 local TOAST_START_Y_SMALL <const> = SCREEN_HEIGHT
+local TOAST_START_Y_MINI <const> = SCREEN_HEIGHT
+
 
 local TOAST_FINISH_X_LARGE <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_LARGE / 2
 local TOAST_FINISH_X_SMALL <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_SMALL / 2
+local TOAST_FINISH_X_MINI <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_MINI / 2
 local TOAST_FINISH_Y_LARGE <const> = SCREEN_HEIGHT - TOAST_HEIGHT_LARGE - TOAST_SPACING
 local TOAST_FINISH_Y_SMALL <const> = SCREEN_HEIGHT - TOAST_HEIGHT_SMALL - TOAST_SPACING
+local TOAST_FINISH_Y_MINI <const> = SCREEN_HEIGHT - TOAST_HEIGHT_MINI - TOAST_SPACING_MINI
 local TOAST_EASING_IN <const> = playdate.easingFunctions.outCubic
 local TOAST_EASING_OUT <const> = playdate.easingFunctions.inCubic
 -- These animation timings use seconds because they need to work at any refresh rate.
@@ -123,10 +134,11 @@ local TOAST_ANIM_ICON_SECONDS <const> = .5
 local TOAST_ANIM_ICON_DELAY <const> = .6
 
 local TOAST_DROP_SHADOW_SIZE <const> = 8
+local TOAST_DROP_SHADOW_SIZE_MINI <const> = 5
 local TOAST_DROP_SHADOW_ALPHA <const> = .25 -- 0.875
 local TOAST_DROP_SHADOW_CORNER <const> = 8
 
-local SORT_ORDER = { "default", "recent", "progress" }
+local SORT_ORDER = { "default", "recent", "progress", "name" }
 
 local av = {}
 local m
@@ -165,15 +177,8 @@ function av.setupDefaults(config)
    return config
 end
 
-function av.initialize(config)
-   config = av.setupDefaults(config)
-
-   gameData = config.gameData
-   assetPath = config.assetPath
-   
-   m = {}
-   m.config = table.deepcopy(config)
-
+function av.setConstants(config)
+   config = config or m.config
    local smallMode = config.smallMode
    m.c = {}
    m.c.CARD_WIDTH = smallMode and CARD_WIDTH_SMALL or CARD_WIDTH_LARGE
@@ -189,6 +194,27 @@ function av.initialize(config)
    m.c.TOAST_FINISH_Y = smallMode and TOAST_FINISH_Y_SMALL or TOAST_FINISH_Y_LARGE
    m.c.TOAST_FINISH_X = smallMode and TOAST_FINISH_X_SMALL or TOAST_FINISH_X_LARGE
 
+   if m.currentToast and m.currentToast.mini then
+      m.c.TOAST_WIDTH = TOAST_WIDTH_MINI
+      m.c.TOAST_HEIGHT = TOAST_HEIGHT_MINI
+      m.c.TOAST_START_Y = TOAST_START_Y_MINI
+      m.c.TOAST_START_X = TOAST_START_X_MINI
+      m.c.TOAST_FINISH_Y = TOAST_FINISH_Y_MINI
+      m.c.TOAST_FINISH_X = TOAST_FINISH_X_MINI
+   end
+end
+
+function av.initialize(config)
+   config = av.setupDefaults(config)
+
+   gameData = config.gameData
+   assetPath = config.assetPath
+   
+   m = {}
+   m.config = table.deepcopy(config)
+
+   m.currentToast = nil
+   av.setConstants(config)
    m.launched = false
    
    m.imagePath = ""
@@ -237,6 +263,7 @@ function av.initialize(config)
    m.fonts.description.locked = av.loadFile(gfx.font.new, assetPath .. "/Nontendo-Light")
    m.fonts.description.locked:setLeading(3)
    m.fonts.description.granted = av.loadFile(gfx.font.new, assetPath .. "/Nontendo-Bold")
+   m.fonts.name.miniToast = m.fonts.description.granted
    m.fonts.description.granted:setLeading(3)
    m.fonts.status = av.loadFile(gfx.font.new, assetPath .. "/font-Bitmore")
    m.fonts.status:setTracking(1)
@@ -278,7 +305,6 @@ function av.initialize(config)
    -- A few settings for showing an achievement toast.
    m.toasting = false
    m.toastQueue = {} -- additional toasts after this toast
-   m.toastAnimFrame = 0
    m.toastSound = av.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/toastSound")
    m.toastPos = { x = SCREEN_WIDTH / 2 - m.c.CARD_WIDTH / 2,
 		  y = SCREEN_HEIGHT }
@@ -290,6 +316,7 @@ function av.reinitialize(config)
 	 m.config[k] = v
       end
    end
+   av.setConstants()
    m.continuousAnimFrame = 0
    m.animFrame = 0
    m.fadeAmount = 0
@@ -297,14 +324,14 @@ function av.reinitialize(config)
    m.scrollSpeed = 0
    m.title = { x = SCREEN_WIDTH/2 - m.c.TITLE_WIDTH/2, y = 0, hidden = false }
    m.card = { }
-   m.scorePossible = 0
-   m.currentScore = 0
+   m.possibleScore = 0
+   m.completionScore = 0
    for i = 1,#m.gameData.achievements do
       local data = m.gameData.achievements[i]
       local achScore = data.score_value or data.scoreValue or 0
-      m.scorePossible += achScore
+      m.possibleScore += achScore
       if data.grantedAt then
-	 m.currentScore += achScore
+	 m.completionScore += achScore
       end
       m.card[i] = {
 	 x = SCREEN_WIDTH / 2 - m.c.CARD_WIDTH / 2,
@@ -313,8 +340,8 @@ function av.reinitialize(config)
       }
    end
    m.completionPercentage = achievements.completionPercentage
-   if not m.completionPercentage and m.scorePossible > 0 then
-      m.completionPercentage = m.currentScore / m.scorePossible
+   if not m.completionPercentage and m.possibleScore > 0 then
+      m.completionPercentage = m.completionScore / m.possibleScore
    else
       m.completionPercentage = 1
    end
@@ -393,6 +420,12 @@ function av.sortCards()
 		    else
 		       return m.additionalAchievementData[a].idx <  m.additionalAchievementData[b].idx
 		    end
+		 end
+      )
+   elseif m.sortOrder == "name" then
+      table.sort(m.cardSort,
+		 function(a, b)
+		    return m.achievementData[a].name < m.achievementData[b].name
 		 end
       )
    end
@@ -549,18 +582,19 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	    m.icons[achievementId].granted or m.defaultIcons.granted
       end
       if toastOptions.updateMinimally then
+	 local image_margin = toastOptions.miniToast and TOAST_MARGIN_MINI or LAYOUT_MARGIN
 	 if toastOptions.checkBoxAnimFrame ~= nil then
 	    local img = m.checkBox.anim:getImage(toastOptions.checkBoxAnimFrame)
-	    img:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
+	    img:draw(image_margin, height - CHECKBOX_SIZE - image_margin)
 	 end
 
 	 if toastOptions.maskAnimFrame ~= nil then
 	    if toastOptions.maskAnimFrame == false then
 	       -- locked icon
-	       iconImgLocked:draw(width - LAYOUT_MARGIN - iconImgLocked.width, LAYOUT_MARGIN)
+	       iconImgLocked:draw(width - image_margin - iconImgLocked.width, image_margin)
 	    elseif toastOptions.maskAnimFrame == true then
 	       -- unlocked icon
-	       iconImgGranted:draw(width - LAYOUT_MARGIN - iconImgGranted.width, LAYOUT_MARGIN)
+	       iconImgGranted:draw(width - image_margin - iconImgGranted.width, image_margin)
 	    elseif type(toastOptions.maskAnimFrame) == "number" then
 	       local backupMask = iconImgLocked:getMaskImage():copy()
 	       gfx.pushContext(m.iconBuffer)
@@ -571,7 +605,7 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	       iconImgLocked:setMaskImage(backupMask)
 	       gfx.popContext()
 	       m.iconBuffer:setMaskImage(backupMask)
-	       m.iconBuffer:draw(width - LAYOUT_MARGIN - m.iconBuffer.width, LAYOUT_MARGIN)
+	       m.iconBuffer:draw(width - image_margin - m.iconBuffer.width, image_margin)
 	    end
 	 end
       else
@@ -598,52 +632,64 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	    granted = toastOptions.granted
 	 end
 	 local iconSize = LAYOUT_ICON_SIZE
+	 local image_margin = toastOptions.miniToast and TOAST_MARGIN_MINI or LAYOUT_MARGIN
 	 if toastOptions.maskAnimFrame == nil then
 	    local iconImg = granted and iconImgGranted or iconImgLocked
 	    if iconImg then
 	       iconSize = math.min(iconSize, iconImg.width)
-	       iconImg:draw(width - LAYOUT_MARGIN - iconImg.width, LAYOUT_MARGIN)
+	       iconImg:draw(width - image_margin - iconImg.width, image_margin)
 	    end
-	 else
-	    if toastOptions.maskAnimFrame == false then
-	       -- locked icon
-	       iconImgLocked:draw(width - LAYOUT_MARGIN - iconImgLocked.width, LAYOUT_MARGIN)
-	    elseif toastOptions.maskAnimFrame == true then
-	       -- unlocked icon
-	       iconImgGranted:draw(width - LAYOUT_MARGIN - iconImgGranted.width, LAYOUT_MARGIN)
-	    elseif type(toastOptions.maskAnimFrame) == "number" then
-	    end
+	 elseif toastOptions.maskAnimFrame == false then
+	    -- locked icon
+	    iconImgLocked:draw(width - image_margin - iconImgLocked.width, image_margin)
+	 elseif toastOptions.maskAnimFrame == true then
+	    -- unlocked icon
+	    iconImgGranted:draw(width - image_margin - iconImgGranted.width, image_margin)
+	 elseif type(toastOptions.maskAnimFrame) == "number" then
+	    -- this will be handled via the redraw above
 	 end
 	 
-	 local font = granted and m.fonts.name.granted or m.fonts.name.locked
-	 gfx.setFont(font)
-	 local nameImg = gfx.imageWithText(info.name,
+	 if toastOptions.miniToast then
+	    local font = m.fonts.name.miniToast
+	    gfx.setFont(font)
+	    local nameImg = gfx.imageWithText(info.name, width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
+					      height - 2*LAYOUT_MARGIN - CHECKBOX_SIZE)
+	    if nameImg then nameImg:draw(TOAST_MARGIN_MINI, TOAST_MARGIN_MINI+2) end
+	 else
+	    local font = granted and m.fonts.name.granted or m.fonts.name.locked
+	    gfx.setFont(font)
+	    local nameImg = gfx.imageWithText(info.name,
+					      width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
+					      height - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE)
+	    
+	    font = granted and m.fonts.description.granted or m.fonts.description.locked
+	    gfx.setFont(font)
+	    local heightRemaining = height - 2*LAYOUT_MARGIN - 2*LAYOUT_SPACING - nameImg.height - CHECKBOX_SIZE
+	    local descImage
+	    if heightRemaining >= font:getHeight() then
+	       local description = info.description
+	       if info.isSecret and not granted then
+		  description = SECRET_DESCRIPTION
+	       end
+	       
+	       descImg = gfx.imageWithText(description,
 					   width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
-					   height - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE)
-
-	 font = granted and m.fonts.description.granted or m.fonts.description.locked
-	 gfx.setFont(font)
-	 local heightRemaining = height - 2*LAYOUT_MARGIN - 2*LAYOUT_SPACING - nameImg.height - CHECKBOX_SIZE
-	 local descImage
-	 if heightRemaining >= font:getHeight() then
-	    local description = info.description
-	    if info.isSecret and not granted then
-	       description = SECRET_DESCRIPTION
+					   heightRemaining)
 	    end
 	    
-	    descImg = gfx.imageWithText(description,
-					width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
-					heightRemaining)
-	 end
-
-	 nameImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN)
-	 if descImg then
-	    descImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN + nameImg.height + LAYOUT_SPACING)
+	    nameImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN)
+	    if descImg then
+	       descImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN + nameImg.height + LAYOUT_SPACING)
+	    end
 	 end
 	 
 	 if toastOptions.checkBoxAnimFrame then
 	    local img = m.checkBox.anim:getImage(toastOptions.checkBoxAnimFrame)
-	    img:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
+	    if toastOptions.miniToast then
+	       img:draw(TOAST_MARGIN_MINI, height - CHECKBOX_SIZE - TOAST_MARGIN_MINI)
+	    else
+	       img:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
+	    end
 	 elseif granted then
 	    m.checkBox.granted:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
 	 elseif info.isSecret then
@@ -652,78 +698,90 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	    m.checkBox.locked:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
 	 end
 
-	 local font = m.fonts.status
-	 local statusText = ""
-	 gfx.setFont(font)
-	 if granted then
-	    local dateStr = av.formatDate(info.grantedAt or playdate.getSecondsSinceEpoch())
-	    if dateStr then
-	       statusText = string.format(GRANTED_TEXT, dateStr)
+	 if toastOptions.miniToast then
+	    if toastOptions.showAchievementUnlockedText then
+	       font = m.fonts.status
+	       gfx.setFont(font)
+	       local extraImg = gfx.imageWithText(TOAST_TEXT, width, height) --[[width - 2*LAYOUT_MARGIN - LAYOUT_SPACING -
+						  CHECKBOX_SIZE - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
+		  height - 2*LAYOUT_MARGIN)]]
+	       extraImg:draw(TOAST_MARGIN_MINI + CHECKBOX_SIZE + TOAST_MARGIN_MINI,
+			     height - TOAST_MARGIN_MINI - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
+	       
 	    end
 	 else
-	    statusText = LOCKED_TEXT
-	 end
-	 statusImg = gfx.imageWithText(statusText, width - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE,
-				       height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
-	 if statusImg then
-	    statusImg:draw(width - LAYOUT_MARGIN - statusImg.width,
-			   height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
-	 end
-
-	 local progressMax = info.progress_max or info.progressMax
-	 if not granted and progressMax then
-	    local progress = info.progress or 0
-	    local progressIsPercentage = info.progressIsPercentage
-
-	    local progressText, frac
-	    if progressIsPercentage then
-	       local pct = math.floor((progress or 0) * 100 / progressMax)
-	       pct = math.max(math.min(pct, 100), 0)
-	       progressText = tostring(pct) .. "%"
-	       frac = pct / 100
-	    else
-	       local amt = math.floor((progress or 0))
-	       amt = math.max(math.min(amt, math.floor(progressMax)), 0)
-	       local slash = m.config.smallMode and "/" or " / "
-	       progressText = tostring(amt) .. slash .. tostring(math.floor(progressMax))
-	       frac = amt / math.floor(progressMax)
-	    end
-	    progressTextImg = gfx.imageWithText(progressText, width - 2*LAYOUT_MARGIN -
-						LAYOUT_STATUS_SPACING - CHECKBOX_SIZE -
-						LAYOUT_STATUS_SPACING - statusImg.width,
-						height - LAYOUT_MARGIN - iconSize - LAYOUT_SPACING)
-	    progressTextImg:draw(width - LAYOUT_MARGIN - statusImg.width -
-				 LAYOUT_STATUS_SPACING - progressTextImg.width,
-				 height - LAYOUT_MARGIN - progressTextImg.height + LAYOUT_STATUS_TWEAK_Y)
-
-	    local progressBarWidth =
-	       width - 2*LAYOUT_MARGIN -
-	       LAYOUT_STATUS_SPACING - statusImg.width -
-	       LAYOUT_STATUS_SPACING - progressTextImg.width-
-	       LAYOUT_SPACING - CHECKBOX_SIZE
-	    gfx.setColor(gfx.kColorBlack)
-	    gfx.pushContext()
-	    gfx.setDitherPattern(.5, gfx.image.kDitherTypeBayer8x8)
-	    gfx.fillRoundRect(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_STATUS_SPACING,
-			      height - LAYOUT_MARGIN - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2,
-			      frac * progressBarWidth,
-			      PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
-	    gfx.popContext()
-	    gfx.setLineWidth(PROGRESS_BAR_OUTLINE)
-	    gfx.drawRoundRect(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_STATUS_SPACING,
-			      height - LAYOUT_MARGIN - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2,
-			      progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
-	 elseif toastOptions.showAchievementUnlockedText then
-	    font = m.fonts.status
+	    local font = m.fonts.status
+	    local statusText = ""
 	    gfx.setFont(font)
-	    local extraImg = gfx.imageWithText(TOAST_TEXT, width - 2*LAYOUT_MARGIN - statusImg.width -
-					       LAYOUT_STATUS_SPACING - LAYOUT_SPACING - CHECKBOX_SIZE,
-					       height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
-	    extraImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
-			  height - LAYOUT_MARGIN - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
-	    
-	 end
+	    if granted then
+	       local dateStr = av.formatDate(info.grantedAt or playdate.getSecondsSinceEpoch())
+	       if dateStr then
+		  statusText = string.format(GRANTED_TEXT, dateStr)
+	       end
+	    else
+	       statusText = LOCKED_TEXT
+	    end
+	    statusImg = gfx.imageWithText(statusText, width - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE,
+					  height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
+	    if statusImg then
+	       statusImg:draw(width - LAYOUT_MARGIN - statusImg.width,
+			      height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
+	    end
 
+	    local progressMax = info.progress_max or info.progressMax
+	    if not granted and progressMax then
+	       local progress = info.progress or 0
+	       local progressIsPercentage = info.progressIsPercentage
+
+	       local progressText, frac
+	       if progressIsPercentage then
+		  local pct = math.floor((progress or 0) * 100 / progressMax)
+		  pct = math.max(math.min(pct, 100), 0)
+		  progressText = tostring(pct) .. "%"
+		  frac = pct / 100
+	       else
+		  local amt = math.floor((progress or 0))
+		  amt = math.max(math.min(amt, math.floor(progressMax)), 0)
+		  local slash = m.config.smallMode and "/" or " / "
+		  progressText = tostring(amt) .. slash .. tostring(math.floor(progressMax))
+		  frac = amt / math.floor(progressMax)
+	       end
+	       progressTextImg = gfx.imageWithText(progressText, width - 2*LAYOUT_MARGIN -
+						   LAYOUT_STATUS_SPACING - CHECKBOX_SIZE -
+						   LAYOUT_STATUS_SPACING - statusImg.width,
+						   height - LAYOUT_MARGIN - iconSize - LAYOUT_SPACING)
+	       progressTextImg:draw(width - LAYOUT_MARGIN - statusImg.width -
+				    LAYOUT_STATUS_SPACING - progressTextImg.width,
+				    height - LAYOUT_MARGIN - progressTextImg.height + LAYOUT_STATUS_TWEAK_Y)
+
+	       local progressBarWidth =
+		  width - 2*LAYOUT_MARGIN -
+		  LAYOUT_STATUS_SPACING - statusImg.width -
+		  LAYOUT_STATUS_SPACING - progressTextImg.width-
+		  LAYOUT_SPACING - CHECKBOX_SIZE
+	       gfx.setColor(gfx.kColorBlack)
+	       gfx.pushContext()
+	       gfx.setDitherPattern(.5, gfx.image.kDitherTypeBayer8x8)
+	       gfx.fillRoundRect(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_STATUS_SPACING,
+				 height - LAYOUT_MARGIN - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2,
+				 frac * progressBarWidth,
+				 PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
+	       gfx.popContext()
+	       gfx.setLineWidth(PROGRESS_BAR_OUTLINE)
+	       gfx.drawRoundRect(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_STATUS_SPACING,
+				 height - LAYOUT_MARGIN - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2,
+				 progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
+	    elseif toastOptions.showAchievementUnlockedText then
+	       font = m.fonts.status
+	       gfx.setFont(font)
+	       local extraImg = gfx.imageWithText(TOAST_TEXT, width - 2*LAYOUT_MARGIN - statusImg.width -
+						  LAYOUT_STATUS_SPACING - LAYOUT_SPACING - CHECKBOX_SIZE,
+						  height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
+	       extraImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
+			     height - LAYOUT_MARGIN - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
+	       
+	    end
+	 end
       end
       gfx.popContext()
    end
@@ -1041,16 +1099,35 @@ function av.updateToast()
 	 m.toastSound:setVolume(m.config.soundVolume)
 	 m.toastSound:play()
       end
+      m.cardImageCache[m.toastAchievement] = nil
    end
-
+   if m.currentToast == nil then
+      -- don't change whether we're mini-toasting except between toasts.
+      m.currentToast = {
+	 mini = not not m.config.toastMiniMode,
+	 anim = not not m.config.toastAnimateIcon,
+      }
+      if m.overrideToastConfig then
+	 if m.overrideToastConfig.toastMiniMode ~= nil then
+	    m.currentToast.mini = m.overrideToastConfig.toastMiniMode
+	 end
+	 if m.overrideToastConfig.toastAnimateIcon ~= nil then
+	    m.currentToast.anim = m.overrideToastConfig.toastAnimateIcon
+	 end
+      end
+      av.setConstants()
+   end
    m.toastAnim = m.toastAnim + 1 / m.toastRefreshRate
    local toastOptions = {
-      checkBoxAnimFrame = 1,
+      checkBoxAnimFrame = m.checkBox.anim:getLength(),
       maskAnimFrame = true,  -- false = locked icon, true = unlocked icon, number = anim frame
       updateMinimally = true,
       granted = true,
       showAchievementUnlockedText = true,
-      dropShadowSize = m.config.toastShadowColor and TOAST_DROP_SHADOW_SIZE or nil,
+      dropShadowSize = m.config.toastShadowColor and
+	 (m.currentToast.mini and TOAST_DROP_SHADOW_SIZE_MINI or TOAST_DROP_SHADOW_SIZE)
+	 or nil,
+      miniToast = m.currentToast.mini
    }
    
    if m.toastAnim <= TOAST_ANIM_IN_SECONDS then
@@ -1060,18 +1137,22 @@ function av.updateToast()
       local negRatio = 1 - ratio
       local x = math.floor(0.5 + ratio * m.c.TOAST_FINISH_X + negRatio * m.c.TOAST_START_X)
       local y = math.floor(0.5 + ratio * m.c.TOAST_FINISH_Y + negRatio * m.c.TOAST_START_Y)
-      toastOptions.checkBoxAnimFrame = 1
-      if TOAST_ANIM_ICON_SECONDS > 0 then
-	 toastOptions.maskAnimFrame = false
+      if m.currentToast.anim then
+	 toastOptions.checkBoxAnimFrame = 1
+	 if TOAST_ANIM_ICON_SECONDS > 0 then
+	    toastOptions.maskAnimFrame = false
+	 end
       end
       av.drawCard(m.toastAchievement, x, y, m.c.TOAST_WIDTH, m.c.TOAST_HEIGHT, toastOptions)
    elseif m.toastAnim - TOAST_ANIM_IN_SECONDS <= TOAST_ANIM_PAUSE_SECONDS then
       -- pausing
       local maskRatio = (m.toastAnim - TOAST_ANIM_IN_SECONDS - TOAST_ANIM_ICON_DELAY) / TOAST_ANIM_ICON_SECONDS
       local checkBoxRatio = (m.toastAnim - TOAST_ANIM_IN_SECONDS - TOAST_ANIM_CHECKBOX_DELAY) / TOAST_ANIM_CHECKBOX_SECONDS
-      toastOptions.checkBoxAnimFrame = math.min(math.max(1, math.ceil(m.checkBox.anim:getLength() * checkBoxRatio)), m.checkBox.anim:getLength())
-      if TOAST_ANIM_ICON_SECONDS > 0 then
-	 toastOptions.maskAnimFrame = math.min(math.max(1, math.ceil(m.maskAnim:getLength() * maskRatio)), m.maskAnim:getLength())
+      if m.currentToast.anim then
+	 toastOptions.checkBoxAnimFrame = math.min(math.max(1, math.ceil(m.checkBox.anim:getLength() * checkBoxRatio)), m.checkBox.anim:getLength())
+	 if TOAST_ANIM_ICON_SECONDS > 0 then
+	    toastOptions.maskAnimFrame = math.min(math.max(1, math.ceil(m.maskAnim:getLength() * maskRatio)), m.maskAnim:getLength())
+	 end
       end
       local ratio = (m.toastAnim - TOAST_ANIM_IN_SECONDS) / TOAST_ANIM_PAUSE_SECONDS
       local x = m.c.TOAST_FINISH_X
@@ -1081,9 +1162,11 @@ function av.updateToast()
       -- sliding down
       local ratio = (m.toastAnim - TOAST_ANIM_IN_SECONDS - TOAST_ANIM_PAUSE_SECONDS) / TOAST_ANIM_OUT_SECONDS
       ratio = TOAST_EASING_OUT(ratio, 0, 1, 1)
-      toastOptions.checkBoxAnimFrame = m.checkBox.anim:getLength()
-      if TOAST_ANIM_ICON_SECONDS > 0 then
-	 toastOptions.maskAnimFrame = true
+      if m.currentToast.anim then
+	 toastOptions.checkBoxAnimFrame = m.checkBox.anim:getLength()
+	 if TOAST_ANIM_ICON_SECONDS > 0 then
+	    toastOptions.maskAnimFrame = true
+	 end
       end
       local negRatio = 1 - ratio
       local x = math.floor(0.5 + negRatio * m.c.TOAST_FINISH_X + ratio * m.c.TOAST_START_X)
@@ -1093,18 +1176,35 @@ function av.updateToast()
       -- wait a moment with the toast totally off screen
       local x = m.c.TOAST_START_X
       local y = m.c.TOAST_START_Y
-      toastOptions.checkBoxAnimFrame = m.checkBox.anim:getLength()
-      toastOptions.maskAnimFrame = true
+      if m.currentToast.anim then
+	 toastOptions.checkBoxAnimFrame = m.checkBox.anim:getLength()
+	 toastOptions.maskAnimFrame = true
+      end
       av.drawCard(m.toastAchievement, x, y, m.c.TOAST_WIDTH, m.c.TOAST_HEIGHT, toastOptions)
    elseif m.toastQueue and #m.toastQueue > 0 then
-      m.toastAchievement = table.remove(m.toastQueue, 1)
+      local nextToast = table.remove(m.toastQueue, 1)
+      m.toastAchievement = nextToast.id
+      m.currentToast = {
+	 mini = nextToast.mini,
+	 anim = nextToast.anim,
+      }
+      if m.overrideToastConfig then
+	 if m.overrideToastConfig.toastMiniMode ~= nil then
+	    m.currentToast.mini = m.overrideToastConfig.toastMiniMode
+	 end
+	 if m.overrideToastConfig.toastAnimateIcon ~= nil then
+	    m.currentToast.anim = m.overrideToastConfig.toastAnimateIcon
+	 end
+      end
       m.cardImageCache[m.toastAchievement] = nil
       m.toastAnim = 0
+      av.setConstants()
    else
       m.toasting = false
       playdate.update = m.toastBackupPlaydateUpdate
       m.toastBackupPlaydateUpdate = nil
       playdate.display.setRefreshRate(30)
+      m.currentToast = nil
       av.destroy()
    end
 end
@@ -1125,13 +1225,28 @@ function av.toast(achievementId, config)
    if not m then
       av.initialize(config)
    end
-   av.reinitialize()
+   av.reinitialize(config)
+   config = m.config
    if m.launched then
       error("achievement_viewer: can't run toast() while launch() is active")
       return
    end
    if m and m.toasting then
-      table.insert(m.toastQueue, achievementId)
+      -- queue up this toast for later
+      if m.overrideToastConfig then
+	 if m.overrideToastConfig.toastMiniMode ~= nil then
+	    mini = m.overrideToastConfig.toastMiniMode
+	 end
+	 if m.overrideToastConfig.toastAnimateIcon ~= nil then
+	    anim = m.overrideToastConfig.toastAnimateIcon
+	 end
+      end
+      
+      local mini, anim = not not config.toastMiniMode, not not config.toastAnimateIcon
+      table.insert(m.toastQueue, { id = achievementId,
+				   mini = mini,
+				   anim = anim,
+      })
       return
    end
 
@@ -1162,12 +1277,19 @@ function av.setVolume(v)
    if defaultConfig then defaultConfig.soundVolume = v end
 end
 
+-- Specify a config with toastMiniMode and/or toastAnimateIcon set that
+-- overrides what the toast was queued up with. Or nil to stop overriding.
+function av.overrideToastConfig(config)
+   m.overrideToastConfig = config
+end
+
 achievementsViewer = {
    initialize = av.initialize,
    launch = av.launch,
    hasLaunched = av.hasLaunched,
    toast = av.toast,
    isToasting = av.isToasting,
+   overrideToastConfig = av.overrideToastConfig,
    abortToasts = av.abortToasts,
    setVolume = av.setVolume,
    getCache = function() return persistentCache end
