@@ -160,7 +160,12 @@ function av.loadFile(loader, path)
    if not path then return nil end
 
    if not persistentCache[path] then
-      persistentCache[path] = loader(path)
+      local item = loader(path)
+      persistentCache[path] = item
+      -- For images, make sure they have a mask. This is needed for toast animation.
+      if loader == gfx.image.new and item and item.hasMask and not item:hasMask() then
+	 item:addMask(true)
+      end
    end
    return persistentCache[path]
 end
@@ -196,7 +201,7 @@ function av.setConstants(config)
    m.c.CARD_SPACING_ANIM = smallMode and CARD_SPACING_ANIM_SMALL or CARD_SPACING_ANIM_LARGE
    m.c.TITLE_WIDTH = smallMode and TITLE_WIDTH_SMALL or TITLE_WIDTH_LARGE
    m.c.TITLE_HEIGHT = smallMode and TITLE_HEIGHT_SMALL or TITLE_HEIGHT_LARGE
-   
+
    m.c.TOAST_WIDTH = smallMode and TOAST_WIDTH_SMALL or TOAST_WIDTH_LARGE
    m.c.TOAST_HEIGHT = smallMode and TOAST_HEIGHT_SMALL or TOAST_HEIGHT_LARGE
    m.c.TOAST_START_Y = smallMode and TOAST_START_Y_SMALL or TOAST_START_Y_LARGE
@@ -219,14 +224,14 @@ function av.initialize(config)
 
    gameData = config.gameData
    assetPath = config.assetPath
-   
+
    m = {}
    m.config = table.deepcopy(config)
 
    m.currentToast = nil
    av.setConstants(config)
    m.launched = false
-   
+
    m.imagePath = ""
    if not gameData then
       gameData = achievements.gameData
@@ -303,7 +308,7 @@ function av.initialize(config)
       local id = data.id
       m.achievementData[id] = data
       m.additionalAchievementData[id] = { idx = i }
-      
+
       m.icons[id] = {}
       local iconLocked = data.iconLocked or data.icon_locked
       local icon = data.icon
@@ -378,7 +383,7 @@ function av.sortCards()
    for i = 1,#m.gameData.achievements do
       m.cardSort[i] = m.gameData.achievements[i].id
    end
-   
+
    if m.sortOrder == "progress" then
       table.sort(m.cardSort,
 		 function(a, b)
@@ -406,7 +411,7 @@ function av.sortCards()
 			     m.achievementData[a].progress_is_percentage
 			  local progessIsPctB = m.achievementData[b].progressIsPercentage or
 			     m.achievementData[b].progress_is_percentage
-			  
+			
 			  if progressA ~= progressB then
 			     return (progressA / progressMaxA) > (progressB / progressMaxB)
 			  elseif progressIsPercentageA ~= progressIsPercentageB then
@@ -490,7 +495,7 @@ function av.drawTitle(x, y)
    local fgColor = m.config.darkMode and gfx.kColorBlack or gfx.kColorWhite
    local bgColor = m.config.darkMode and gfx.kColorWhite or gfx.kColorBlack
    local textDrawMode = m.config.darkMode and gfx.kDrawModeFillWhite or gfx.kDrawModeCopy
-   
+
    gfx.pushContext(image)
    if not updateMinimally then
 
@@ -542,13 +547,13 @@ function av.drawTitle(x, y)
    sortImg2:draw(width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth + (
 		    m.maxSortTextWidth / 2 - sortImg2.width/2),
 		 height - TITLE_HELP_TEXT_MARGIN - sortImg2.height)
-   
+
    sortImg:draw(width - LAYOUT_MARGIN - sortImg.width - 2 * TITLE_ARROW_X_MARGIN - m.maxSortTextWidth,
 		height - TITLE_HELP_TEXT_MARGIN - sortImg.height)
    gfx.setColor(gfx.kColorWhite)
    gfx.setLineWidth(1)
    local arrowAnim = math.sin(TITLE_ARROW_SPEED * m.continuousAnimFrame) * TITLE_ARROW_MAG
-   
+
    local triX = width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN/2 + arrowAnim
    local triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
 
@@ -562,7 +567,7 @@ function av.drawTitle(x, y)
 		   triX - TITLE_ARROW_WIDTH/2, triY,
 		   triX + TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
    gfx.popContext()
-   
+
    m.titleImageCache:draw(x, y)
 end
 
@@ -573,11 +578,11 @@ end
 
 function av.drawCard(achievementId, x, y, width, height, toastOptions)
    if not toastOptions then toastOptions = {} end
-   
+
    local fgColor = m.config.darkMode and gfx.kColorWhite or gfx.kColorBlack
    local bgColor = m.config.darkMode and gfx.kColorBlack or gfx.kColorWhite
    local textDrawMode = m.config.darkMode and gfx.kDrawModeCopy or  gfx.kDrawModeFillWhite
-   
+
    local wantWidth = width + (toastOptions.dropShadowSize or 0)
    local wantHeight = height + (toastOptions.dropShadowSize or 0)
    local image = m.cardImageCache[achievementId]
@@ -594,7 +599,7 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
       local margin = 1
 
       local info = m.achievementData[achievementId]
-      
+
       local iconImgGranted = m.icons[achievementId].granted or m.defaultIcons.granted or
 	    m.icons[achievementId].locked or m.defaultIcons.locked
       local iconImgLocked
@@ -620,16 +625,15 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	       -- unlocked icon
 	       iconImgGranted:draw(width - image_margin - iconImgGranted.width, image_margin)
 	    elseif type(toastOptions.maskAnimFrame) == "number" then
-	       local backupMask = iconImgLocked:getMaskImage()
-	       if backupMask then backupMask = backupMask:copy() end
+	       local backupMask = iconImgLocked:getMaskImage():copy()
 	       gfx.pushContext(m.iconBuffer)
 	       gfx.clear(gfx.kColorClear)
 	       iconImgGranted:draw(0, 0)
 	       iconImgLocked:setMaskImage(m.maskAnim:getImage(toastOptions.maskAnimFrame))
 	       iconImgLocked:draw(0, 0)
-	       if backupMask then iconImgLocked:setMaskImage(backupMask) end
+	       iconImgLocked:setMaskImage(backupMask)
 	       gfx.popContext()
-	       if backupMask then m.iconBuffer:setMaskImage(backupMask) end
+	       m.iconBuffer:setMaskImage(backupMask)
 	       m.iconBuffer:draw(width - image_margin - m.iconBuffer.width, image_margin)
 	    end
 	 end
@@ -645,7 +649,7 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 
 	 gfx.setColor(gfx.kColorWhite)
 	 gfx.fillRoundRect(0, 0, width, height, CARD_CORNER)
-	 
+	
 	 gfx.setStrokeLocation(gfx.kStrokeInside)
 	 gfx.setLineWidth(CARD_OUTLINE)
 	 gfx.setColor(gfx.kColorBlack)
@@ -673,7 +677,7 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	 elseif type(toastOptions.maskAnimFrame) == "number" then
 	    -- this will be handled via the redraw above
 	 end
-	 
+	
 	 if toastOptions.miniToast then
 	    local font = m.fonts.name.miniToast
 	    gfx.setFont(font)
@@ -686,7 +690,7 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	    local nameImg = gfx.imageWithText(info.name,
 					      width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
 					      height - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE)
-	    
+	
 	    font = granted and m.fonts.description.granted or m.fonts.description.locked
 	    gfx.setFont(font)
 	    local heightRemaining = height - 2*LAYOUT_MARGIN - 2*LAYOUT_SPACING - nameImg.height - CHECKBOX_SIZE
@@ -696,18 +700,18 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	       if info.isSecret and not granted then
 		  description = SECRET_DESCRIPTION
 	       end
-	       
+	
 	       descImg = gfx.imageWithText(description,
 					   width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
 					   heightRemaining)
 	    end
-	    
+	
 	    nameImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN)
 	    if descImg then
 	       descImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN + nameImg.height + LAYOUT_SPACING)
 	    end
 	 end
-	 
+	
 	 if toastOptions.checkBoxAnimFrame then
 	    local img = m.checkBox.anim:getImage(toastOptions.checkBoxAnimFrame)
 	    if toastOptions.miniToast then
@@ -732,7 +736,7 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 		  height - 2*LAYOUT_MARGIN)]]
 	       extraImg:draw(TOAST_MARGIN_MINI + CHECKBOX_SIZE + TOAST_MARGIN_MINI,
 			     height - TOAST_MARGIN_MINI - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
-	       
+	
 	    end
 	 else
 	    local font = m.fonts.status
@@ -804,7 +808,7 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 						  height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
 	       extraImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
 			     height - LAYOUT_MARGIN - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
-	       
+	
 	    end
 	 end
       end
@@ -840,7 +844,7 @@ function av.drawScrollbar(x, y)
    gfx.drawRoundRect(x + SCROLLBAR_WIDTH/2 - SCROLLBAR_PAGE_WIDTH/2 + margin,
 		     margin + startPos + SCROLLBAR_Y_BUFFER,
 		     SCROLLBAR_PAGE_WIDTH - 2*margin, barPagePixels - 2*margin, SCROLLBAR_CORNER)
-   
+
    gfx.popContext()
 end
 
@@ -860,7 +864,7 @@ function av.drawCards(x, y, animating)
    av.drawScrollbar((1-animFrac) * scrollBarHidden + (animFrac) * scrollBarX, 0)
 
    local extraSpacing = m.cardSpacing
-   
+
    local count = 0
    local titleY = y + m.title.y
    if not m.title.hidden then
@@ -912,7 +916,7 @@ function av.animateInUpdate()
 
    gfx.pushContext()
    gfx.setDitherPattern(1-m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
-   gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight()) 
+   gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight())
    gfx.popContext()
 
    if m.fadeAmount >= FADE_AMOUNT and m.fadedBackdropImage == nil and m.backdropImage then
@@ -953,13 +957,13 @@ function av.animateOutUpdate()
    end
    gfx.pushContext()
    gfx.setDitherPattern(FADE_AMOUNT + m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
-   gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight()) 
+   gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight())
    gfx.popContext()
-   
+
 
    m.rawAnimFrac = 1-m.animFrame / ANIM_FRAMES
    local animFrame = ANIM_EASING_OUT(m.animFrame, 0, ANIM_FRAMES, ANIM_FRAMES)
-   
+
    local scrollOffset = SCREEN_HEIGHT * (animFrame / ANIM_FRAMES)
    m.cardSpacing = m.c.CARD_SPACING_ANIM * (animFrame / ANIM_FRAMES)
    av.drawCards(x, scrollOffset, -1)
@@ -989,7 +993,7 @@ function av.mainUpdate()
 
    m.continuousAnimFrame = m.continuousAnimFrame + 1
    m.animFrame = m.animFrame + 1
-   
+
    m.maxScroll = m.card[#m.card].y + m.c.CARD_HEIGHT - SCREEN_HEIGHT + 2*CARD_SPACING
 
    av.drawCards(0, 0, 0)
@@ -1057,14 +1061,14 @@ function av.mainUpdate()
 	 m.scrollToTop = false
       end
    end
-   
+
    if not m.scrollToTop and m.scroll // 32 ~= oldScroll // 32 then
       if m.config.soundVolume > 0 then
 	 m.scrollSound:setVolume(m.config.soundVolume)
 	 m.scrollSound:play()
       end
    end
-   
+
    m.backButtonImg:draw(BACK_BUTTON_X, BACK_BUTTON_Y)
 
    if playdate.buttonJustPressed(playdate.kButtonB) then
@@ -1077,7 +1081,7 @@ end
 function av.beginExit()
    m.animFrame = 0
    m.fadeAmount = 0
-   playdate.update = av.animateOutUpdate   
+   playdate.update = av.animateOutUpdate
    if m.config.soundVolume > 0 then
       m.exitSound:setVolume(m.config.soundVolume)
       m.exitSound:play()
@@ -1114,7 +1118,7 @@ function av.launch(config)
    m.backdropImage = config.disableBackground and nil or gfx.getDisplayImage()
    av.clearCaches()
    m.launched = true
-   
+
    av.backupUserSettings()
 
    playdate.display.setRefreshRate(50)
@@ -1166,7 +1170,7 @@ function av.updateToast()
 	 or nil,
       miniToast = m.currentToast.mini
    }
-   
+
    if m.toastAnim <= TOAST_ANIM_IN_SECONDS then
       -- sliding up
       local ratio = m.toastAnim / TOAST_ANIM_IN_SECONDS
@@ -1277,7 +1281,7 @@ function av.toast(achievementId, config)
 	    anim = m.overrideToastConfig.toastAnimateIcon
 	 end
       end
-      
+
       local mini, anim = not not config.toastMiniMode, not not config.toastAnimateIcon
       table.insert(m.toastQueue, { id = achievementId,
 				   mini = mini,
