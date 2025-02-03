@@ -68,8 +68,15 @@ local TITLE_ARROW_X_MARGIN <const> = 16
 local TITLE_ARROW_Y_MARGIN <const> = 6
 local TITLE_ARROW_WIDTH <const> = 5
 local TITLE_ARROW_HEIGHT <const> = 10
-local TITLE_ARROW_SPEED = 0.3
-local TITLE_ARROW_MAG = 3
+local TITLE_ARROW_SPEED <const> = 0.3
+local TITLE_ARROW_MAG <const> = 3
+
+local BACK_BUTTON_X <const> = 4
+local BACK_BUTTON_Y <const> = 240 - 24
+local BACK_BUTTON_START_X <const> = 4
+local BACK_BUTTON_START_Y <const> = 242
+local BACK_BUTTON_EASING_IN <const> = playdate.easingFunctions.outQuint
+local BACK_BUTTON_EASING_OUT <const> = playdate.easingFunctions.inQuint
 
 local PROGRESS_BAR_HEIGHT <const> = 8
 local PROGRESS_BAR_OUTLINE <const> = 1
@@ -278,6 +285,8 @@ function av.initialize(config)
    m.checkBox.locked = av.loadFile(gfx.image.new, assetPath .. "/check_box")
    m.checkBox.granted = av.loadFile(gfx.image.new, assetPath .. "/check_box_checked")
    m.checkBox.secret = av.loadFile(gfx.image.new, assetPath .. "/check_box_secret")
+
+   m.backButtonImg = av.loadFile(gfx.image.new, assetPath .. "/back_button")
 
    m.launchSound = av.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/launchSound")
    m.exitSound = av.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/exitSound")
@@ -920,6 +929,11 @@ function av.animateInUpdate()
    m.cardSpacing = m.c.CARD_SPACING_ANIM - m.c.CARD_SPACING_ANIM * (animFrame / ANIM_FRAMES)
    av.drawCards(0, scrollOffset, 1)
 
+   local backButtonAnimFrac = BACK_BUTTON_EASING_IN(m.rawAnimFrac, 0, 1, 1)
+   local backButtonX = BACK_BUTTON_X * backButtonAnimFrac + BACK_BUTTON_START_X * (1-backButtonAnimFrac)
+   local backButtonY = BACK_BUTTON_Y * backButtonAnimFrac + BACK_BUTTON_START_Y * (1-backButtonAnimFrac)
+   m.backButtonImg:draw(backButtonX, backButtonY)
+
    if m.fadeAmount >= FADE_AMOUNT and m.animFrame > ANIM_FRAMES then
       m.cardSpacing = 0
       m.animFrame = 0
@@ -952,6 +966,11 @@ function av.animateOutUpdate()
    if m.animFrame <= ANIM_FRAMES then
       m.animFrame = m.animFrame + 1
    end
+
+   local backButtonAnimFrac = BACK_BUTTON_EASING_OUT(m.rawAnimFrac, 0, 1, 1)
+   local backButtonX = BACK_BUTTON_X * backButtonAnimFrac + BACK_BUTTON_START_X * (1-backButtonAnimFrac)
+   local backButtonY = BACK_BUTTON_Y * backButtonAnimFrac + BACK_BUTTON_START_Y * (1-backButtonAnimFrac)
+   m.backButtonImg:draw(backButtonX, backButtonY)
 
    if m.fadeAmount >= FADE_AMOUNT and m.animFrame > ANIM_FRAMES then
       av.restoreUserSettings()
@@ -1046,6 +1065,8 @@ function av.mainUpdate()
       end
    end
    
+   m.backButtonImg:draw(BACK_BUTTON_X, BACK_BUTTON_Y)
+
    if playdate.buttonJustPressed(playdate.kButtonB) then
       m.fadedBackdropImage = nil
       av.beginExit()
