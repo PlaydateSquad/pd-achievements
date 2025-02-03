@@ -596,15 +596,16 @@ function av.drawCard(achievementId, x, y, width, height, toastOptions)
 	       -- unlocked icon
 	       iconImgGranted:draw(width - image_margin - iconImgGranted.width, image_margin)
 	    elseif type(toastOptions.maskAnimFrame) == "number" then
-	       local backupMask = iconImgLocked:getMaskImage():copy()
+	       local backupMask = iconImgLocked:getMaskImage()
+	       if backupMask then backupMask = backupMask:copy() end
 	       gfx.pushContext(m.iconBuffer)
 	       gfx.clear(gfx.kColorClear)
 	       iconImgGranted:draw(0, 0)
 	       iconImgLocked:setMaskImage(m.maskAnim:getImage(toastOptions.maskAnimFrame))
 	       iconImgLocked:draw(0, 0)
-	       iconImgLocked:setMaskImage(backupMask)
+	       if backupMask then iconImgLocked:setMaskImage(backupMask) end
 	       gfx.popContext()
-	       m.iconBuffer:setMaskImage(backupMask)
+	       if backupMask then m.iconBuffer:setMaskImage(backupMask) end
 	       m.iconBuffer:draw(width - image_margin - m.iconBuffer.width, image_margin)
 	    end
 	 end
