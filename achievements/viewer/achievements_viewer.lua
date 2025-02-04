@@ -25,7 +25,7 @@ local defaultConfig = {
    -- the following can be overridden via overrideToastConfig
    toastMiniMode = false,  -- render a mini-toast instead of a full-sized toast -- smaller font and no description.
    toastAssumeGranted = false,  -- normally, toasting an achievement that isn't already unlocked shows an "in progress" toast
-   toastAnimateIcon = true,  -- animate the checkbox and the icon changing over (only on granted achievements)
+   toastAnimateUnlocking = true,  -- animate the checkbox and the icon changing over (only on granted achievements)
 }
 
 local FADE_AMOUNT <const> = 0.5
@@ -242,7 +242,7 @@ function av.initialize(config)
       gameData = achievements.gameData
    end
    if not gameData then
-      error("achievement_viewer.initialize() invalid gameData")
+      print("ERROR: achievement_viewer.initialize() invalid gameData")
       m = nil
       return
    end
@@ -1145,7 +1145,7 @@ function av.launch(config)
    end
    av.reinitialize(config)
    if m.launched then
-      error("achievement_viewer: can't run launch() more than once at a time")
+      print("ERROR: achievement_viewer: can't run launch() more than once at a time")
       return
    end
    m.userUpdate = config.updateFunction or function() end
@@ -1175,7 +1175,7 @@ function av.updateToast()
       -- don't change whether we're mini-toasting except between toasts.
       m.currentToast = {
 	 mini = not not m.config.toastMiniMode,
-	 anim = not not m.config.toastAnimateIcon,
+	 anim = not not m.config.toastAnimateUnlocking,
 	 granted = not not m.config.toastAssumeGranted,
       }
       if m.overrideToastConfig then
@@ -1185,8 +1185,8 @@ function av.updateToast()
 	 if m.overrideToastConfig.toastAssumeGranted ~= nil then
 	    m.currentToast.granted = m.overrideToastConfig.toastAssumeGranted
 	 end
-	 if m.overrideToastConfig.toastAnimateIcon ~= nil then
-	    m.currentToast.anim = m.overrideToastConfig.toastAnimateIcon
+	 if m.overrideToastConfig.toastAnimateUnlocking ~= nil then
+	    m.currentToast.anim = m.overrideToastConfig.toastAnimateUnlocking
 	 end
       end
       av.setConstants()
@@ -1295,8 +1295,8 @@ function av.updateToast()
 	 if m.overrideToastConfig.toastAssumeGranted ~= nil then
 	    m.currentToast.granted = m.overrideToastConfig.toastAssumeGranted
 	 end
-	 if m.overrideToastConfig.toastAnimateIcon ~= nil then
-	    m.currentToast.anim = m.overrideToastConfig.toastAnimateIcon
+	 if m.overrideToastConfig.toastAnimateUnlocking ~= nil then
+	    m.currentToast.anim = m.overrideToastConfig.toastAnimateUnlocking
 	 end
       end
       m.cardImageCache[m.toastAchievement] = nil
@@ -1330,16 +1330,16 @@ function av.toast(achievementId, config)
    av.reinitialize(config)
    config = m.config
    if m.launched then
-      error("achievement_viewer: can't run toast() while launch() is active")
+      print("ERROR: achievement_viewer: can't run toast() while launch() is active")
       return
    end
    if not m.achievementData[achievementId] then
-      error("achievement_viewer: toast() called with invalid achievement " .. achievementId)
+      print("ERROR: achievement_viewer: toast() called with invalid achievement " .. achievementId)
       return
    end
    if m and m.toasting then
       -- queue up this toast for later
-      local mini, anim, granted = not not config.toastMiniMode, not not config.toastAnimateIcon, not not config.toastAssumeGranted
+      local mini, anim, granted = not not config.toastMiniMode, not not config.toastAnimateUnlocking, not not config.toastAssumeGranted
       if m.overrideToastConfig then
 	 if m.overrideToastConfig.toastMiniMode ~= nil then
 	    mini = m.overrideToastConfig.toastMiniMode
@@ -1347,8 +1347,8 @@ function av.toast(achievementId, config)
 	 if m.overrideToastConfig.toastAssumeGranted ~= nil then
 	    granted = m.overrideToastConfig.toastAssumeGranted
 	 end
-	 if m.overrideToastConfig.toastAnimateIcon ~= nil then
-	    anim = m.overrideToastConfig.toastAnimateIcon
+	 if m.overrideToastConfig.toastAnimateUnlocking ~= nil then
+	    anim = m.overrideToastConfig.toastAnimateUnlocking
 	 end
       end
 
@@ -1387,7 +1387,7 @@ function av.setVolume(v)
    if defaultConfig then defaultConfig.soundVolume = v end
 end
 
--- Specify a config with toastMiniMode, toastAnimateIcon, toastAssumeGranted set that
+-- Specify a config with toastMiniMode, toastAnimateUnlocking, toastAssumeGranted set that
 -- overrides what the toast was queued up with. Or nil to stop overriding.
 function av.overrideToastConfig(config)
    m.overrideToastConfig = config
