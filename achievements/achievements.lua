@@ -207,7 +207,7 @@ local function export_images(gameID, current_build_nr)
 	for filename, _ in pairs(crawlImagePaths("icon", "iconLocked")) do
 		copy_file(filename, shared_path .. filename)
 	end
-	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked", "secretIcon"} do
+	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked", "secretIcon", "iconPath", "cardPath"} do
 		local asset_path = achievements.gameData[metadata_asset]
 		if asset_path then
 			asset_path = force_extension(asset_path, ".pdi")
