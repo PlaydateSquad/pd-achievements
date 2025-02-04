@@ -1253,7 +1253,7 @@ function av.updateToast()
       local x = m.c.TOAST_FINISH_X
       local y = m.c.TOAST_FINISH_Y
       av.drawCard(m.toastAchievement, x, y, m.c.TOAST_WIDTH, m.c.TOAST_HEIGHT, toastOptions)
-      if m.toastAnim >= TOAST_ANIM_IN_SECONDS + TOAST_ANIM_PAUSE_SECONDS_NOANIM then
+      if m.toastAnim - TOAST_ANIM_IN_SECONDS >= TOAST_ANIM_PAUSE_SECONDS_NOANIM then
 	 -- early-out the pause if there is no animation
 	 m.toastAnim = TOAST_ANIM_IN_SECONDS + TOAST_ANIM_PAUSE_SECONDS - 1/m.toastRefreshRate + 0.001
       end
