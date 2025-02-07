@@ -202,16 +202,26 @@ local function export_images(gameID, current_build_nr)
 
 	-- otherwise, the structure should be copied
 
-	local shared_path = achievements.paths.get_shared_images_path(gameID)
+	local shared_images_path = achievements.paths.get_shared_images_path(gameID)
 	-- This is a set, so the iteration is a little different than usual.
 	for filename, _ in pairs(crawlImagePaths("icon", "iconLocked")) do
-		copy_file(filename, shared_path .. filename)
+		copy_file(filename, shared_images_path .. filename)
 	end
 	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked", "secretIcon"} do
 		local asset_path = achievements.gameData[metadata_asset]
 		if asset_path then
 			asset_path = force_extension(asset_path, ".pdi")
-			copy_file(asset_path, shared_path .. asset_path)
+			copy_file(asset_path, shared_images_path .. asset_path)
+		end
+	end
+	-- These files go in the top-level shared game files directory,
+	-- not in the AchievementImages subdirectory.
+	local shared_game_data_path = achievements.paths.get_achievement_folder_root_path(gameID)
+	for _, metadata_asset in ipairs{"iconPath", "cardPath"} do
+		local asset_path = achievements.gameData[metadata_asset]
+		if asset_path then
+			asset_path = force_extension(asset_path, ".pdi")
+			copy_file(asset_path, shared_game_data_path .. asset_path)
 		end
 	end
 		
