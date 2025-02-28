@@ -4,6 +4,42 @@ import "CoreLibs/crank"
 
 local gfx <const> = playdate.graphics
 
+--[[ Achievements Viewer
+   
+   This provides an "achievements viewer" screen that you can easily use in your
+   game to display acheivements using a consistent UI.
+
+   To use it, ensure all of the required assets are in the "achievements/viewer"
+   directory of your game, and call achievementsViewer.launch().
+
+   When you run acheivementsViewer.launch(), the viewer will temporarily take
+   over your playdate.update function, blocking execution of your game. When the
+   user exits the achievements viewer by pressing the B button, control will be
+   returned to your previous playdate.update function.
+
+   For more advanced use, you can set various config options below, for example:
+   achievementsViewer.launch({
+     numDescriptionLines = 1,
+     fadeColor = gfx.kColorWhite,
+   }).
+
+   Startup delay: The first time you call launch(), there will be a slight delay
+   as it loads assets; to prevent this, call achievementsViewer.initialize()
+   ahead of time. You can also pass in config settings to initialize().
+
+   Device state: The viewer attempts to back up and restore as much device state
+   as possible to avoid affecting your game, including refresh rate, display
+   scale, and input handlers. If you find that it's overriding any settings
+   you'd otherwise like to keep, you can either restore them using the
+   returnToGameFunction config setting, or modify the backupUserSettings and
+   restoreUserSettings functions below (and feel free to submit a PR).
+
+   Note: launching the viewer does not affect the Playdate system menu, so if
+   you have any menu items set up, they will still be usable while the viewer
+   is on screen. If you ever need to force the viewer to exit (for example if the
+   user chooses a "exit" menu option), call achievementsViewer.forceExit().
+]]
+
 -- These are the settings you can pass to initialize() and launch() the first time.
 -- initialize() is optional, and will be automatically run when you call launch().
 local defaultConfig = {
@@ -13,15 +49,19 @@ local defaultConfig = {
    invertCards = false, -- show dark cards with a light header row (icon won't be inverted)
    fadeColor = gfx.kColorBlack, -- What color to fade the background with when launching?
                                 -- Typically, if your game looks dark, the viewer will look
-				-- best if you set this to white. You can also use
-				-- clear to not fade the BG at all.
+                                -- best if you set this to white. You can also use
+                                -- clear to not fade the BG at all.
 
    soundVolume = 1,  -- 0 to 1, or call achievementsViewer.setSoundVolume() instead
    sortOrder = "default",  -- sort order "default", "recent", "progress", or "name"
    summaryMode = "count",  -- how to summarize achievements: "count", "percent", "score", or "none"
 
-   disableBackground = false,  -- disable the automatically captured / fading background
-   updateFunction = function() end,  -- this will be called every frame when the viewer is blocking the screen
+   disableBackground = false,  -- disable the automatically captured / fading background.
+                               -- If you disable the background, you probably need to set
+                               -- an updateFunction and draw something there.
+   
+   updateFunction = function() end,  -- this will be called every frame when the viewer is blocking
+                                     -- the screen, prior to drawing the viewer
    returnToGameFunction = function() end, -- this will be called when the viewer is returning to the game
 }
 
@@ -452,28 +492,28 @@ function av.drawTitle(x, y)
       gfx.setFont(font)
       local summaryImg
       if m.config.summaryMode == "percent" or m.config.summaryMode == "percentage" then
-	 local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
-	 summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), TITLE_WIDTH, TITLE_HEIGHT)
+         local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
+         summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), TITLE_WIDTH, TITLE_HEIGHT)
       elseif m.config.summaryMode == "count" then
-	 summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
-						      tostring(m.numCompleted or 0),
-						      tostring(#m.gameData.achievements or 0)),
-					TITLE_WIDTH, TITLE_HEIGHT)
+         summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
+                                                      tostring(m.numCompleted or 0),
+                                                      tostring(#m.gameData.achievements or 0)),
+                                        TITLE_WIDTH, TITLE_HEIGHT)
       elseif m.config.summaryMode == "score" then
-	 summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
-						      tostring(m.completionScore or 0),
-						      tostring(m.possibleScore or 0)),
-					TITLE_WIDTH, TITLE_HEIGHT)
+         summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
+                                                      tostring(m.completionScore or 0),
+                                                      tostring(m.possibleScore or 0)),
+                                        TITLE_WIDTH, TITLE_HEIGHT)
       end
       if summaryImg then
-	 summaryImg:draw(LAYOUT_MARGIN,
-			 height - TITLE_HELP_TEXT_MARGIN - summaryImg.height)
+         summaryImg:draw(LAYOUT_MARGIN,
+                         height - TITLE_HELP_TEXT_MARGIN - summaryImg.height)
       end
       
       gfx.popContext()
       m.titleImageCache = image
       if m.config.invertCards then
-	 m.titleImageCache:setInverted(true)
+         m.titleImageCache:setInverted(true)
       end
    end
    gfx.pushContext(image)
@@ -485,13 +525,13 @@ function av.drawTitle(x, y)
    gfx.setImageDrawMode(gfx.kDrawModeCopy)
    gfx.setColor(gfx.kColorBlack)
    gfx.fillRect(width / 2, height - TITLE_HELP_TEXT_MARGIN - sortImg.height - 2,
-		width / 2 - LAYOUT_MARGIN, sortImg.height + 4)
+                width / 2 - LAYOUT_MARGIN, sortImg.height + 4)
    sortImg2:draw(width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth + (
-		    m.maxSortTextWidth / 2 - sortImg2.width/2),
-		 height - TITLE_HELP_TEXT_MARGIN - sortImg2.height)
+                    m.maxSortTextWidth / 2 - sortImg2.width/2),
+                 height - TITLE_HELP_TEXT_MARGIN - sortImg2.height)
    
    sortImg:draw(width - LAYOUT_MARGIN - sortImg.width - 2 * TITLE_ARROW_X_MARGIN - m.maxSortTextWidth,
-		height - TITLE_HELP_TEXT_MARGIN - sortImg.height)
+                height - TITLE_HELP_TEXT_MARGIN - sortImg.height)
    gfx.setColor(gfx.kColorWhite)
    gfx.setLineWidth(1)
    local arrowAnim = math.sin(TITLE_ARROW_SPEED * m.continuousAnimFrame) * TITLE_ARROW_MAG
@@ -500,14 +540,14 @@ function av.drawTitle(x, y)
    local triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
    
    gfx.fillPolygon(triX - TITLE_ARROW_WIDTH/2, triY - TITLE_ARROW_HEIGHT/2,
-		   triX + TITLE_ARROW_WIDTH/2, triY,
-		   triX - TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
+                   triX + TITLE_ARROW_WIDTH/2, triY,
+                   triX - TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
    triX = width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth - TITLE_ARROW_X_MARGIN/2 - arrowAnim
    triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
    
    gfx.fillPolygon(triX + TITLE_ARROW_WIDTH/2, triY - TITLE_ARROW_HEIGHT/2,
-		   triX - TITLE_ARROW_WIDTH/2, triY,
-		   triX + TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
+                   triX - TITLE_ARROW_WIDTH/2, triY,
+                   triX + TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
    gfx.popContext()
    
    m.titleImageCache:draw(x, y)
@@ -558,45 +598,45 @@ function av.drawCard(achievementId, x, y, width, height)
 
       local iconImg = granted and iconImgGranted or iconImgLocked
       if m.config.invertCards then
-	 iconImg = iconImg:invertedImage()
+         iconImg = iconImg:invertedImage()
       end
       if iconImg then
-	 iconSize = math.min(iconSize, iconImg.width)
-	 iconImg:draw(width - imageMargin - iconImg.width, imageMargin)
+         iconSize = math.min(iconSize, iconImg.width)
+         iconImg:draw(width - imageMargin - iconImg.width, imageMargin)
       end      
 
       local font = granted and m.fonts.name.granted or m.fonts.name.locked
       gfx.setFont(font)
       local nameImg = gfx.imageWithText(info.name,
-					width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
-					height - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE)
+                                        width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
+                                        height - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE)
       
       font = granted and m.fonts.description.granted or m.fonts.description.locked
       gfx.setFont(font)
       local heightRemaining = height - 2*LAYOUT_MARGIN - 2*LAYOUT_SPACING - nameImg.height - CHECKBOX_SIZE
       local descImage
       if heightRemaining >= font:getHeight() then
-	 local description = info.description
-	 if info.isSecret and not granted then
-	    description = SECRET_DESCRIPTION
-	 end
-	 
-	 descImg = gfx.imageWithText(description,
-				     width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
-				     heightRemaining)
+         local description = info.description
+         if info.isSecret and not granted then
+            description = SECRET_DESCRIPTION
+         end
+         
+         descImg = gfx.imageWithText(description,
+                                     width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
+                                     heightRemaining)
       end
       
       nameImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN)
       if descImg then
-	 descImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN + nameImg.height + LAYOUT_SPACING)
+         descImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN + nameImg.height + LAYOUT_SPACING)
       end
    
       if granted then
-	 m.checkBox.granted:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
+         m.checkBox.granted:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
       elseif info.isSecret then
-	 m.checkBox.secret:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
+         m.checkBox.secret:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
       else
-	 m.checkBox.locked:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
+         m.checkBox.locked:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
       end
       
       local progressMax = info.progress_max or info.progressMax
@@ -605,76 +645,76 @@ function av.drawCard(achievementId, x, y, width, height)
       local statusText = ""
       gfx.setFont(font)
       if granted then
-	 local dateStr = av.formatDate(info.grantedAt or playdate.getSecondsSinceEpoch())
-	 if dateStr then
-	    statusText = string.format(GRANTED_TEXT, dateStr)
-	 end
+         local dateStr = av.formatDate(info.grantedAt or playdate.getSecondsSinceEpoch())
+         if dateStr then
+            statusText = string.format(GRANTED_TEXT, dateStr)
+         end
       else
-	 statusText = LOCKED_TEXT
+         statusText = LOCKED_TEXT
       end
       statusImg = gfx.imageWithText(statusText, width - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE,
-				    height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
+                                    height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
       if statusImg then
-	 statusImg:draw(width - LAYOUT_MARGIN - statusImg.width,
-			height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
-	 statusImgWidth = statusImg.width
+         statusImg:draw(width - LAYOUT_MARGIN - statusImg.width,
+                        height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
+         statusImgWidth = statusImg.width
       end
       
       if not granted and progressMax then
-	 local font = m.fonts.status
-	 gfx.setFont(font)
-	 local progress = m.achievementProgress[achievementId] or info.progress or 0
-	 local progressIsPercentage = info.progressIsPercentage
-	 
-	 local progressText, frac
-	 if progressIsPercentage then
-	    local pct = math.floor((progress or 0) * 100 / progressMax)
-	    pct = math.max(math.min(pct, 100), 0)
-	    progressText = tostring(pct) .. "%"
-	    frac = pct / 100
-	 else
-	    local amt = math.floor((progress or 0))
-	    amt = math.max(math.min(amt, math.floor(progressMax)), 0)
-	    local slash = "/"
-	    progressText = tostring(amt) .. slash .. tostring(math.floor(progressMax))
-	    frac = amt / math.floor(progressMax)
-	 end
-	 local progressTextWidth = width - 2*LAYOUT_MARGIN -
-	    LAYOUT_STATUS_SPACING - CHECKBOX_SIZE -
-	    LAYOUT_STATUS_SPACING - statusImgWidth
-	 local progressTextHeight = height - LAYOUT_MARGIN - iconSize - LAYOUT_SPACING
-	 local progressSpacing = LAYOUT_STATUS_SPACING
-	 local progressMargin = LAYOUT_MARGIN
-	 local progressTextImg = gfx.imageWithText(progressText, progressTextWidth, progressTextHeight)
-	 
-	 progressTextImg:draw(width - progressMargin - statusImgWidth -
-			      progressSpacing - progressTextImg.width,
-			      height - progressMargin - progressTextImg.height + LAYOUT_STATUS_TWEAK_Y)
-	 
-	 local progressBarWidth =
-	    width - 2*LAYOUT_MARGIN -
-	    LAYOUT_STATUS_SPACING - statusImgWidth -
-	    LAYOUT_STATUS_SPACING - progressTextImg.width-
-	    LAYOUT_SPACING - CHECKBOX_SIZE
-	 local progressBarTweakY = LAYOUT_PROGRESS_TWEAK_Y
-	 gfx.setColor(gfx.kColorBlack)
-	 gfx.pushContext()
-	 gfx.setDitherPattern(.5, gfx.image.kDitherTypeBayer8x8)
-	 gfx.fillRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
-			   height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
-			   frac * progressBarWidth,
-			   PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
-	 gfx.popContext()
-	 gfx.setLineWidth(PROGRESS_BAR_OUTLINE)
-	 gfx.drawRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
-			   height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
-			   progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
+         local font = m.fonts.status
+         gfx.setFont(font)
+         local progress = m.achievementProgress[achievementId] or info.progress or 0
+         local progressIsPercentage = info.progressIsPercentage
+         
+         local progressText, frac
+         if progressIsPercentage then
+            local pct = math.floor((progress or 0) * 100 / progressMax)
+            pct = math.max(math.min(pct, 100), 0)
+            progressText = tostring(pct) .. "%"
+            frac = pct / 100
+         else
+            local amt = math.floor((progress or 0))
+            amt = math.max(math.min(amt, math.floor(progressMax)), 0)
+            local slash = "/"
+            progressText = tostring(amt) .. slash .. tostring(math.floor(progressMax))
+            frac = amt / math.floor(progressMax)
+         end
+         local progressTextWidth = width - 2*LAYOUT_MARGIN -
+            LAYOUT_STATUS_SPACING - CHECKBOX_SIZE -
+            LAYOUT_STATUS_SPACING - statusImgWidth
+         local progressTextHeight = height - LAYOUT_MARGIN - iconSize - LAYOUT_SPACING
+         local progressSpacing = LAYOUT_STATUS_SPACING
+         local progressMargin = LAYOUT_MARGIN
+         local progressTextImg = gfx.imageWithText(progressText, progressTextWidth, progressTextHeight)
+         
+         progressTextImg:draw(width - progressMargin - statusImgWidth -
+                              progressSpacing - progressTextImg.width,
+                              height - progressMargin - progressTextImg.height + LAYOUT_STATUS_TWEAK_Y)
+         
+         local progressBarWidth =
+            width - 2*LAYOUT_MARGIN -
+            LAYOUT_STATUS_SPACING - statusImgWidth -
+            LAYOUT_STATUS_SPACING - progressTextImg.width-
+            LAYOUT_SPACING - CHECKBOX_SIZE
+         local progressBarTweakY = LAYOUT_PROGRESS_TWEAK_Y
+         gfx.setColor(gfx.kColorBlack)
+         gfx.pushContext()
+         gfx.setDitherPattern(.5, gfx.image.kDitherTypeBayer8x8)
+         gfx.fillRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
+                           height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
+                           frac * progressBarWidth,
+                           PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
+         gfx.popContext()
+         gfx.setLineWidth(PROGRESS_BAR_OUTLINE)
+         gfx.drawRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
+                           height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
+                           progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
       end
       gfx.popContext()
       if m.config.invertCards then
-	 m.cardImageCache[achievementId] = image:invertedImage()
+         m.cardImageCache[achievementId] = image:invertedImage()
       else
-	 m.cardImageCache[achievementId] = image
+         m.cardImageCache[achievementId] = image
       end
    end
    m.cardImageCache[achievementId]:draw(x, y)
@@ -847,7 +887,7 @@ function av.animateOutUpdate()
 
    if m.fadeAmount >= FADE_AMOUNT and m.animFrame > ANIM_FRAMES then
       if m.backdropImage then
-	 m.backdropImage:drawScaled(0, 0, 1/m.backupDisplayScale, 1/m.backupDisplayScale)
+         m.backdropImage:drawScaled(0, 0, 1/m.backupDisplayScale, 1/m.backupDisplayScale)
       end
       av.restoreUserSettings()
       playdate.getCrankTicks(1)
@@ -991,13 +1031,13 @@ function av.launch(config)
       local backdropImage = gfx.getDisplayImage()
       local displayScale = playdate.display.getScale()
       if displayScale == 1 then
-	 m.backdropImage = backdropImage
+         m.backdropImage = backdropImage
       else
-	 -- scale the 2x or 4x or 8x background to 1x pixels
-	 m.backdropImage = gfx.image.new(SCREEN_WIDTH, SCREEN_HEIGHT)
-	 gfx.pushContext(m.backdropImage)
-	 backdropImage:drawScaled(0, 0, displayScale, displayScale)
-	 gfx.popContext()
+         -- scale the 2x or 4x or 8x background to 1x pixels
+         m.backdropImage = gfx.image.new(SCREEN_WIDTH, SCREEN_HEIGHT)
+         gfx.pushContext(m.backdropImage)
+         backdropImage:drawScaled(0, 0, displayScale, displayScale)
+         gfx.popContext()
       end
    end
    av.clearCaches()
@@ -1017,6 +1057,11 @@ function av.launch(config)
    end
 end
 
+function av.forceExit()
+   m.fadedBackdropImage = nil
+   av.beginExit()
+end
+
 function av.hasLaunched()
    return m and m.launched
 end
@@ -1031,6 +1076,7 @@ end
 achievementsViewer = {
    initialize = av.initialize,
    launch = av.launch,
+   forceExit = av.forceExit,
    hasLaunched = av.hasLaunched,
    setVolume = av.setVolume,
    getCache = function() return persistentCache end,
