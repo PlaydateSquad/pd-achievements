@@ -43,32 +43,60 @@ local gfx <const> = playdate.graphics
 -- These are the settings you can pass to initialize() and launch() the first time.
 -- initialize() is optional, and will be automatically run when you call launch().
 local defaultConfig = {
-   gameData = nil, -- nil = get the game data directly from the achievements library
-   assetPath = "achievements/viewer/",  -- path for the viewer's fonts, images, and sounds
-   numDescriptionLines = 2,  -- how many description lines to allow, tested with 0 to 3
-   invertCards = false, -- show dark cards with a light header row (icon won't be inverted)
-   fadeColor = gfx.kColorBlack, -- What color to fade the background with when launching?
-                                -- Typically, if your game looks dark, the viewer will look
-                                -- best if you set this to white. You can also use
-                                -- clear to not fade the BG at all.
+   -- Set the path that you've placed the achievements viewer's fonts, images,
+   -- and sounds. Be sure to include the trailing slash.
+   assetPath = "achievements/viewer/", 
 
-   soundVolume = 1,  -- 0 to 1, or call achievementsViewer.setSoundVolume() instead
-   sortOrder = "default",  -- sort order "default", "recent", "progress", or "name"
-   summaryMode = "count",  -- how to summarize achievements: "count", "percent", "score", or "none"
+   -- Number of lines of the achievement description to display. Setting this to 1
+   -- lets you fit more achievements on screen, if they all have very short
+   -- descriptions. If you have long descriptions, you may need to set this to 3.
+   -- This has been tested in the range of 0 (don't show descriptions) to 3.
+   numDescriptionLines = 2,
 
-   disableBackground = false,  -- Disable the automatically captured / fading background.
-                               -- If you disable the background, you will need to set
-                               -- an updateFunction and draw something there, or maybe
-                               -- call gfx.sprite.update() or something.
+   -- What color to fade the background with when launching?  Typically, if your
+   -- game looks dark, the viewer will look best if you set this to white. You
+   -- can also use clear to not fade the BG at all.
+   fadeColor = gfx.kColorBlack,
 
-   updateFunction = function(anim) end,  -- This will be called every frame when the viewer
-                                         -- is blocking  the screen, prior to drawing the
-					 -- viewer. The parameter passed in will range from
-					 -- 0 to 1 as the viewer fades in, stay 1 while the
-					 -- viewer is being displayed, then go from 1 back
-					 -- down to 0 while the viewer fades out.
+   -- Normally, a black header row is displayed, followed by white cards for the
+   -- achievements. Set this to true to show dark cards with a light header row
+   -- instead. (Achievement icons will still display normally and won't be
+   -- inverted.)
+   invertCards = false,
 
-   returnToGameFunction = function() end, -- this will be called when the viewer is returning to the game
+   -- The default audio volume to use for the achievement viewer's sound
+   -- effects. This should range from 0 to 1. You can modify this after the
+   -- first time by calling achievementsViewer.setSoundVolume(), for example if
+   -- the user changes a "sound effects volume" in-game option..
+   soundVolume = 1,
+
+   -- The default sort order to display achievements in. Options are: "default",
+   -- "recent", "progress", or "name"
+   sortOrder = "default",
+
+   -- How to summarize achievements in the header: "count", "percent", "score",
+   -- or "none".
+   summaryMode = "count",
+
+   -- Disable the automatically captured / fading background.  If you disable
+   -- the background, you will need to set an updateFunction and draw something
+   -- there, or maybe call gfx.sprite.update() or something.
+   disableBackground = false,
+   
+   -- Which achievement data to use. Normally you will set this to nil to have
+   -- it retrieve the current game's data directly from the achievements
+   -- library, but if you want to display a different game's data, you can get
+   -- the gameData using the crossgame module and pass it in here.
+   gameData = nil,
+
+   -- This will be called every frame when the viewer is blocking the screen,
+   -- prior to drawing the viewer. The parameter passed in will range from 0 to
+   -- 1 as the viewer fades in, stay 1 while the viewer is being displayed, then
+   -- go from 1 back down to 0 while the viewer fades out.
+   updateFunction = function(anim) end,
+
+   -- This will be called when the viewer is returning to the game.
+   returnToGameFunction = function() end,
 }
 
 local FADE_AMOUNT <const> = 0.5
