@@ -79,7 +79,7 @@ local options = {
         CHANGE_SCENE("simple_viewer")
     end},
     {"LAUNCH FANCY VIEWER", function()
-	achievementsViewer.launch()
+	achievementsViewer.launch({fadeColor = gfx.kColorWhite})
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then
