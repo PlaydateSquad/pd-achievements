@@ -10,7 +10,11 @@ local defaultConfig = {
    gameData = nil, -- nil = get the game data directly from the achievements library
    assetPath = "achievements/viewer/",  -- path for the viewer's fonts, images, and sounds
    numDescriptionLines = 2,  -- how many description lines to allow, tested with 0 to 3
-   darkMode = true,  -- show dark cards on a lightly-faded bg instead of light cards on a dark-faded bg
+   invertCards = false, -- show dark cards with a light header row (icon won't be inverted)
+   fadeColor = gfx.kColorBlack, -- What color to fade the background with when launching?
+                                -- Typically, if your game looks dark, the viewer will look
+				-- best if you set this to white. You can also use
+				-- clear to not fade the BG at all.
 
    soundVolume = 1,  -- 0 to 1, or call achievementsViewer.setSoundVolume() instead
    sortOrder = "default",  -- sort order "default", "recent", "progress", or "name"
@@ -24,8 +28,9 @@ local defaultConfig = {
 local FADE_AMOUNT <const> = 0.5
 local FADE_FRAMES <const> = 16
 
-local SCREEN_WIDTH <const> = playdate.display.getWidth()
-local SCREEN_HEIGHT <const> = playdate.display.getHeight()
+-- hard-coded because we will always use 1x scale
+local SCREEN_WIDTH <const> = 400
+local SCREEN_HEIGHT <const> = 240
 
 local CARD_CORNER <const> = 6
 local CARD_WIDTH <const> = 300
@@ -395,6 +400,9 @@ function av.backupUserSettings()
    if m.backupRefreshRate == nil then
       m.backupRefreshRate = playdate.display.getRefreshRate()
    end
+   if m.backupDisplayScale == nil then
+      m.backupDisplayScale = playdate.display.getScale()
+   end
 end
 
 function av.restoreUserSettings()
@@ -404,12 +412,16 @@ function av.restoreUserSettings()
    end
    if m.backupRefreshRate then
       playdate.display.setRefreshRate(m.backupRefreshRate)
+      m.backupRefreshRate = nil
+   end
+   if m.backupDisplayScale then
+      playdate.display.setScale(m.backupDisplayScale)
+      m.backupDisplayScale = nil
    end
    if m.handlingInput then
       playdate.inputHandlers.pop()
+      m.handlingInput = false
    end
-   m.backupPlaydateUpdate = nil
-   m.backupRefreshRate = nil
 end
 
 function av.destroy()
@@ -421,48 +433,50 @@ function av.drawTitle(x, y)
    local height = TITLE_HEIGHT
    local image = m.titleImageCache
    if not image then
-      m.titleImageCache = gfx.image.new(width, height)
-      image = m.titleImageCache
+      image = gfx.image.new(width, height)
+   
+      gfx.pushContext(image)
+      local font = m.fonts.title
+      
+      gfx.setColor(gfx.kColorWhite)
+      gfx.fillRoundRect(0, 0, width, height, TITLE_CORNER)
+      
+      local margin = 1
+      gfx.setColor(gfx.kColorBlack)
+      gfx.fillRoundRect(0+margin, 0+margin, width-2*margin, height-2*margin, TITLE_CORNER)
+      
+      gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+      font:drawTextAligned("Achievements", width/2, height/2 - math.floor(font:getHeight()/2) + TITLE_TWEAK_Y, kTextAlignment.center)
+      
+      font = m.fonts.status
+      gfx.setFont(font)
+      local summaryImg
+      if m.config.summaryMode == "percent" or m.config.summaryMode == "percentage" then
+	 local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
+	 summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), TITLE_WIDTH, TITLE_HEIGHT)
+      elseif m.config.summaryMode == "count" then
+	 summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
+						      tostring(m.numCompleted or 0),
+						      tostring(#m.gameData.achievements or 0)),
+					TITLE_WIDTH, TITLE_HEIGHT)
+      elseif m.config.summaryMode == "score" then
+	 summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
+						      tostring(m.completionScore or 0),
+						      tostring(m.possibleScore or 0)),
+					TITLE_WIDTH, TITLE_HEIGHT)
+      end
+      if summaryImg then
+	 summaryImg:draw(LAYOUT_MARGIN,
+			 height - TITLE_HELP_TEXT_MARGIN - summaryImg.height)
+      end
+      
+      gfx.popContext()
+      m.titleImageCache = image
+      if m.config.invertCards then
+	 m.titleImageCache:setInverted(true)
+      end
    end
-   local fgColor = m.config.darkMode and gfx.kColorBlack or gfx.kColorWhite
-   local bgColor = m.config.darkMode and gfx.kColorWhite or gfx.kColorBlack
-   local textDrawMode = m.config.darkMode and gfx.kDrawModeFillWhite or gfx.kDrawModeCopy
-
    gfx.pushContext(image)
-   local font = m.fonts.title
-   
-   gfx.setColor(gfx.kColorWhite)
-   gfx.fillRoundRect(0, 0, width, height, TITLE_CORNER)
-   
-   local margin = 1
-   gfx.setColor(gfx.kColorBlack)
-   gfx.fillRoundRect(0+margin, 0+margin, width-2*margin, height-2*margin, TITLE_CORNER)
-   
-   gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
-   font:drawTextAligned("Achievements", width/2, height/2 - math.floor(font:getHeight()/2) + TITLE_TWEAK_Y, kTextAlignment.center)
-   
-   font = m.fonts.status
-   gfx.setFont(font)
-   local summaryImg
-   if m.config.summaryMode == "percent" or m.config.summaryMode == "percentage" then
-      local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
-      summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), TITLE_WIDTH, TITLE_HEIGHT)
-   elseif m.config.summaryMode == "count" then
-      summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
-						   tostring(m.numCompleted or 0),
-						   tostring(#m.gameData.achievements or 0)),
-				     TITLE_WIDTH, TITLE_HEIGHT)
-   elseif m.config.summaryMode == "score" then
-      summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
-						   tostring(m.completionScore or 0),
-						   tostring(m.possibleScore or 0)),
-				     TITLE_WIDTH, TITLE_HEIGHT)
-   end
-   if summaryImg then
-      summaryImg:draw(LAYOUT_MARGIN,
-		      height - TITLE_HELP_TEXT_MARGIN - summaryImg.height)
-   end
-
    font = m.fonts.status
    gfx.setFont(font)
    gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
@@ -471,31 +485,31 @@ function av.drawTitle(x, y)
    gfx.setImageDrawMode(gfx.kDrawModeCopy)
    gfx.setColor(gfx.kColorBlack)
    gfx.fillRect(width / 2, height - TITLE_HELP_TEXT_MARGIN - sortImg.height - 2,
-                width / 2 - LAYOUT_MARGIN, sortImg.height + 4)
+		width / 2 - LAYOUT_MARGIN, sortImg.height + 4)
    sortImg2:draw(width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth + (
-                    m.maxSortTextWidth / 2 - sortImg2.width/2),
-                 height - TITLE_HELP_TEXT_MARGIN - sortImg2.height)
+		    m.maxSortTextWidth / 2 - sortImg2.width/2),
+		 height - TITLE_HELP_TEXT_MARGIN - sortImg2.height)
    
    sortImg:draw(width - LAYOUT_MARGIN - sortImg.width - 2 * TITLE_ARROW_X_MARGIN - m.maxSortTextWidth,
-                height - TITLE_HELP_TEXT_MARGIN - sortImg.height)
+		height - TITLE_HELP_TEXT_MARGIN - sortImg.height)
    gfx.setColor(gfx.kColorWhite)
    gfx.setLineWidth(1)
    local arrowAnim = math.sin(TITLE_ARROW_SPEED * m.continuousAnimFrame) * TITLE_ARROW_MAG
-
+   
    local triX = width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN/2 + arrowAnim
    local triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
-
+   
    gfx.fillPolygon(triX - TITLE_ARROW_WIDTH/2, triY - TITLE_ARROW_HEIGHT/2,
-                   triX + TITLE_ARROW_WIDTH/2, triY,
-                   triX - TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
+		   triX + TITLE_ARROW_WIDTH/2, triY,
+		   triX - TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
    triX = width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth - TITLE_ARROW_X_MARGIN/2 - arrowAnim
    triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
-
+   
    gfx.fillPolygon(triX + TITLE_ARROW_WIDTH/2, triY - TITLE_ARROW_HEIGHT/2,
-                   triX - TITLE_ARROW_WIDTH/2, triY,
-                   triX + TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
+		   triX - TITLE_ARROW_WIDTH/2, triY,
+		   triX + TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
    gfx.popContext()
-
+   
    m.titleImageCache:draw(x, y)
 end
 
@@ -505,10 +519,6 @@ function av.formatDate(timestamp)
 end
 
 function av.drawCard(achievementId, x, y, width, height)
-   local fgColor = m.config.darkMode and gfx.kColorWhite or gfx.kColorBlack
-   local bgColor = m.config.darkMode and gfx.kColorBlack or gfx.kColorWhite
-   local textDrawMode = m.config.darkMode and gfx.kDrawModeCopy or  gfx.kDrawModeFillWhite
-
    local wantWidth = width
    local wantHeight = height
    local image = m.cardImageCache[achievementId]
@@ -517,7 +527,6 @@ function av.drawCard(achievementId, x, y, width, height)
    end
    if not image then
       image = gfx.image.new(wantWidth, wantHeight)
-      m.cardImageCache[achievementId] = image
 
       gfx.pushContext(image)
       local margin = 1
@@ -548,6 +557,9 @@ function av.drawCard(achievementId, x, y, width, height)
       local imageMargin = LAYOUT_MARGIN
 
       local iconImg = granted and iconImgGranted or iconImgLocked
+      if m.config.invertCards then
+	 iconImg = iconImg:invertedImage()
+      end
       if iconImg then
 	 iconSize = math.min(iconSize, iconImg.width)
 	 iconImg:draw(width - imageMargin - iconImg.width, imageMargin)
@@ -659,6 +671,11 @@ function av.drawCard(achievementId, x, y, width, height)
 			   progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
       end
       gfx.popContext()
+      if m.config.invertCards then
+	 m.cardImageCache[achievementId] = image:invertedImage()
+      else
+	 m.cardImageCache[achievementId] = image
+      end
    end
    m.cardImageCache[achievementId]:draw(x, y)
 end
@@ -760,10 +777,13 @@ function av.animateInUpdate()
 
    m.maxScroll = m.card[#m.card].y + m.c.CARD_HEIGHT - SCREEN_HEIGHT + 2*CARD_SPACING
 
-   gfx.pushContext()
-   gfx.setDitherPattern(1-m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
-   gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight())
-   gfx.popContext()
+   if m.config.fadeColor ~= gfx.kColorClear then
+      gfx.pushContext()
+      gfx.setColor(m.config.fadeColor)
+      gfx.setDitherPattern(1-m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
+      gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight())
+      gfx.popContext()
+   end
 
    if m.fadeAmount >= FADE_AMOUNT and m.fadedBackdropImage == nil and m.backdropImage then
       m.fadedBackdropImage = playdate.graphics.getWorkingImage()
@@ -801,10 +821,13 @@ function av.animateOutUpdate()
    if m.fadeAmount >= FADE_AMOUNT then
       m.fadeAmount = FADE_AMOUNT
    end
-   gfx.pushContext()
-   gfx.setDitherPattern(FADE_AMOUNT + m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
-   gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight())
-   gfx.popContext()
+   if m.config.fadeColor ~= gfx.kColorClear then
+      gfx.pushContext()
+      gfx.setColor(m.config.fadeColor)
+      gfx.setDitherPattern(FADE_AMOUNT + m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
+      gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight())
+      gfx.popContext()
+   end
 
 
    m.rawAnimFrac = 1-m.animFrame / ANIM_FRAMES
@@ -823,6 +846,9 @@ function av.animateOutUpdate()
    m.backButtonImg:draw(backButtonX, backButtonY)
 
    if m.fadeAmount >= FADE_AMOUNT and m.animFrame > ANIM_FRAMES then
+      if m.backdropImage then
+	 m.backdropImage:drawScaled(0, 0, 1/m.backupDisplayScale, 1/m.backupDisplayScale)
+      end
       av.restoreUserSettings()
       playdate.getCrankTicks(1)
       local returnFunction = m.returnToGameFunction
@@ -961,13 +987,26 @@ function av.launch(config)
    m.userUpdate = config.updateFunction or function() end
    m.returnToGame = config.returnToGameFunction or function() end
 
-   m.backdropImage = config.disableBackground and nil or gfx.getDisplayImage()
+   if not config.disableBackground then
+      local backdropImage = gfx.getDisplayImage()
+      local displayScale = playdate.display.getScale()
+      if displayScale == 1 then
+	 m.backdropImage = backdropImage
+      else
+	 -- scale the 2x or 4x or 8x background to 1x pixels
+	 m.backdropImage = gfx.image.new(SCREEN_WIDTH, SCREEN_HEIGHT)
+	 gfx.pushContext(m.backdropImage)
+	 backdropImage:drawScaled(0, 0, displayScale, displayScale)
+	 gfx.popContext()
+      end
+   end
    av.clearCaches()
    m.launched = true
 
    av.backupUserSettings()
 
    playdate.display.setRefreshRate(50)
+   playdate.display.setScale(1)
    playdate.inputHandlers.push({}, true)
    m.handlingInput = true
 
