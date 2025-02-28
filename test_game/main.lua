@@ -78,11 +78,8 @@ local options = {
     {"GO TO BASIC VIEWER", function()
         CHANGE_SCENE("simple_viewer")
     end},
-    {"GO TO FANCY VIEWER", function()
+    {"LAUNCH FANCY VIEWER", function()
 	achievementsViewer.launch()
-    end},
-    {"fancy toast", function()
-	achievementsViewer.toast("test_achievement")
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then

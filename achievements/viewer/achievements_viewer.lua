@@ -9,8 +9,7 @@ local gfx <const> = playdate.graphics
 local defaultConfig = {
    gameData = nil, -- nil = get the game data directly from the achievements library
    assetPath = "achievements/viewer/",  -- path for the viewer's fonts, images, and sounds
-   smallMode = false,  -- use shorter cards (which only have room for a 1-line description instead of 2)
-   numDescriptionLines = 2,  -- how many description lines to allow, tested with 1 to 3
+   numDescriptionLines = 2,  -- how many description lines to allow, tested with 0 to 3
    darkMode = true,  -- show dark cards on a lightly-faded bg instead of light cards on a dark-faded bg
 
    soundVolume = 1,  -- 0 to 1, or call achievementsViewer.setSoundVolume() instead
@@ -29,14 +28,15 @@ local SCREEN_WIDTH <const> = playdate.display.getWidth()
 local SCREEN_HEIGHT <const> = playdate.display.getHeight()
 
 local CARD_CORNER <const> = 6
-local CARD_WIDTH_LARGE <const> = 300
-local CARD_WIDTH_SMALL <const> = 300
-local CARD_HEIGHT_LARGE <const> = 90
-local CARD_HEIGHT_SMALL <const> = 74
+local CARD_WIDTH <const> = 300
+-- Base height of each card...
+local CARD_HEIGHT_BASE <const> = 58
+-- ...plus this height per description line...
+local CARD_HEIGHT_PER_LINE <const> = 16
+-- ...but with a minimum of this height.
+local CARD_HEIGHT_MIN <const> = 64
 local CARD_OUTLINE <const> = 2
 local CARD_SPACING <const> = 8
-local CARD_SPACING_ANIM_LARGE <const> = SCREEN_HEIGHT - CARD_HEIGHT_LARGE
-local CARD_SPACING_ANIM_SMALL <const> = SCREEN_HEIGHT - CARD_HEIGHT_SMALL
 
 -- layout of inside the card
 local LAYOUT_MARGIN <const> = 8
@@ -51,10 +51,8 @@ local CHECKBOX_SIZE <const> = 15
 
 local TITLE_CORNER <const> = 6
 local TITLE_TWEAK_Y <const> = -2 -- tweak the Y position of the title text
-local TITLE_WIDTH_LARGE <const> = CARD_WIDTH_LARGE
-local TITLE_WIDTH_SMALL <const> = CARD_WIDTH_SMALL
-local TITLE_HEIGHT_LARGE <const> = 64
-local TITLE_HEIGHT_SMALL <const> = 64
+local TITLE_WIDTH <const> = CARD_WIDTH
+local TITLE_HEIGHT <const> = 64
 local TITLE_LOCK_Y <const> = 19  -- lock in position at this point, or negative to not
 local TITLE_SPACING <const> = CARD_SPACING
 local TITLE_PERCENTAGE_TEXT <const> = "%s completed"
@@ -144,16 +142,20 @@ end
 
 function av.setConstants(config)
    config = config or m.config
-   local smallMode = config.smallMode
+   local numLines = config.numDescriptionLines
    m.c = {}
-   m.c.CARD_WIDTH = smallMode and CARD_WIDTH_SMALL or CARD_WIDTH_LARGE
-   m.c.CARD_HEIGHT = smallMode and CARD_HEIGHT_SMALL or CARD_HEIGHT_LARGE
-   m.c.CARD_SPACING_ANIM = smallMode and CARD_SPACING_ANIM_SMALL or CARD_SPACING_ANIM_LARGE
-   m.c.TITLE_WIDTH = smallMode and TITLE_WIDTH_SMALL or TITLE_WIDTH_LARGE
-   m.c.TITLE_HEIGHT = smallMode and TITLE_HEIGHT_SMALL or TITLE_HEIGHT_LARGE
+   m.c.CARD_WIDTH = CARD_WIDTH
+   m.c.CARD_HEIGHT = math.max(CARD_HEIGHT_MIN, CARD_HEIGHT_BASE + numLines * CARD_HEIGHT_PER_LINE)
+   m.c.CARD_SPACING_ANIM = SCREEN_HEIGHT - m.c.CARD_HEIGHT
 end
 
 function av.initialize(config)
+   if not achievements then
+      error("ERROR: achievements library achievements.lua not loaded")
+   elseif not achievements.graphics then
+      error("ERROR: achievements library graphics.lua not loaded")
+   end
+
    config = av.setupDefaults(config)
 
    gameData = config.gameData
@@ -190,12 +192,18 @@ function av.initialize(config)
    m.defaultIcons = {}
    if (gameData.defaultIcon) then
       m.defaultIcons.granted = av.loadFile(gfx.image.new, m.imagePath .. (gameData.defaultIcon or gameData.default_icon))
+   else
+      m.defaultIcons.granted = achievements.graphics.get_image("*_default_icon")
    end
    if (gameData.defaultIconLocked or gameData.default_icon_locked) then
       m.defaultIcons.locked = av.loadFile(gfx.image.new, m.imagePath .. (gameData.defaultIconLocked or gameData.default_icon_locked))
+   else
+      m.defaultIcons.locked = achievements.graphics.get_image("*_default_locked")
    end
    if (gameData.secretIcon or gameData.secret_icon) then
       m.defaultIcons.secret = av.loadFile(gfx.image.new, m.imagePath .. (gameData.secretIcon or gameData.secret_icon))
+   else
+      m.defaultIcons.secret = achievements.graphics.get_image("*_default_secret")
    end
 
    m.assetPath = assetPath
@@ -266,7 +274,7 @@ function av.reinitialize(config)
    m.fadeAmount = 0
    m.scroll = 0
    m.scrollSpeed = 0
-   m.title = { x = SCREEN_WIDTH/2 - m.c.TITLE_WIDTH/2, y = 0, hidden = false }
+   m.title = { x = SCREEN_WIDTH/2 - TITLE_WIDTH/2, y = 0, hidden = false }
    m.card = { }
    m.numCompleted = 0
    m.possibleScore = 0
@@ -281,7 +289,7 @@ function av.reinitialize(config)
       end
       m.card[i] = {
          x = SCREEN_WIDTH / 2 - m.c.CARD_WIDTH / 2,
-         y = m.c.TITLE_HEIGHT + TITLE_SPACING + (i-1) * (m.c.CARD_HEIGHT + CARD_SPACING),
+         y = TITLE_HEIGHT + TITLE_SPACING + (i-1) * (m.c.CARD_HEIGHT + CARD_SPACING),
          hidden = false
       }
    end
@@ -409,8 +417,8 @@ function av.destroy()
 end
 
 function av.drawTitle(x, y)
-   local width = m.c.TITLE_WIDTH
-   local height = m.c.TITLE_HEIGHT
+   local width = TITLE_WIDTH
+   local height = TITLE_HEIGHT
    local image = m.titleImageCache
    if not image then
       m.titleImageCache = gfx.image.new(width, height)
@@ -438,17 +446,17 @@ function av.drawTitle(x, y)
    local summaryImg
    if m.config.summaryMode == "percent" or m.config.summaryMode == "percentage" then
       local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
-      summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
+      summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), TITLE_WIDTH, TITLE_HEIGHT)
    elseif m.config.summaryMode == "count" then
       summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
 						   tostring(m.numCompleted or 0),
 						   tostring(#m.gameData.achievements or 0)),
-				     m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
+				     TITLE_WIDTH, TITLE_HEIGHT)
    elseif m.config.summaryMode == "score" then
       summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
 						   tostring(m.completionScore or 0),
 						   tostring(m.possibleScore or 0)),
-				     m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
+				     TITLE_WIDTH, TITLE_HEIGHT)
    end
    if summaryImg then
       summaryImg:draw(LAYOUT_MARGIN,
@@ -458,8 +466,8 @@ function av.drawTitle(x, y)
    font = m.fonts.status
    gfx.setFont(font)
    gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
-   local sortImg = gfx.imageWithText("Sort:", m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
-   local sortImg2 = gfx.imageWithText(tostring(m.sortOrder), m.c.TITLE_WIDTH, m.c.TITLE_HEIGHT)
+   local sortImg = gfx.imageWithText("Sort:", TITLE_WIDTH, TITLE_HEIGHT)
+   local sortImg2 = gfx.imageWithText(tostring(m.sortOrder), TITLE_WIDTH, TITLE_HEIGHT)
    gfx.setImageDrawMode(gfx.kDrawModeCopy)
    gfx.setColor(gfx.kColorBlack)
    gfx.fillRect(width / 2, height - TITLE_HELP_TEXT_MARGIN - sortImg.height - 2,
@@ -537,7 +545,13 @@ function av.drawCard(achievementId, x, y, width, height)
       
       local granted = not not m.achievementData[achievementId].grantedAt
       local iconSize = LAYOUT_ICON_SIZE
-      local image_margin = LAYOUT_MARGIN
+      local imageMargin = LAYOUT_MARGIN
+
+      local iconImg = granted and iconImgGranted or iconImgLocked
+      if iconImg then
+	 iconSize = math.min(iconSize, iconImg.width)
+	 iconImg:draw(width - imageMargin - iconImg.width, imageMargin)
+      end      
 
       local font = granted and m.fonts.name.granted or m.fonts.name.locked
       gfx.setFont(font)
@@ -685,7 +699,7 @@ function av.drawCards(x, y, animating)
    local y = (y or 0) - m.scroll + CARD_SPACING
 
 
-   local scrollBarX = x + m.title.x + math.max(m.c.TITLE_WIDTH, m.c.CARD_WIDTH) + SCROLLBAR_SPACING
+   local scrollBarX = x + m.title.x + math.max(TITLE_WIDTH, m.c.CARD_WIDTH) + SCROLLBAR_SPACING
    local scrollBarHidden = SCREEN_WIDTH + SCROLLBAR_SPACING
    local animFrac
    if animating > 0 then
@@ -700,7 +714,7 @@ function av.drawCards(x, y, animating)
    local count = 0
    local titleY = y + m.title.y
    if not m.title.hidden then
-      if titleY + m.c.TITLE_HEIGHT > 0 and titleY < SCREEN_HEIGHT then
+      if titleY + TITLE_HEIGHT > 0 and titleY < SCREEN_HEIGHT then
          m.title.isVisible = true
          count = count + 1
       else
@@ -979,11 +993,11 @@ achievementsViewer = {
    initialize = av.initialize,
    launch = av.launch,
    hasLaunched = av.hasLaunched,
+   setVolume = av.setVolume,
+   getCache = function() return persistentCache end,
    toast = function() end,
    isToasting = function() end,
    overrideToastConfig = function() end,
    abortToasts = function() end,
-   setVolume = av.setVolume,
-   getCache = function() return persistentCache end
 }
 achievementViewer = achievementsViewer  -- typos yay
