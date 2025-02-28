@@ -5,7 +5,7 @@ import "CoreLibs/crank"
 local gfx <const> = playdate.graphics
 
 --[[ Achievements Viewer
-   
+
    This provides an "achievements viewer" screen that you can easily use in your
    game to display acheivements using a consistent UI.
 
@@ -60,14 +60,14 @@ local defaultConfig = {
                                -- If you disable the background, you will need to set
                                -- an updateFunction and draw something there, or maybe
                                -- call gfx.sprite.update() or something.
-   
+
    updateFunction = function(anim) end,  -- This will be called every frame when the viewer
                                          -- is blocking  the screen, prior to drawing the
 					 -- viewer. The parameter passed in will range from
 					 -- 0 to 1 as the viewer fades in, stay 1 while the
 					 -- viewer is being displayed, then go from 1 back
 					 -- down to 0 while the viewer fades out.
-   
+
    returnToGameFunction = function() end, -- this will be called when the viewer is returning to the game
 }
 
@@ -397,7 +397,7 @@ function av.sortCards()
                              m.achievementData[a].progress_is_percentage
                           local progessIsPctB = m.achievementData[b].progressIsPercentage or
                              m.achievementData[b].progress_is_percentage
-                        
+
                           if progressA ~= progressB then
                              return (progressA / progressMaxA) > (progressB / progressMaxB)
                           elseif progressIsPercentageA ~= progressIsPercentageB then
@@ -480,20 +480,20 @@ function av.drawTitle(x, y)
    local image = m.titleImageCache
    if not image then
       image = gfx.image.new(width, height)
-   
+
       gfx.pushContext(image)
       local font = m.fonts.title
-      
+
       gfx.setColor(gfx.kColorWhite)
       gfx.fillRoundRect(0, 0, width, height, TITLE_CORNER)
-      
+
       local margin = 1
       gfx.setColor(gfx.kColorBlack)
       gfx.fillRoundRect(0+margin, 0+margin, width-2*margin, height-2*margin, TITLE_CORNER)
-      
+
       gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
       font:drawTextAligned("Achievements", width/2, height/2 - math.floor(font:getHeight()/2) + TITLE_TWEAK_Y, kTextAlignment.center)
-      
+
       font = m.fonts.status
       gfx.setFont(font)
       local summaryImg
@@ -515,7 +515,7 @@ function av.drawTitle(x, y)
          summaryImg:draw(LAYOUT_MARGIN,
                          height - TITLE_HELP_TEXT_MARGIN - summaryImg.height)
       end
-      
+
       gfx.popContext()
       m.titleImageCache = image
       if m.config.invertCards then
@@ -535,27 +535,27 @@ function av.drawTitle(x, y)
    sortImg2:draw(width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth + (
                     m.maxSortTextWidth / 2 - sortImg2.width/2),
                  height - TITLE_HELP_TEXT_MARGIN - sortImg2.height)
-   
+
    sortImg:draw(width - LAYOUT_MARGIN - sortImg.width - 2 * TITLE_ARROW_X_MARGIN - m.maxSortTextWidth,
                 height - TITLE_HELP_TEXT_MARGIN - sortImg.height)
    gfx.setColor(gfx.kColorWhite)
    gfx.setLineWidth(1)
    local arrowAnim = math.sin(TITLE_ARROW_SPEED * m.continuousAnimFrame) * TITLE_ARROW_MAG
-   
+
    local triX = width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN/2 + arrowAnim
    local triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
-   
+
    gfx.fillPolygon(triX - TITLE_ARROW_WIDTH/2, triY - TITLE_ARROW_HEIGHT/2,
                    triX + TITLE_ARROW_WIDTH/2, triY,
                    triX - TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
    triX = width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth - TITLE_ARROW_X_MARGIN/2 - arrowAnim
    triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
-   
+
    gfx.fillPolygon(triX + TITLE_ARROW_WIDTH/2, triY - TITLE_ARROW_HEIGHT/2,
                    triX - TITLE_ARROW_WIDTH/2, triY,
                    triX + TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
    gfx.popContext()
-   
+
    m.titleImageCache:draw(x, y)
 end
 
@@ -591,13 +591,13 @@ function av.drawCard(achievementId, x, y, width, height)
       end
       gfx.setColor(gfx.kColorWhite)
       gfx.fillRoundRect(0, 0, width, height, CARD_CORNER)
-      
+
       gfx.setStrokeLocation(gfx.kStrokeInside)
       gfx.setLineWidth(CARD_OUTLINE)
       gfx.setColor(gfx.kColorBlack)
-      
+
       gfx.drawRoundRect(margin, margin, width-2*margin, height-2*margin, CARD_CORNER)
-      
+
       local granted = not not m.achievementData[achievementId].grantedAt
       local iconSize = LAYOUT_ICON_SIZE
       local imageMargin = LAYOUT_MARGIN
@@ -609,14 +609,14 @@ function av.drawCard(achievementId, x, y, width, height)
       if iconImg then
          iconSize = math.min(iconSize, iconImg.width)
          iconImg:draw(width - imageMargin - iconImg.width, imageMargin)
-      end      
+      end
 
       local font = granted and m.fonts.name.granted or m.fonts.name.locked
       gfx.setFont(font)
       local nameImg = gfx.imageWithText(info.name,
                                         width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
                                         height - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE)
-      
+
       font = granted and m.fonts.description.granted or m.fonts.description.locked
       gfx.setFont(font)
       local heightRemaining = height - 2*LAYOUT_MARGIN - 2*LAYOUT_SPACING - nameImg.height - CHECKBOX_SIZE
@@ -626,17 +626,17 @@ function av.drawCard(achievementId, x, y, width, height)
          if info.isSecret and not granted then
             description = SECRET_DESCRIPTION
          end
-         
+
          descImg = gfx.imageWithText(description,
                                      width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
                                      heightRemaining)
       end
-      
+
       nameImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN)
       if descImg then
          descImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN + nameImg.height + LAYOUT_SPACING)
       end
-   
+
       if granted then
          m.checkBox.granted:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
       elseif info.isSecret then
@@ -644,7 +644,7 @@ function av.drawCard(achievementId, x, y, width, height)
       else
          m.checkBox.locked:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
       end
-      
+
       local progressMax = info.progress_max or info.progressMax
       local statusImgWidth, statusImgHeight = 0, 0
       local font = m.fonts.status
@@ -665,13 +665,13 @@ function av.drawCard(achievementId, x, y, width, height)
                         height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
          statusImgWidth = statusImg.width
       end
-      
+
       if not granted and progressMax then
          local font = m.fonts.status
          gfx.setFont(font)
          local progress = m.achievementProgress[achievementId] or info.progress or 0
          local progressIsPercentage = info.progressIsPercentage
-         
+
          local progressText, frac
          if progressIsPercentage then
             local pct = math.floor((progress or 0) * 100 / progressMax)
@@ -692,11 +692,11 @@ function av.drawCard(achievementId, x, y, width, height)
          local progressSpacing = LAYOUT_STATUS_SPACING
          local progressMargin = LAYOUT_MARGIN
          local progressTextImg = gfx.imageWithText(progressText, progressTextWidth, progressTextHeight)
-         
+
          progressTextImg:draw(width - progressMargin - statusImgWidth -
                               progressSpacing - progressTextImg.width,
                               height - progressMargin - progressTextImg.height + LAYOUT_STATUS_TWEAK_Y)
-         
+
          local progressBarWidth =
             width - 2*LAYOUT_MARGIN -
             LAYOUT_STATUS_SPACING - statusImgWidth -
