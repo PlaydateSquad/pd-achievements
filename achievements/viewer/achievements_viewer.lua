@@ -56,12 +56,18 @@ local defaultConfig = {
    sortOrder = "default",  -- sort order "default", "recent", "progress", or "name"
    summaryMode = "count",  -- how to summarize achievements: "count", "percent", "score", or "none"
 
-   disableBackground = false,  -- disable the automatically captured / fading background.
-                               -- If you disable the background, you probably need to set
-                               -- an updateFunction and draw something there.
+   disableBackground = false,  -- Disable the automatically captured / fading background.
+                               -- If you disable the background, you will need to set
+                               -- an updateFunction and draw something there, or maybe
+                               -- call gfx.sprite.update() or something.
    
-   updateFunction = function() end,  -- this will be called every frame when the viewer is blocking
-                                     -- the screen, prior to drawing the viewer
+   updateFunction = function(anim) end,  -- This will be called every frame when the viewer
+                                         -- is blocking  the screen, prior to drawing the
+					 -- viewer. The parameter passed in will range from
+					 -- 0 to 1 as the viewer fades in, stay 1 while the
+					 -- viewer is being displayed, then go from 1 back
+					 -- down to 0 while the viewer fades out.
+   
    returnToGameFunction = function() end, -- this will be called when the viewer is returning to the game
 }
 
@@ -805,19 +811,19 @@ end
 
 
 function av.animateInUpdate()
-   m.userUpdate()
-   if m.backdropImage then
-      m.backdropImage:draw(0, 0)
-   end
-   m.continuousAnimFrame = m.continuousAnimFrame + 1
    m.fadeAmount = m.fadeAmount + (FADE_AMOUNT / FADE_FRAMES)
    if m.fadeAmount >= FADE_AMOUNT then
       m.fadeAmount = FADE_AMOUNT
    end
+   m.userUpdate(m.fadeAmount / FADE_AMOUNT)
+   if m.backdropImage then
+      m.backdropImage:draw(0, 0)
+   end
+   m.continuousAnimFrame = m.continuousAnimFrame + 1
 
    m.maxScroll = m.card[#m.card].y + m.c.CARD_HEIGHT - SCREEN_HEIGHT + 2*CARD_SPACING
 
-   if m.config.fadeColor ~= gfx.kColorClear then
+   if m.config.fadeColor ~= gfx.kColorClear and not m.config.disableBackground then
       gfx.pushContext()
       gfx.setColor(m.config.fadeColor)
       gfx.setDitherPattern(1-m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
@@ -852,16 +858,16 @@ function av.animateInUpdate()
 end
 
 function av.animateOutUpdate()
-   m.userUpdate()
-   if m.backdropImage then
-      m.backdropImage:draw(0, 0)
-   end
    m.continuousAnimFrame = m.continuousAnimFrame + 1
    m.fadeAmount = m.fadeAmount + (FADE_AMOUNT / FADE_FRAMES)
    if m.fadeAmount >= FADE_AMOUNT then
       m.fadeAmount = FADE_AMOUNT
    end
-   if m.config.fadeColor ~= gfx.kColorClear then
+   m.userUpdate(1-m.fadeAmount / FADE_AMOUNT)
+   if m.backdropImage then
+      m.backdropImage:draw(0, 0)
+   end
+   if m.config.fadeColor ~= gfx.kColorClear and not m.config.disableBackground then
       gfx.pushContext()
       gfx.setColor(m.config.fadeColor)
       gfx.setDitherPattern(FADE_AMOUNT + m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
@@ -898,7 +904,7 @@ function av.animateOutUpdate()
 end
 
 function av.mainUpdate()
-   m.userUpdate()
+   m.userUpdate(1)
    if m.fadedBackdropImage then
       m.fadedBackdropImage:draw(0, 0)
    end
