@@ -123,7 +123,7 @@ local TOAST_HEIGHT_BASE <const> = 58
 local TOAST_HEIGHT_PER_LINE <const> = 16
 -- ...but with a minimum of this height.
 local TOAST_HEIGHT_MIN <const> = 64
-local TOAST_SPACING <const> = 10
+local TOAST_SPACING <const> = 12
 local TOAST_TEXT <const> = "Achievement unlocked!"
 
 local MINI_TOAST_WIDTH <const> = 184
