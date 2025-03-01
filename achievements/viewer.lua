@@ -6,25 +6,28 @@ local gfx <const> = playdate.graphics
 
 --[[ Achievements Viewer
 
-   This provides an "achievements viewer" screen that you can easily use in your
-   game to display acheivements using a consistent UI.
+   This provides a modal "achievements viewer" screen that you can easily use in
+   your game to display achievements using a consistent UI that feels like part
+   of the Playdate OS.
 
    To use it, ensure all of the required assets are in the "achievements/assets"
-   directory of your game, and call achievementsViewer.launch().
+   directory of your game, and call achievements.viewer.launch() when you want
+   to display the achievements viewer. (Ensure that you return out from your
+   playdate.update function as soon after the call as you can.)
 
-   When you run acheivementsViewer.launch(), the viewer will temporarily take
+   When you run achievements.viewer.launch(), the viewer will temporarily take
    over your playdate.update function, blocking execution of your game. When the
    user exits the achievements viewer by pressing the B button, control will be
    returned to your previous playdate.update function.
 
    For more advanced use, you can set various config options below, for example:
-   achievementsViewer.launch({
+   achievements.viewer.launch({
      numDescriptionLines = 1,
      fadeColor = gfx.kColorWhite,
    }).
 
    Startup delay: The first time you call launch(), there will be a slight delay
-   as it loads assets; to prevent this, call achievementsViewer.initialize()
+   as it loads assets; to prevent this, call achievements.viewer.initialize()
    ahead of time. You can also pass in config settings to initialize().
 
    Device state: The viewer attempts to back up and restore as much device state
@@ -37,7 +40,7 @@ local gfx <const> = playdate.graphics
    Note: launching the viewer does not affect the Playdate system menu, so if
    you have any menu items set up, they will still be usable while the viewer
    is on screen. If you ever need to force the viewer to exit (for example if the
-   user chooses a "exit" menu option), call achievementsViewer.forceExit().
+   user chooses a "exit" menu option), call achievements.viewer.forceExit().
 ]]
 
 -- These are the settings you can pass to initialize() and launch() the first time.
@@ -66,7 +69,7 @@ local defaultConfig = {
 
    -- The default audio volume to use for the achievement viewer's sound
    -- effects. This should range from 0 to 1. You can modify this after the
-   -- first time by calling achievementsViewer.setSoundVolume(), for example if
+   -- first time by calling achievements.viewer.setSoundVolume(), for example if
    -- the user changes a "sound effects volume" in-game option..
    soundVolume = 1,
 
