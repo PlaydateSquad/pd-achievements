@@ -612,7 +612,7 @@ function av.drawCard(achievementId, x, y, width, height)
       local iconImgGranted = m.icons[achievementId].granted or m.defaultIcons.granted or
             m.icons[achievementId].locked or m.defaultIcons.locked
       local iconImgLocked
-      if info.secret then
+      if info.isSecret then
          iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.secret or m.defaultIcons.locked or
             m.icons[achievementId].granted or m.defaultIcons.granted
       else
@@ -650,7 +650,7 @@ function av.drawCard(achievementId, x, y, width, height)
       font = granted and m.fonts.description.granted or m.fonts.description.locked
       gfx.setFont(font)
       local heightRemaining = height - 2*LAYOUT_MARGIN - 2*LAYOUT_SPACING - nameImg.height - CHECKBOX_SIZE
-      local descImage
+      local descImg
       if heightRemaining >= font:getHeight() then
          local description = info.description
          if info.isSecret and not granted then
