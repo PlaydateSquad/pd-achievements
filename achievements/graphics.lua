@@ -10,6 +10,7 @@ local gfx <const> = playdate.graphics
 local toast_graphics = {
 	iconWidth = 32,
 	iconHeight = 32,
+	toasts = {},
 }
 achievements.graphics = toast_graphics
 

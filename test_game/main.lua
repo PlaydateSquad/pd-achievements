@@ -41,7 +41,6 @@ local achievementData = {
 }
 
 achievements.initialize(achievementData)
-achievements.graphics.default_toast = achievements.graphics.toasts.falling_card
 
 gfx.setColor(gfx.kColorBlack)
 
@@ -69,6 +68,7 @@ import "CoreLibs/ui"
 import "generate_data"
 import "simple_viewer"
 import "achievements/viewer"
+import "achievements/toasts"
 
 local main_screen = playdate.ui.gridview.new(0, 20)
 local options = {
@@ -80,6 +80,12 @@ local options = {
     end},
     {"LAUNCH FANCY VIEWER", function()
 	achievements.viewer.launch({fadeColor = gfx.kColorWhite})
+    end},
+    {"regular toast", function()
+	achievements.toasts.toast("test_achievement", { miniMode = false, numDescriptionLines = 1 })
+    end},
+    {"mini toast", function()
+	achievements.toasts.toast("test_achievement", { miniMode = true })
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then
@@ -145,7 +151,6 @@ Scenes.MAIN_DEBUG = {
         gfx.fillRect(0, 0, 400, 240)
         main_screen:drawInRect(10, 10, 390, 230)
         playdate.drawFPS(0,0)
-        achievements.graphics.updateVisuals()
     end
 }
 
