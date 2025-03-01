@@ -295,8 +295,6 @@ function at.initialize(config)
    m.toastQueue = {} -- additional toasts after this toast
    m.toastSound = at.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/toastSound")
    m.toastProgressSound = at.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/toastProgressSound")
-   m.toastPos = { x = SCREEN_WIDTH / 2 - TOAST_WIDTH / 2,
-		  y = SCREEN_HEIGHT }
 end
 
 function at.reinitialize(config)
@@ -812,7 +810,6 @@ end
 achievements.toasts = {
    initialize = at.initialize,
    toast = at.toast,
-   miniToast = at.miniToast,
    isToasting = at.isToasting,
    overrideConfig = at.overrideConfig,
    abortToasts = at.abortToasts,
