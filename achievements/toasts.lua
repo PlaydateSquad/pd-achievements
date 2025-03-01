@@ -12,8 +12,12 @@ local gfx <const> = playdate.graphics
    advanced.
 
    To use it, ensure all of the required assets are in the "achievements/assets"
-   directory of your game, and call achievementsViewer.launch().
-   
+   directory of your game.
+
+   Then you can trigger a toast to display in one of two ways: Either call
+   achievements.toasts.toast("achievement_id") when you want to display the
+   toast, or call achievements.toasts.setAutoToastOnGrant(true) to automatically
+   display a toast whenever an achievement is granted.
 ]]
 
 -- These are the settings you can pass to initialize() and toast() the first time.
@@ -50,6 +54,19 @@ local defaultConfig = {
    -- use a lighter shadow by setting this to white, or no shadow by setting
    -- this to clear.
    shadowColor = gfx.kColorBlack,
+
+   -- Advanced setting: how to render toasts. Currently the only way implemented
+   -- is "update", but "sprite" and "manual" will be implemented in the future.
+   --
+   --   update: override the developer's playdate.update while the toast displays,
+   --   which will draw the toast after everything else has rendered.
+   --
+   --   sprite: draw the toast into a playdate.gfx.sprite with a very
+   --   high priority
+   --
+   --   manual: the developer must call achievements.toasts.manualUpdate() at
+   --   the end of their playdate.update, after everything else has rendered.
+   renderMethod = "update",
 
    -- The following can be overridden toast-by-toast via overrideConfig.
    -- This sets the defaults for any toasts where these are unspecified.
@@ -858,6 +875,8 @@ achievements.toasts = {
    overrideConfig = at.overrideConfig,
    abortToasts = at.abortToasts,
    setVolume = at.setVolume,
+
+   manualUpdate = at.updateToast,
 
    setAutoToastOnGrant = at.setAutoToastOnGrant,
    setAutoToastOnAdvance = at.setAutoToastOnAdvance,
