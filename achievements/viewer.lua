@@ -223,7 +223,6 @@ function av.setConstants(config)
    config = config or m.config
    local numLines = config.numDescriptionLines
    m.c = {}
-   m.c.CARD_WIDTH = CARD_WIDTH
    m.c.CARD_HEIGHT = math.max(CARD_HEIGHT_MIN, CARD_HEIGHT_BASE + numLines * CARD_HEIGHT_PER_LINE)
    m.c.CARD_SPACING_ANIM = SCREEN_HEIGHT - m.c.CARD_HEIGHT
 end
@@ -367,7 +366,7 @@ function av.reinitialize(config)
          m.numCompleted += 1
       end
       m.card[i] = {
-         x = SCREEN_WIDTH / 2 - m.c.CARD_WIDTH / 2,
+         x = SCREEN_WIDTH / 2 - CARD_WIDTH / 2,
          y = TITLE_HEIGHT + TITLE_SPACING + (i-1) * (m.c.CARD_HEIGHT + CARD_SPACING),
          hidden = false
       }
@@ -790,7 +789,7 @@ function av.drawCards(x, y, animating)
    local y = (y or 0) - m.scroll + CARD_SPACING
 
 
-   local scrollBarX = x + m.title.x + math.max(TITLE_WIDTH, m.c.CARD_WIDTH) + SCROLLBAR_SPACING
+   local scrollBarX = x + m.title.x + math.max(TITLE_WIDTH, CARD_WIDTH) + SCROLLBAR_SPACING
    local scrollBarHidden = SCREEN_WIDTH + SCROLLBAR_SPACING
    local animFrac
    if animating > 0 then
@@ -825,7 +824,7 @@ function av.drawCards(x, y, animating)
             av.drawCard(id,
                         x + card.x,
                         y + card.drawY,
-                        m.c.CARD_WIDTH, m.c.CARD_HEIGHT)
+                        CARD_WIDTH, m.c.CARD_HEIGHT)
             m.card[i].isVisible = true
          else
             m.card[i].isVisible = false
