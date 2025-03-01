@@ -165,7 +165,13 @@ local at = {}
 local m
 local savedConfig = nil
 
-local persistentCache = {} -- persists between toasts
+local persistentCache
+
+if achievements and achievements.viewer and achievements.viewer.getCache then
+   persistentCache = achievements.viewer.getCache()  -- share cache between toasts and viewewr
+else
+   persistentCache = {}
+end
 
 function at.loadFile(loader, path)
    if not path then return nil end
