@@ -4,6 +4,18 @@ import "CoreLibs/crank"
 
 local gfx <const> = playdate.graphics
 
+
+--[[ Achievement Toasts
+
+   This provides a "toast" popup that can display achievements when
+   they are granted, or give a progress update when their progress is
+   advanced.
+
+   To use it, ensure all of the required assets are in the "achievements/assets"
+   directory of your game, and call achievementsViewer.launch().
+   
+]]
+
 -- These are the settings you can pass to initialize() and toast() the first time.
 -- initialize() is optional, and will be automatically run when you call toast().
 local defaultConfig = {
@@ -807,6 +819,38 @@ function at.overrideConfig(config)
    m.overrideConfig = config
 end
 
+local originalGrantFunction = nil
+local function grantWithToast()
+end
+
+function at.setAutoToastOnGrant(autoToast)
+   if not originalGrantFunction then
+      originalGrantFunction = achievements.grant
+   end
+   
+   achievements.grant = autoToast and grantWithToast or originalGrantFunction
+end
+
+local originalAdvanceToFunction = nil
+local originalAdvanceByFunction = nil
+local function advanceToWithToast()
+end
+local function advanceByWithToast()
+end
+
+
+function at.setAutoToastOnAdvance(autoToast)
+   if not originalAdvanceToFunction then
+      originalAdvanceToFunction = achievements.advanceTo
+   end
+   if not originalAdvanceByFunction then
+      originalAdvanceByFunction = achievements.advanceBy
+   end
+   
+   achievements.advanceTo = autoToast and advanceToWithToast or originalAdvanceToFunction
+   achievements.advanceBy = autoToast and advanceByWithToast or originalAdvanceByFunction
+end
+
 achievements.toasts = {
    initialize = at.initialize,
    toast = at.toast,
@@ -814,4 +858,7 @@ achievements.toasts = {
    overrideConfig = at.overrideConfig,
    abortToasts = at.abortToasts,
    setVolume = at.setVolume,
+
+   setAutoToastOnGrant = at.setAutoToastOnGrant,
+   setAutoToastOnAdvance = at.setAutoToastOnAdvance,
 }
