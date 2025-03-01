@@ -4,8 +4,8 @@ import "CoreLibs/crank"
 
 local gfx <const> = playdate.graphics
 
--- These are the settings you can pass to initialize(), launch(), and toast() the first time.
--- initialize() is optional, and will be automatically run when you call launch() or toast().
+-- These are the settings you can pass to initialize() and toast() the first time.
+-- initialize() is optional, and will be automatically run when you call toast().
 local defaultConfig = {
    -- Set the path that you've placed the achievements viewer's fonts, images,
    -- and sounds. Be sure to include the trailing slash.
@@ -60,8 +60,8 @@ local defaultConfig = {
 local FADE_AMOUNT <const> = 0.5
 local FADE_FRAMES <const> = 16
 
-local SCREEN_WIDTH <const> = playdate.display.getWidth()
-local SCREEN_HEIGHT <const> = playdate.display.getHeight()
+local SCREEN_WIDTH <const> = 400
+local SCREEN_HEIGHT <const> = 240
 
 -- layout of inside the card
 local LAYOUT_MARGIN <const> = 8
@@ -87,33 +87,32 @@ local SECRET_DESCRIPTION <const> = "This is a secret achievement."
 
 local TOAST_CORNER <const> = 6
 local TOAST_OUTLINE <const> = 2
-local TOAST_WIDTH_LARGE <const> = 300
-local TOAST_WIDTH_SMALL <const> = 300
-local TOAST_HEIGHT_LARGE <const> = 90
-local TOAST_HEIGHT_SMALL <const> = 74
+-- Base height of each toast...
+local TOAST_HEIGHT_BASE <const> = 58
+-- ...plus this height per description line...
+local TOAST_HEIGHT_PER_LINE <const> = 16
+-- ...but with a minimum of this height.
+local TOAST_HEIGHT_MIN <const> = 64
 local TOAST_SPACING <const> = 20
 local TOAST_TEXT <const> = "Achievement unlocked!"
-local TOAST_WIDTH_MINI <const> = 184
-local TOAST_HEIGHT_MINI <const> = 44
-local TOAST_MARGIN_MINI <const> = 6
-local TOAST_SPACING_MINI <const> = 7
 
-local TOAST_START_X_LARGE <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_LARGE / 2
-local TOAST_START_X_SMALL <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_SMALL / 2
-local TOAST_START_X_MINI <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_MINI / 2
-local TOAST_START_Y_LARGE <const> = SCREEN_HEIGHT
-local TOAST_START_Y_SMALL <const> = SCREEN_HEIGHT
-local TOAST_START_Y_MINI <const> = SCREEN_HEIGHT
+local MINI_TOAST_WIDTH <const> = 184
+local MINI_TOAST_HEIGHT <const> = 44
+local MINI_TOAST_MARGIN <const> = 6
+local MINI_TOAST_SPACING <const> = 7
+local MINI_TOAST_START_X <const> = SCREEN_WIDTH / 2 - MINI_TOAST_WIDTH / 2
+local MINI_TOAST_START_Y <const> = SCREEN_HEIGHT
+local MINI_TOAST_FINISH_X <const> = SCREEN_WIDTH / 2 - MINI_TOAST_WIDTH / 2
+local MINI_TOAST_FINISH_Y <const> = SCREEN_HEIGHT - MINI_TOAST_HEIGHT - MINI_TOAST_SPACING
 
+local TOAST_START_X <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH / 2
+local TOAST_START_Y <const> = SCREEN_HEIGHT
+local TOAST_FINISH_X <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH / 2
+local TOAST_FINISH_Y_BASE <const> = SCREEN_HEIGHT - TOAST_SPACING
 
-local TOAST_FINISH_X_LARGE <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_LARGE / 2
-local TOAST_FINISH_X_SMALL <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_SMALL / 2
-local TOAST_FINISH_X_MINI <const> = SCREEN_WIDTH / 2 - TOAST_WIDTH_MINI / 2
-local TOAST_FINISH_Y_LARGE <const> = SCREEN_HEIGHT - TOAST_HEIGHT_LARGE - TOAST_SPACING
-local TOAST_FINISH_Y_SMALL <const> = SCREEN_HEIGHT - TOAST_HEIGHT_SMALL - TOAST_SPACING
-local TOAST_FINISH_Y_MINI <const> = SCREEN_HEIGHT - TOAST_HEIGHT_MINI - TOAST_SPACING_MINI
 local TOAST_EASING_IN <const> = playdate.easingFunctions.outCubic
 local TOAST_EASING_OUT <const> = playdate.easingFunctions.inCubic
+
 -- These animation timings use seconds because they need to work at any refresh rate.
 local TOAST_ANIM_IN_SECONDS <const> = 0.25
 local TOAST_ANIM_PAUSE_SECONDS <const> = 4
@@ -132,15 +131,13 @@ local TOAST_DROP_SHADOW_SIZE_MINI <const> = 5
 local TOAST_DROP_SHADOW_ALPHA <const> = .25 -- 0.875
 local TOAST_DROP_SHADOW_CORNER <const> = 8
 
-local SORT_ORDER = { "default", "recent", "progress", "name" }
-
-local av = {}
+local at = {}
 local m
 local savedConfig = nil
 
-local persistentCache = {} -- persists between launches
+local persistentCache = {} -- persists between toasts
 
-function av.loadFile(loader, path)
+function at.loadFile(loader, path)
    if not path then return nil end
 
    if not persistentCache[path] then
@@ -154,7 +151,7 @@ function av.loadFile(loader, path)
    return persistentCache[path]
 end
 
-function av.setupDefaults(config)
+function at.setupDefaults(config)
    if config then
       config = table.deepcopy(config)
       for k,v in pairs(defaultConfig) do
@@ -176,22 +173,10 @@ function av.setupDefaults(config)
    return config
 end
 
-function av.setConstants(config)
+function at.setConstants(config)
    config = config or m.config
-   local smallMode = config.smallMode
    m.c = {}
-   m.c.CARD_WIDTH = smallMode and CARD_WIDTH_SMALL or CARD_WIDTH_LARGE
-   m.c.CARD_HEIGHT = smallMode and CARD_HEIGHT_SMALL or CARD_HEIGHT_LARGE
-   m.c.CARD_SPACING_ANIM = smallMode and CARD_SPACING_ANIM_SMALL or CARD_SPACING_ANIM_LARGE
-   m.c.TITLE_WIDTH = smallMode and TITLE_WIDTH_SMALL or TITLE_WIDTH_LARGE
-   m.c.TITLE_HEIGHT = smallMode and TITLE_HEIGHT_SMALL or TITLE_HEIGHT_LARGE
-
-   m.c.TOAST_WIDTH = smallMode and TOAST_WIDTH_SMALL or TOAST_WIDTH_LARGE
-   m.c.TOAST_HEIGHT = smallMode and TOAST_HEIGHT_SMALL or TOAST_HEIGHT_LARGE
-   m.c.TOAST_START_Y = smallMode and TOAST_START_Y_SMALL or TOAST_START_Y_LARGE
-   m.c.TOAST_START_X = smallMode and TOAST_START_X_SMALL or TOAST_START_X_LARGE
-   m.c.TOAST_FINISH_Y = smallMode and TOAST_FINISH_Y_SMALL or TOAST_FINISH_Y_LARGE
-   m.c.TOAST_FINISH_X = smallMode and TOAST_FINISH_X_SMALL or TOAST_FINISH_X_LARGE
+   m.c.TOAST_HEIGHT = math.max(TOAST_HEIGHT_MIN, TOAST_HEIGHT_BASE + numLines * TOAST_HEIGHT_PER_LINE)
 
    if m.currentToast and m.currentToast.mini then
       m.c.TOAST_WIDTH = TOAST_WIDTH_MINI
@@ -1372,15 +1357,12 @@ function av.overrideToastConfig(config)
    m.overrideToastConfig = config
 end
 
-achievementsViewer = {
-   initialize = av.initialize,
-   launch = av.launch,
-   hasLaunched = av.hasLaunched,
-   toast = av.toast,
-   isToasting = av.isToasting,
-   overrideToastConfig = av.overrideToastConfig,
-   abortToasts = av.abortToasts,
-   setVolume = av.setVolume,
-   getCache = function() return persistentCache end
+achievements.toasts = {
+   initialize = at.initialize,
+   toast = at.toast,
+   miniToast = at.miniToast,
+   isToasting = at.isToasting,
+   overrideConfig = at.overrideConfig,
+   abortToasts = at.abortToasts,
+   setVolume = at.setVolume,
 }
-achievementViewer = achievementsViewer  -- typos yay
