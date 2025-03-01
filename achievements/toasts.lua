@@ -7,25 +7,54 @@ local gfx <const> = playdate.graphics
 -- These are the settings you can pass to initialize(), launch(), and toast() the first time.
 -- initialize() is optional, and will be automatically run when you call launch() or toast().
 local defaultConfig = {
-   gameData = nil, -- get the game data directly from the achievements library
-   assetPath = "achievements/viewer/",
-   smallMode = false,  -- use shorter cards (which only have room for a 1-line description instead of 2)
-   darkMode = true,  -- show dark cards instead of light cards
+   -- Set the path that you've placed the achievements viewer's fonts, images,
+   -- and sounds. Be sure to include the trailing slash.
+   assetPath = "achievements/toasts/", 
 
-   soundVolume = 1,  -- 0 to 1, or call achievementsViewer.setSoundVolume() instead
-   sortOrder = "default",  -- sort order default, recent, or progress
-   summaryMode = "count",  -- how to summarize achievements: "count", "percent", "score", or "none"
+   -- Number of lines of the achievement description to display. Setting this to 1
+   -- lets you fit more achievements on screen, if they all have very short
+   -- descriptions. If you have long descriptions, you may need to set this to 3.
+   -- This has been tested in the range of 0 (don't show descriptions) to 3.
+   -- Mini toasts always show 0 lines of description.
+   numDescriptionLines = 2,
 
-   disableBackground = false,  -- disable the automatically captured background
-   updateFunction = function() end,  -- this will be called every frame when the viewer is blocking the screen
-   returnToGameFunction = function() end, -- this will be called when the viewer is returning to the game
+   -- Normally, a toast is rendered as a white card with black text. Set this to
+   -- render a black card with white text.
+   invertToasts = false,
 
-   -- special options for toasts
-   toastShadowColor = gfx.kColorBlack, -- set to white if rendering on a dark background
-   -- the following can be overridden via overrideToastConfig
-   toastMiniMode = false,  -- render a mini-toast instead of a full-sized toast -- smaller font and no description.
-   toastAssumeGranted = false,  -- normally, toasting an achievement that isn't already unlocked shows an "in progress" toast
-   toastAnimateUnlocking = true,  -- animate the checkbox and the icon changing over (only on granted achievements)
+   -- The default audio volume to use for the toast's sound
+   -- effects. This should range from 0 to 1. You can modify this after the
+   -- first time by calling achievementToasts.setSoundVolume(), for example if
+   -- the user changes a "sound effects volume" in-game option..
+   soundVolume = 1,
+
+   -- Which achievement data to use. Normally you will set this to nil to have
+   -- it retrieve the current game's data directly from the achievements
+   -- library, but if you want to display a different game's data, you can get
+   -- the gameData using the crossgame module and pass it in here.
+   gameData = nil,
+
+   -- Normally the toast is rendered with a black dithered background. You can
+   -- use a lighter shadow by setting this to white, or no shadow by setting
+   -- this to clear.
+   shadowColor = gfx.kColorBlack,
+
+   -- The following can be overridden toast-by-toast via overrideConfig.
+   -- This sets the defaults for any toasts where these are unspecified.
+
+   -- Set this to true to render a mini-toast instead of a full-sized
+   -- toast. This takes up much less space on the screen by using a
+   -- smaller font and showing no description.
+   miniMode = false,
+
+   -- Normally, toasting an achievement that isn't already unlocked
+   -- shows an "in progress" toast. Setting this to true assumes any
+   -- achievement you toast is granted.
+   assumeGranted = false,
+
+   -- Animate the checkbox and the icon changing over (only for
+   -- granted achievements, not on "in progress" toasts).
+   animateUnlocking = true,
 }
 
 local FADE_AMOUNT <const> = 0.5
@@ -33,16 +62,6 @@ local FADE_FRAMES <const> = 16
 
 local SCREEN_WIDTH <const> = playdate.display.getWidth()
 local SCREEN_HEIGHT <const> = playdate.display.getHeight()
-
-local CARD_CORNER <const> = 6
-local CARD_WIDTH_LARGE <const> = 300
-local CARD_WIDTH_SMALL <const> = 300
-local CARD_HEIGHT_LARGE <const> = 90
-local CARD_HEIGHT_SMALL <const> = 74
-local CARD_OUTLINE <const> = 2
-local CARD_SPACING <const> = 8
-local CARD_SPACING_ANIM_LARGE <const> = SCREEN_HEIGHT - CARD_HEIGHT_LARGE
-local CARD_SPACING_ANIM_SMALL <const> = SCREEN_HEIGHT - CARD_HEIGHT_SMALL
 
 -- layout of inside the card
 local LAYOUT_MARGIN <const> = 8
@@ -55,51 +74,9 @@ local LAYOUT_PROGRESS_TWEAK_Y <const> = 0
 
 local CHECKBOX_SIZE <const> = 15
 
-local TITLE_CORNER <const> = 6
-local TITLE_TWEAK_Y <const> = -2 -- tweak the Y position of the title text
-local TITLE_WIDTH_LARGE <const> = CARD_WIDTH_LARGE
-local TITLE_WIDTH_SMALL <const> = CARD_WIDTH_SMALL
-local TITLE_HEIGHT_LARGE <const> = 64
-local TITLE_HEIGHT_SMALL <const> = 64
-local TITLE_LOCK_Y <const> = 19  -- lock in position at this point, or negative to not
-local TITLE_SPACING <const> = CARD_SPACING
-local TITLE_PERCENTAGE_TEXT <const> = "%s completed"
-local TITLE_COUNT_TEXT <const> = "Completed: %s / %s"
-local TITLE_SCORE_TEXT <const> = "Completion score: %s / %s"
-local TITLE_HELP_TEXT_MARGIN <const> = 4
-local TITLE_ARROW_X_MARGIN <const> = 16
-local TITLE_ARROW_Y_MARGIN <const> = 6
-local TITLE_ARROW_WIDTH <const> = 5
-local TITLE_ARROW_HEIGHT <const> = 10
-local TITLE_ARROW_SPEED <const> = 0.3
-local TITLE_ARROW_MAG <const> = 3
-
-local BACK_BUTTON_X <const> = 4
-local BACK_BUTTON_Y <const> = 240 - 24
-local BACK_BUTTON_START_X <const> = 4
-local BACK_BUTTON_START_Y <const> = 242
-local BACK_BUTTON_EASING_IN <const> = playdate.easingFunctions.outQuint
-local BACK_BUTTON_EASING_OUT <const> = playdate.easingFunctions.inQuint
-
 local PROGRESS_BAR_HEIGHT <const> = 8
 local PROGRESS_BAR_OUTLINE <const> = 1
 local PROGRESS_BAR_CORNER <const> = 2
-
-local ANIM_FRAMES <const> = 20
-local ANIM_EASING_IN <const> = playdate.easingFunctions.outBack -- outCubic
-local ANIM_EASING_OUT <const> = playdate.easingFunctions.inCubic
-
-local SCROLL_EASING <const> = playdate.easingFunctions.inQuad
-local SCROLL_ACCEL <const> = .75
-local SCROLL_ACCEL_DOWN <const> = 2
-local SCROLL_SPEED <const> = 16
-local SCROLLBAR_WIDTH <const> = 6
-local SCROLLBAR_PAGE_WIDTH <const> = 10
-local SCROLLBAR_CORNER <const> = 4
-local SCROLLBAR_SPACING <const> = 6
-local SCROLLBAR_Y_BUFFER <const> = 10
-local SCROLLBAR_EASING_IN <const> = playdate.easingFunctions.outQuint
-local SCROLLBAR_EASING_OUT <const> = playdate.easingFunctions.inQuint
 
 local LOCKED_TEXT <const> = "Locked "
 local PROGRESS_TEXT <const> = "Locked "  -- could also be "Progress "
@@ -108,6 +85,8 @@ local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d
 
 local SECRET_DESCRIPTION <const> = "This is a secret achievement."
 
+local TOAST_CORNER <const> = 6
+local TOAST_OUTLINE <const> = 2
 local TOAST_WIDTH_LARGE <const> = 300
 local TOAST_WIDTH_SMALL <const> = 300
 local TOAST_HEIGHT_LARGE <const> = 90
