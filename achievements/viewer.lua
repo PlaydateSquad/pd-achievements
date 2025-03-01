@@ -1115,4 +1115,6 @@ achievements.viewer = {
    forceExit = av.forceExit,
    hasLaunched = av.hasLaunched,
    setVolume = av.setVolume,
+
+   getCache = function() return persistentCache end,
 }
