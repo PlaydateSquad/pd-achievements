@@ -27,7 +27,6 @@ function generate_game_data(numgames, achievements_min, achievements_max)
             description = "Auto-generated random game data for achievement viewer testing. (#" .. i ..")",
             version = "0.0.0",
             specVersion = achievements.specVersion,
-            libVersion = achievements.libVersion,
             achievements = {},
         }
         -- Begin generating achievement data.
