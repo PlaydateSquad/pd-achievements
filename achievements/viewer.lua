@@ -1107,16 +1107,10 @@ function av.setVolume(v)
    if defaultConfig then defaultConfig.soundVolume = v end
 end
 
-achievementsViewer = {
+achievements.viewer = {
    initialize = av.initialize,
    launch = av.launch,
    forceExit = av.forceExit,
    hasLaunched = av.hasLaunched,
    setVolume = av.setVolume,
-   getCache = function() return persistentCache end,
-   toast = function() end,
-   isToasting = function() end,
-   overrideToastConfig = function() end,
-   abortToasts = function() end,
 }
-achievementViewer = achievementsViewer  -- typos yay
