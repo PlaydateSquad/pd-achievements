@@ -223,6 +223,7 @@ function av.setConstants(config)
    config = config or m.config
    local numLines = config.numDescriptionLines
    m.c = {}
+   m.c.CARD_WIDTH = CARD_WIDTH
    m.c.CARD_HEIGHT = math.max(CARD_HEIGHT_MIN, CARD_HEIGHT_BASE + numLines * CARD_HEIGHT_PER_LINE)
    m.c.CARD_SPACING_ANIM = SCREEN_HEIGHT - m.c.CARD_HEIGHT
 end
