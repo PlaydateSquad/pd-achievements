@@ -9,7 +9,7 @@ local gfx <const> = playdate.graphics
    This provides an "achievements viewer" screen that you can easily use in your
    game to display acheivements using a consistent UI.
 
-   To use it, ensure all of the required assets are in the "achievements/viewer"
+   To use it, ensure all of the required assets are in the "achievements/assets"
    directory of your game, and call achievementsViewer.launch().
 
    When you run acheivementsViewer.launch(), the viewer will temporarily take
@@ -45,7 +45,7 @@ local gfx <const> = playdate.graphics
 local defaultConfig = {
    -- Set the path that you've placed the achievements viewer's fonts, images,
    -- and sounds. Be sure to include the trailing slash.
-   assetPath = "achievements/viewer/", 
+   assetPath = "achievements/assets/", 
 
    -- Number of lines of the achievement description to display. Setting this to 1
    -- lets you fit more achievements on screen, if they all have very short
