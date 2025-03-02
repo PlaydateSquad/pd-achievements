@@ -7,21 +7,34 @@ local gfx <const> = playdate.graphics
 
 --[[ Achievement Toasts
 
-   This provides a "toast" popup that can display achievements when
-   they are granted, or give a progress update when their progress is
-   advanced.
+   This provides a "toast" popup that can display achievements when they are
+   granted, or give a progress update when their progress is advanced.
 
    To use it, ensure all of the required assets are in the "achievements/assets"
    directory of your game.
 
-   Then you can trigger a toast to display in one of two ways: Either call
-   achievements.toasts.toast("achievement_id") when you want to display the
-   toast, or call achievements.toasts.setAutoToastOnGrant(true) to automatically
-   display a toast whenever an achievement is granted.
+   You can optionally call achievements.toasts.initialize(config) to preload the
+   assets and set up the toasts system. The various options allowed are in
+   defaultConfig below.
+
+   Toasts can be triggered in two different ways: automatically or manually. If
+   you want to show a toast automatically when an achievement is granted,
+   specify toastOnGranted=true in the configuration when you call
+   initialize(). If toastOnGranted=false, then you'll need to call
+   achievements.toasts.toast(achievementId) to trigger a toast.
+
+   If you call toast() on an achievement that hasn't yet been completed, a
+   progress toast will be displayed. You can trigger these to appear
+   automatically when an achievement is advanced via advanceBy() or advanceTo()
+   by setting toastOnAdvance=true (or a number).
 ]]
 
--- These are the settings you can pass to initialize() and toast() the first time.
--- initialize() is optional, and will be automatically run when you call toast().
+
+
+
+-- These are the settings you can pass to initialize() and toast().
+-- initialize() is optional, and will be automatically run when you call
+-- toast() the first time.
 local defaultConfig = {
    -- Set the path that you've placed the achievements viewer's fonts, images,
    -- and sounds.
@@ -59,10 +72,10 @@ local defaultConfig = {
    -- shadowColor.
    invert = false,
 
-   -- The default audio volume to use for the toast's sound
-   -- effects. This should range from 0 to 1. You can modify this after the
-   -- first time by calling achievementToasts.setSoundVolume(), for example if
-   -- the user changes a "sound effects volume" in-game option..
+   -- The default audio volume to use for the toast's sound effects. This should
+   -- range from 0 to 1. You can call achievements.toasts.setSoundVolume() later
+   -- to change this mid-toast (for example if the user changes an in-game
+   -- volume setting).
    soundVolume = 1,
 
    -- Which achievement data to use. Normally you will set this to nil to have
@@ -76,21 +89,22 @@ local defaultConfig = {
    -- this to clear.
    shadowColor = gfx.kColorBlack,
 
-   -- Advanced setting: how to render toasts. Currently the only way implemented
-   -- is "update", but "sprite" and "manual" will be implemented in the future.
+   -- Advanced setting: how to render toasts. This can be set to "auto",
+   -- "sprite", or "manual", depending on how you want to update the toasts.
    --
-   --   update: override the developer's playdate.update while the toast displays,
-   --   which will draw the toast after everything else has rendered.
+   --   "auto": override the developer's playdate.update while the toast
+   --   displays, which will draw the toast after everything else has
+   --   rendered. This will be restored after all pending toasts are finished
+   --   displaying.
    --
-   --   sprite: draw the toast into a playdate.gfx.sprite with a very
-   --   high priority
+   --   "sprite": draw the toast into a playdate.gfx.sprite with a very high
+   --   priority. Be careful not to call gfx.sprite.removeAll() before this is
+   --   finished.
    --
-   --   manual: the developer must call achievements.toasts.manualUpdate() at
-   --   the end of their playdate.update, after everything else has rendered.
-   renderMode = "update",
-
-   -- The following can be overridden toast-by-toast via overrideConfig.
-   -- This sets the defaults for any toasts where these are unspecified.
+   --   "manual": the developer must call achievements.toasts.manualUpdate() at
+   --   the end of their playdate.update, after everything else has rendered, to
+   --   draw any pending toasts.
+   renderMode = "auto",
 
    -- Set this to true to render a mini-toast instead of a full-sized
    -- toast. This takes up much less space on the screen by using a
@@ -183,6 +197,8 @@ local TOAST_DROP_SHADOW_ALPHA <const> = .25 -- 0.875
 local TOAST_DROP_SHADOW_DITHER <const> = gfx.image.kDitherTypeBayer8x8
 local TOAST_DROP_SHADOW_CORNER <const> = 8
 
+local TOAST_SPRITE_Z_INDEX <const> = 32767
+
 local at = {}
 local m
 local savedConfig = nil
@@ -231,9 +247,8 @@ function at.setupDefaults(config)
    return config
 end
 
-function at.setConstants(config)
-   config = config or m.config
-   local numLines = config.numDescriptionLines
+function at.setConstants()
+   local numLines = m.config.numDescriptionLines
    m.c = {}
    m.c.TOAST_WIDTH = TOAST_WIDTH
    m.c.TOAST_HEIGHT = math.max(TOAST_HEIGHT_MIN, TOAST_HEIGHT_BASE + numLines * TOAST_HEIGHT_PER_LINE)
@@ -253,16 +268,19 @@ function at.setConstants(config)
 end
 
 function at.initialize(config)
+   if m then
+      at.reinitialize(config)
+      return
+   end
    config = at.setupDefaults(config)
-
+   
    gameData = config.gameData
    assetPath = config.assetPath
-
+   
    m = {}
    m.config = table.deepcopy(config)
 
    m.currentToast = nil
-   at.setConstants(config)
 
    m.imagePath = ""
    if not gameData then
@@ -358,12 +376,16 @@ function at.initialize(config)
 end
 
 function at.reinitialize(config)
+   -- Import any new fields set in config.
    if config then
       for k,v in pairs(config) do
 	 m.config[k] = v
+	 if savedConfig then savedConfig[k] = v end
       end
    end
-   at.setConstants()
+   -- Update settings that might have changed.
+   at.setToastOnGrant(m.config.toastOnGrant)
+   at.setToastOnAdvance(m.config.toastOnAdvance)
 end
 
 function at.formatDate(timestamp)
@@ -568,7 +590,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 	 if not granted and progressMax then
 	    local font = m.fonts.status
 	    gfx.setFont(font)
-	    local progress = info.progress or 0
+	    local progress = m.currentToast.progress or 0
 	    local progressIsPercentage = info.progressIsPercentage
 
 	    local progressText, frac
@@ -647,11 +669,33 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 	 iconImgLocked:setInverted(false)
 	 iconImgGranted:setInverted(false)
       end
+
+      if m.config.renderMode == "sprite" and m.toastSprite then
+	 m.toastSprite:setImage(m.toastImageCache[achievementId])
+	 m.toastSprite:setZIndex(TOAST_SPRITE_Z_INDEX)
+	 m.toastSprite:setCenter(0, 0)
+	 m.toastSprite:moveTo(x, y)
+      end
    end
-   m.toastImageCache[achievementId]:draw(x, y)
+
+   if m.config.renderMode == "auto" or m.config.renderMode == "manual" then
+      m.toastImageCache[achievementId]:draw(x, y)
+   elseif m.config.renderMode == "sprite" and m.toastSprite then
+      m.toastSprite:moveTo(x, y)
+   end
 end
 
 function at.destroy()
+   m.toasting = false
+   if m.toastBackupPlaydateUpdate then
+      playdate.update = m.toastBackupPlaydateUpdate
+      m.toastBackupPlaydateUpdate = nil
+   end
+   m.currentToast = nil
+   if m.toastSprite then
+      m.toastSprite:remove()
+      m.toastSprite = nil
+   end
    m = nil
 end
 
@@ -661,28 +705,23 @@ function at.clearCaches()
 end
 
 function at.updateToast()
+   if not m then return end
+   if not at.isToasting() then return end
+
    if m.toastBackupPlaydateUpdate then m.toastBackupPlaydateUpdate() end
 
    if m.currentToast == nil then
-      -- don't change whether we're mini-toasting except between toasts.
-      m.currentToast = {
-	 mini = not not m.config.miniMode,
-	 anim = not not m.config.animateUnlocking,
-	 granted = not not m.config.assumeGranted,
-      }
-      if m.overrideConfig then
-	 if m.overrideConfig.miniMode ~= nil then
-	    m.currentToast.mini = m.overrideConfig.miniMode
-	 end
-	 if m.overrideConfig.animateUnlocking ~= nil then
-	    m.currentToast.anim = m.overrideConfig.animateUnlocking
-	 end
-	 if m.overrideConfig.assumeGranted ~= nil then
-	    m.currentToast.granted = m.overrideConfig.assumeGranted
-	 end
+      -- Check if the queue contains any toasts
+      m.currentToast = table.remove(m.toastQueue, 1)
+      if not m.currentToast then
+	 -- finished toasting
+	 at.destroy()
+	 return
       end
+      m.toastAchievement = m.currentToast.id
+      m.toastImageCache[m.toastAchievement] = nil
+      m.toastAnim = 0
       at.setConstants()
-      m.currentToast.granted = m.currentToast.granted or achievements.isGranted(m.toastAchievement)
    end
    local isGranted = m.currentToast.granted
 
@@ -775,35 +814,8 @@ function at.updateToast()
 	 toastOptions.maskAnimFrame = true
       end
       at.drawCard(m.toastAchievement, x, y, m.c.TOAST_WIDTH, m.c.TOAST_HEIGHT, toastOptions)
-   elseif m.toastQueue and #m.toastQueue > 0 then
-      local nextToast = table.remove(m.toastQueue, 1)
-      m.toastAchievement = nextToast.id
-      m.currentToast = {
-	 granted = nextToast.granted,
-	 mini = nextToast.mini,
-	 anim = nextToast.anim,
-      }
-      if m.overrideConfig then
-	 if m.overrideConfig.miniMode ~= nil then
-	    m.currentToast.mini = m.overrideConfig.miniMode
-	 end
-	 if m.overrideConfig.assumeGranted ~= nil then
-	    m.currentToast.granted = m.overrideConfig.assumeGranted
-	 end
-	 if m.overrideConfig.animateUnlocking ~= nil then
-	    m.currentToast.anim = m.overrideConfig.animateUnlocking
-	 end
-      end
-      m.currentToast.granted = m.currentToast.granted or achievements.isGranted(m.toastAchievement)
-      m.toastImageCache[m.toastAchievement] = nil
-      m.toastAnim = 0
-      at.setConstants()
    else
-      m.toasting = false
-      playdate.update = m.toastBackupPlaydateUpdate
-      m.toastBackupPlaydateUpdate = nil
-      m.currentToast = nil
-      at.destroy()
+      m.currentToast = nil  -- will draw the next from the queue
    end
 end
 
@@ -819,49 +831,46 @@ function at.abortToasts()
 end
 
 function at.toast(achievementId, config)
-   config = at.setupDefaults(config)
-   if not m then
-      at.initialize(config)
-   end
-   at.reinitialize(config)
+   at.initialize(config)
    config = m.config
    if not m.achievementData[achievementId] then
       print("ERROR: achievement_viewer: toast() called with invalid achievement " .. achievementId)
       return
    end
-   if m and m.toasting then
-      -- queue up this toast for later
-      local mini, anim, granted = not not config.miniMode, not not config.animateUnlocking, not not config.assumeGranted
-      if m.overrideConfig then
-	 if m.overrideConfig.miniMode ~= nil then
-	    mini = m.overrideConfig.miniMode
-	 end
-	 if m.overrideConfig.assumeGranted ~= nil then
-	    granted = m.overrideConfig.assumeGranted
-	 end
-	 if m.overrideConfig.animateUnlocking ~= nil then
-	    anim = m.overrideConfig.animateUnlocking
+
+   -- queue up this toast
+   table.insert(m.toastQueue, { id = achievementId,
+				mini = not not config.miniMode,
+				anim = not not config.animateUnlocking,
+				granted = config.assumeGranted or achievements.isGranted(achievementId),
+				progress = achievements.progress[achievementId] or m.achievementData[achievementId].progress,
+   })
+
+   if not m.toasting then
+      -- set up for the first toast in a sequence
+      m.toasting = true
+      if m.config.renderMode == "auto" then
+	 m.toastBackupPlaydateUpdate = playdate.update
+	 playdate.update = at.updateToast
+      else
+	 m.toastBackupPlaydateUpdate = nil
+      end
+      
+      m.toastAnim = 0
+      m.toastAchievement = achievementId
+      m.toastRefreshRate = playdate.display.getRefreshRate() or 30
+      m.toastImageCache[m.toastAchievement] = nil
+      if m.toastRefreshRate == 0 then m.toastRefreshRate = 30 end
+      
+      if m.config.renderMode == "sprite" then
+	 if not m.toastSprite then
+	    m.toastSprite = gfx.sprite.new()
+	    m.toastSprite.update = at.updateToast
+	    m.toastSprite:setUpdatesEnabled(true)
+	    m.toastSprite:add()
 	 end
       end
-
-      table.insert(m.toastQueue, { id = achievementId,
-				   mini = mini,
-				   anim = anim,
-				   granted = granted,
-      })
-      return
    end
-
-   m.toastBackupPlaydateUpdate = playdate.update
-
-   m.toasting = true
-   m.toastAnim = 0
-   m.toastAchievement = achievementId
-   m.toastRefreshRate = playdate.display.getRefreshRate() or 30
-   m.toastImageCache[m.toastAchievement] = nil
-   if m.toastRefreshRate == 0 then m.toastRefreshRate = 30 end
-
-   playdate.update = at.updateToast
 end
 
 function at.isToasting()
@@ -870,20 +879,17 @@ end
 
 -- 0 to 1
 function at.setVolume(v)
-   if m and m.config then m.config.soundVolume = v end
+   if m then
+      m.config.soundVolume = v
+      m.toastSound:setVolume(v)
+      m.toastProgressSound:setVolume(v)
+   end
    if savedConfig then savedConfig.soundVolume = v end
    if defaultConfig then defaultConfig.soundVolume = v end
 end
 
--- Specify a config with miniMode, animateUnlocking, assumeGranted set that
--- overrides what the toast was queued up with. Or nil to stop overriding.
-function at.overrideConfig(config)
-   m.overrideConfig = config
-end
-
 local originalGrantFunction = nil
 local function grantWithToast(achievementId)
-   print("grantWithToast")
    local wasGrantedBefore = achievements.isGranted(achievementId)
    if originalGrantFunction(achievementId) then
       if not wasGrantedBefore and achievements.isGranted(achievementId) then
@@ -894,7 +900,6 @@ end
 
 function at.setToastOnGrant(autoToast)
    if not originalGrantFunction then
-      print("saving grant method")
       originalGrantFunction = achievements.grant
    end
    
@@ -958,14 +963,10 @@ achievements.toasts = {
    initialize = at.initialize,
    toast = at.toast,
    isToasting = at.isToasting,
-   overrideConfig = at.overrideConfig,
    abortToasts = at.abortToasts,
    setVolume = at.setVolume,
 
    manualUpdate = at.updateToast,
-
-   setToastOnGrant = at.setToastOnGrant,
-   setToastOnAdvance = at.setToastOnAdvance,
 
    getCache = function() return persistentCache end,
 }
