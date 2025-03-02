@@ -38,7 +38,7 @@ local achievementData = {
     -- The filepath to an icon image for locked achievements which are marked as secret. Optional.
     secretIcon = "my_icon_hidden", -- 32x32 .png
     iconPath = "path_to_icons",
-    cardPath = "path_to_game_card", -- dimensions??
+    cardPath = "path_to_game_card", -- 380x90 .png
     achievements = {
         -- This table should be an array of achievement tables.
         -- Each of these tables stores the data for a single achievement.
