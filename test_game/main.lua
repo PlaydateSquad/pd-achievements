@@ -70,11 +70,13 @@ import "simple_viewer"
 import "achievements/viewer"
 import "achievements/toasts"
 
-local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
+local TOAST_MODE = "sprite"  -- can also use "sprite" or "manual", for testing
 
 achievements.toasts.initialize({ miniMode = false, numDescriptionLines = 1,
 				 toastOnGrant = true, toastOnAdvance = 0.5,
 				 renderMode = TOAST_MODE })
+
+local mainSprite
 
 local main_screen = playdate.ui.gridview.new(0, 20)
 local options = {
@@ -87,13 +89,11 @@ local options = {
     {"LAUNCH FANCY VIEWER", function()
 	achievements.viewer.launch({fadeColor = gfx.kColorWhite})
     end},
-    {"use regular toasts", function()
+    {"set to regular toasts", function()
 	achievements.toasts.initialize({ miniMode = false })
-	--achievements.toasts.toast("test_achievement", { miniMode = false })
     end},
-    {"use mini toasts", function()
+    {"set to mini toasts", function()
 	achievements.toasts.initialize({ miniMode = true })
-	--achievements.toasts.toast("test_achievement", { miniMode = true })
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then
@@ -163,7 +163,7 @@ Scenes.MAIN_DEBUG = {
 }
 
 if TOAST_MODE == "sprite" then
-   local mainSprite = gfx.sprite.new(gfx.image.new(400, 240))
+   mainSprite = gfx.sprite.new(gfx.image.new(400, 240))
    mainSprite:add()
    mainSprite:setCenter(0, 0)
    mainSprite:moveTo(0, 0)

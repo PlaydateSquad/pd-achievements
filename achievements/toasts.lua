@@ -108,8 +108,7 @@ local defaultConfig = {
    --   displaying.
    --
    --   "sprite": draw the toast into a playdate.gfx.sprite with a very high
-   --   priority. Be careful not to call gfx.sprite.removeAll() before this is
-   --   finished.
+   --   priority.
    --
    --   "manual": the developer must call achievements.toasts.manualUpdate() at
    --   the end of their playdate.update, after everything else has rendered, to
@@ -699,18 +698,26 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
    end
 end
 
+local originalSpriteRemoveAllFunction
+
 function at.destroy()
-   m.toasting = false
-   if m.toastBackupPlaydateUpdate then
-      playdate.update = m.toastBackupPlaydateUpdate
-      m.toastBackupPlaydateUpdate = nil
+   if m then
+      m.toasting = false
+      if m.toastBackupPlaydateUpdate then
+	 playdate.update = m.toastBackupPlaydateUpdate
+	 m.toastBackupPlaydateUpdate = nil
+      end
+      m.currentToast = nil
+      if m.toastSprite then
+	 m.toastSprite:remove()
+	 m.toastSprite = nil
+      end
+      m = nil
    end
-   m.currentToast = nil
-   if m.toastSprite then
-      m.toastSprite:remove()
-      m.toastSprite = nil
+   if originalSpriteRemoveAllFunction then
+      gfx.sprite.removeAll = originalSpriteRemoveAllFunction
+      originalSpriteRemoveAllFunction = nil
    end
-   m = nil
 end
 
 
@@ -882,6 +889,21 @@ function at.toast(achievementId, config)
             m.toastSprite.update = at.updateToast
             m.toastSprite:setUpdatesEnabled(true)
             m.toastSprite:add()
+
+	    if originalSpriteRemoveAllFunction == nil then
+	       -- Update gfx.sprite.removeAll to also call at.destroy(), to
+	       -- avoid the toast library from being in a half-working state in
+	       -- the rare instance removeAll is called while a toast is
+	       -- animating. at.destroy() restores the function back to normal.
+	       originalSpriteRemoveAllFunction = gfx.sprite.removeAll
+	       gfx.sprite.removeAll = function()
+		  originalSpriteRemoveAllFunction()
+		  -- If you want to preserve the toast instead of shutting it
+		  -- down fully, you can call m.toastSprite:add() here instead
+		  -- of at.destroy() and it will continue displaying.
+		  at.destroy()
+	       end
+	    end
          end
       end
    end
