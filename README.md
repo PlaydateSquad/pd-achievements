@@ -115,6 +115,10 @@ Returns `true` if the achievement has been earned by the player, returns `false`
 
 If this flag is set to `true` then `achievements.save()` will be automatically run every time an achievement is newly granted or revoked. Defaults to `false`.
 
+### achievements.getInfo(string: achievement_id)
+
+Returns the metadata associated with the achievement. The table schema is identical to the one passed to `achievements.initialize()`.
+
 ## Crossgame Module
 
 Adds helper functions for dealing with data written by other games. To use it, add `crossgame.lua` to your project and import it after `achievements.lua`.
