@@ -70,10 +70,13 @@ import "simple_viewer"
 import "achievements/viewer"
 import "achievements/toasts"
 
-local TOAST_MODE = "sprite"  -- can also use "sprite" or "manual", for testing
+local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
-achievements.toasts.initialize({ miniMode = false, numDescriptionLines = 1,
-				 toastOnGrant = true, toastOnAdvance = 0.5,
+--playdate.display.setScale(2)
+achievements.toasts.initialize({ miniMode = false,
+				 numDescriptionLines = 1,
+				 toastOnGrant = true,
+				 toastOnAdvance = 0.5,
 				 renderMode = TOAST_MODE })
 
 local mainSprite

@@ -104,7 +104,7 @@ local defaultConfig = {
    -- Normally the toast is rendered with a black dithered background. You can
    -- use a lighter shadow by setting this to white, or no shadow by setting
    -- this to clear.
-   shadowColor = gfx.kColorBlack,
+   shadowColor = gfx.kColorBlack ,
 
    -- Advanced setting: how to render toasts. This can be set to "auto",
    -- "sprite", or "manual", depending on how you want to update the toasts.
@@ -181,6 +181,7 @@ local MINI_TOAST_WIDTH <const> = 184
 local MINI_TOAST_HEIGHT <const> = 44
 local MINI_TOAST_MARGIN <const> = 6
 local MINI_TOAST_SPACING <const> = 7
+local MINI_TOAST_SPACING_SCALED <const> = 3  -- if display scale is 2
 local MINI_TOAST_START_X <const> = SCREEN_WIDTH / 2 - MINI_TOAST_WIDTH / 2
 local MINI_TOAST_START_Y <const> = SCREEN_HEIGHT
 local MINI_TOAST_FINISH_X <const> = SCREEN_WIDTH / 2 - MINI_TOAST_WIDTH / 2
@@ -275,13 +276,22 @@ function at.setConstants()
    m.c.TOAST_FINISH_X = TOAST_FINISH_X
    m.c.TOAST_FINISH_Y = TOAST_FINISH_Y_BASE - m.c.TOAST_HEIGHT
 
+   if m.config.shadowColor == gfx.kColorClear then
+      -- move the toast down if there's no drop shadow
+      m.c.TOAST_FINISH_Y = m.c.TOAST_FINISH_Y + TOAST_DROP_SHADOW_SIZE
+   end
+   
    if m.currentToast and m.currentToast.mini then
       m.c.TOAST_WIDTH = MINI_TOAST_WIDTH
       m.c.TOAST_HEIGHT = MINI_TOAST_HEIGHT
       m.c.TOAST_START_Y = MINI_TOAST_START_Y - SCREEN_HEIGHT + actualScreenHeight
       m.c.TOAST_START_X = MINI_TOAST_START_X - SCREEN_WIDTH/2 + actualScreenWidth/2
-      m.c.TOAST_FINISH_Y = MINI_TOAST_FINISH_Y - SCREEN_HEIGHT + actualScreenHeight
       m.c.TOAST_FINISH_X = MINI_TOAST_FINISH_X - SCREEN_WIDTH/2 + actualScreenWidth/2
+      m.c.TOAST_FINISH_Y = MINI_TOAST_FINISH_Y - SCREEN_HEIGHT + actualScreenHeight
+      if m.config.shadowColor == gfx.kColorClear then
+	 -- move the toast down if there's no drop shadow
+	 m.c.TOAST_FINISH_Y = m.c.TOAST_FINISH_Y + MINI_TOAST_DROP_SHADOW_SIZE
+   end
    end
 end
 
@@ -399,8 +409,9 @@ function at.initialize(config)
    at.setToastOnAdvance(m.config.toastOnAdvance)
 
    if playdate.display.getScale() > 1 then
-      -- Mini toasts are required for scale 2. For scale 4 or 8, all bets are off.
+      -- Mini toasts with no shadow are required for scale 2. For scale 4 or 8, all bets are off.
       m.config.miniMode = true
+      m.config.shadowColor = gfx.kColorClear
    end
 end
 
