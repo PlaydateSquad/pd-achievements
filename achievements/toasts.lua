@@ -180,6 +180,7 @@ local TOAST_ANIM_ICON_DELAY <const> = .6
 local TOAST_DROP_SHADOW_SIZE <const> = 8
 local MINI_TOAST_DROP_SHADOW_SIZE <const> = 5
 local TOAST_DROP_SHADOW_ALPHA <const> = .25 -- 0.875
+local TOAST_DROP_SHADOW_DITHER <const> = gfx.image.kDitherTypeBayer8x8
 local TOAST_DROP_SHADOW_CORNER <const> = 8
 
 local at = {}
@@ -430,13 +431,13 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 	    end
 	 end
       else
-	 if toastOptions.dropShadowSize and toastOptions.dropShadowSize > 0 and m.config.shadowColor ~= gfx.kColorClear then
+	 if toastOptions.dropShadowSize and toastOptions.dropShadowSize > 0 then
 	    gfx.pushContext()
 	    gfx.setColor(m.config.shadowColor)
 	    if m.config.invert then
 	       gfx.setColor(m.config.shadowColor == gfx.kColorBlack and gfx.kColorWhite or gfx.kColorBlack)
 	    end
-	    gfx.setDitherPattern(TOAST_DROP_SHADOW_ALPHA, gfx.image.kDitherTypeBayer8x8)
+	    gfx.setDitherPattern(TOAST_DROP_SHADOW_ALPHA, TOAST_DROP_SHADOW_DITHER)
 	    gfx.fillRoundRect(toastOptions.dropShadowSize, toastOptions.dropShadowSize,
 			      width, height, TOAST_DROP_SHADOW_CORNER)
 	    gfx.popContext()
@@ -710,7 +711,7 @@ function at.updateToast()
       updateMinimally = true,
       granted = isGranted,
       showAchievementUnlockedText = isGranted,
-      dropShadowSize = m.config.shadowColor and
+      dropShadowSize = (m.config.shadowColor ~= gfx.kColorClear) and
 	 (m.currentToast.mini and MINI_TOAST_DROP_SHADOW_SIZE or TOAST_DROP_SHADOW_SIZE)
 	 or nil,
       miniToast = m.currentToast.mini
