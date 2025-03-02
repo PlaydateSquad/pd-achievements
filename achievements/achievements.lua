@@ -31,7 +31,6 @@
 ---@field gameID string A unique ID to identify the game. Analogous to BundleID in pdxinfo.
 ---@field version string The version string of the game, as in pdxinfo.
 ---@field specVersion string The version string of the specification used.
----@field libVersion string The version string of the Achievement library used.
 ---@field defaultIcon string | nil The filepath for the game's default unlocked achievement icon, relative to the value of achievements.imagePath.
 ---@field defaultIconLocked string | nil The filepath for the game's default locked achievement icon, relative to the value of achievements.imagePath.
 ---@field secretIcon string | nil The filepath for the game's 'hidden achievement' icon.
@@ -62,7 +61,6 @@ local shared_images_updated_file <const> = "_last_seen_version.txt"
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
 	specVersion = "0.2",
-	libVersion = "0.3-alpha",
 	flag_is_playdatesquad_api = true,
 
 	forceSaveOnGrantOrRevoke = false,
@@ -202,16 +200,26 @@ local function export_images(gameID, current_build_nr)
 
 	-- otherwise, the structure should be copied
 
-	local shared_path = achievements.paths.get_shared_images_path(gameID)
+	local shared_images_path = achievements.paths.get_shared_images_path(gameID)
 	-- This is a set, so the iteration is a little different than usual.
 	for filename, _ in pairs(crawlImagePaths("icon", "iconLocked")) do
-		copy_file(filename, shared_path .. filename)
+		copy_file(filename, shared_images_path .. filename)
 	end
 	for _, metadata_asset in ipairs{"defaultIcon", "defaultIconLocked", "secretIcon"} do
 		local asset_path = achievements.gameData[metadata_asset]
 		if asset_path then
 			asset_path = force_extension(asset_path, ".pdi")
-			copy_file(asset_path, shared_path .. asset_path)
+			copy_file(asset_path, shared_images_path .. asset_path)
+		end
+	end
+	-- These files go in the top-level shared game files directory,
+	-- not in the AchievementImages subdirectory.
+	local shared_game_data_path = achievements.paths.get_achievement_folder_root_path(gameID)
+	for _, metadata_asset in ipairs{"iconPath", "cardPath"} do
+		local asset_path = achievements.gameData[metadata_asset]
+		if asset_path then
+			asset_path = force_extension(asset_path, ".pdi")
+			copy_file(asset_path, shared_game_data_path .. asset_path)
 		end
 	end
 		
@@ -253,10 +261,8 @@ local function validate_gamedata(ach_root, prevent_debug)
 	end
 
 	ach_root.specVersion = achievements.specVersion
-	ach_root.libVersion = achievements.libVersion
 	print("game version saved as \"" .. ach_root.version .. "\"")
 	print("specification version saved as \"" .. ach_root.specVersion .. "\"")
-	print("library version saved as \"" .. ach_root.libVersion .. "\"")
 
 	if type(ach_root.defaultIcon) ~= 'string' and ach_root.defaultIcon ~= nil then
 		error("expected 'defaultIcon' to be type string, got " .. type(ach_root.defaultIconcon), 3)
