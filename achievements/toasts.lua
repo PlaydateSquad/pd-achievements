@@ -48,7 +48,7 @@ local gfx <const> = playdate.graphics
    MUCH smaller. (If your game runs with a display scale > 1, toasts will always
    be mini, as larger toasts won't fit on screen.)
 
-   
+
 ]]
 
 
@@ -84,6 +84,15 @@ local defaultConfig = {
    -- Mini toasts always show 0 lines of description.
    numDescriptionLines = 2,
 
+   -- Set this to true to animate toasts coming down from the top of the screen
+   -- instead of rising up from the bottom.
+   toastFromTop = false,
+
+   -- Set this to true to render a mini-toast instead of a full-sized
+   -- toast. This takes up much less space on the screen by using a smaller font
+   -- and showing no description. If the display scale is > 1, this is forced.
+   miniMode = false,
+
    -- Normally, a toast is rendered as a white card with black text. Set this to
    -- render a black card with white text. The shadow will still be rendered in
    -- shadowColor.
@@ -103,8 +112,8 @@ local defaultConfig = {
 
    -- Normally the toast is rendered with a black dithered background. You can
    -- use a lighter shadow by setting this to white, or no shadow by setting
-   -- this to clear.
-   shadowColor = gfx.kColorBlack ,
+   -- this to clear. If display scale is > 1, shadowColor is forced to be clear.
+   shadowColor = gfx.kColorBlack,
 
    -- Advanced setting: how to render toasts. This can be set to "auto",
    -- "sprite", or "manual", depending on how you want to update the toasts.
@@ -121,11 +130,6 @@ local defaultConfig = {
    --   the end of their playdate.update, after everything else has rendered, to
    --   draw any pending toasts.
    renderMode = "auto",
-
-   -- Set this to true to render a mini-toast instead of a full-sized
-   -- toast. This takes up much less space on the screen by using a
-   -- smaller font and showing no description.
-   miniMode = false,
 
    -- Normally, toasting an achievement that isn't already unlocked
    -- shows an "in progress" toast. Setting this to true assumes any
@@ -269,18 +273,7 @@ function at.setConstants()
    m.c = {}
    -- adjust for scaled displays
    actualScreenWidth, actualScreenHeight = playdate.display.getSize()
-   m.c.TOAST_WIDTH = TOAST_WIDTH
-   m.c.TOAST_HEIGHT = math.max(TOAST_HEIGHT_MIN, TOAST_HEIGHT_BASE + numLines * TOAST_HEIGHT_PER_LINE)
-   m.c.TOAST_START_Y = TOAST_START_Y
-   m.c.TOAST_START_X = TOAST_START_X
-   m.c.TOAST_FINISH_X = TOAST_FINISH_X
-   m.c.TOAST_FINISH_Y = TOAST_FINISH_Y_BASE - m.c.TOAST_HEIGHT
 
-   if m.config.shadowColor == gfx.kColorClear then
-      -- move the toast down if there's no drop shadow
-      m.c.TOAST_FINISH_Y = m.c.TOAST_FINISH_Y + TOAST_DROP_SHADOW_SIZE
-   end
-   
    if m.currentToast and m.currentToast.mini then
       m.c.TOAST_WIDTH = MINI_TOAST_WIDTH
       m.c.TOAST_HEIGHT = MINI_TOAST_HEIGHT
@@ -288,10 +281,36 @@ function at.setConstants()
       m.c.TOAST_START_X = MINI_TOAST_START_X - SCREEN_WIDTH/2 + actualScreenWidth/2
       m.c.TOAST_FINISH_X = MINI_TOAST_FINISH_X - SCREEN_WIDTH/2 + actualScreenWidth/2
       m.c.TOAST_FINISH_Y = MINI_TOAST_FINISH_Y - SCREEN_HEIGHT + actualScreenHeight
-      if m.config.shadowColor == gfx.kColorClear then
-	 -- move the toast down if there's no drop shadow
-	 m.c.TOAST_FINISH_Y = m.c.TOAST_FINISH_Y + MINI_TOAST_DROP_SHADOW_SIZE
-   end
+      if m.config.toastFromTop then
+         -- set start to above the top of the screen, and finish to just lower
+         -- than the edge
+         m.c.TOAST_START_Y = - TOAST_SPACING - m.c.TOAST_HEIGHT
+         m.c.TOAST_FINISH_Y = MINI_TOAST_SPACING - MINI_TOAST_DROP_SHADOW_SIZE
+      else
+         if m.config.shadowColor == gfx.kColorClear then
+            -- move the toast down if there's no drop shadow
+            m.c.TOAST_FINISH_Y = m.c.TOAST_FINISH_Y + MINI_TOAST_DROP_SHADOW_SIZE
+         end
+      end
+   else
+      m.c.TOAST_WIDTH = TOAST_WIDTH
+      m.c.TOAST_HEIGHT = math.max(TOAST_HEIGHT_MIN, TOAST_HEIGHT_BASE + numLines * TOAST_HEIGHT_PER_LINE)
+      m.c.TOAST_START_Y = TOAST_START_Y
+      m.c.TOAST_START_X = TOAST_START_X
+      m.c.TOAST_FINISH_X = TOAST_FINISH_X
+      m.c.TOAST_FINISH_Y = TOAST_FINISH_Y_BASE - m.c.TOAST_HEIGHT
+
+      if m.config.toastFromTop then
+         -- set start to above the top of the screen, and finish to just lower
+         -- than the edge
+         m.c.TOAST_START_Y = - TOAST_SPACING - m.c.TOAST_HEIGHT
+         m.c.TOAST_FINISH_Y = TOAST_SPACING - TOAST_DROP_SHADOW_SIZE
+      else
+         if m.config.shadowColor == gfx.kColorClear then
+            -- move the toast down if there's no drop shadow
+            m.c.TOAST_FINISH_Y = m.c.TOAST_FINISH_Y + TOAST_DROP_SHADOW_SIZE
+         end
+      end
    end
 end
 
@@ -729,13 +748,13 @@ function at.destroy()
    if m then
       m.toasting = false
       if m.toastBackupPlaydateUpdate then
-	 playdate.update = m.toastBackupPlaydateUpdate
-	 m.toastBackupPlaydateUpdate = nil
+         playdate.update = m.toastBackupPlaydateUpdate
+         m.toastBackupPlaydateUpdate = nil
       end
       m.currentToast = nil
       if m.toastSprite then
-	 m.toastSprite:remove()
-	 m.toastSprite = nil
+         m.toastSprite:remove()
+         m.toastSprite = nil
       end
       m = nil
    end
@@ -915,20 +934,20 @@ function at.toast(achievementId, config)
             m.toastSprite:setUpdatesEnabled(true)
             m.toastSprite:add()
 
-	    if originalSpriteRemoveAllFunction == nil then
-	       -- Update gfx.sprite.removeAll to also call at.destroy(), to
-	       -- avoid the toast library from being in a half-working state in
-	       -- the rare instance removeAll is called while a toast is
-	       -- animating. at.destroy() restores the function back to normal.
-	       originalSpriteRemoveAllFunction = gfx.sprite.removeAll
-	       gfx.sprite.removeAll = function()
-		  originalSpriteRemoveAllFunction()
-		  -- If you want to preserve the toast instead of shutting it
-		  -- down fully, you can call m.toastSprite:add() here instead
-		  -- of at.destroy() and it will continue displaying.
-		  at.destroy()
-	       end
-	    end
+            if originalSpriteRemoveAllFunction == nil then
+               -- Update gfx.sprite.removeAll to also call at.destroy(), to
+               -- avoid the toast library from being in a half-working state in
+               -- the rare instance removeAll is called while a toast is
+               -- animating. at.destroy() restores the function back to normal.
+               originalSpriteRemoveAllFunction = gfx.sprite.removeAll
+               gfx.sprite.removeAll = function()
+                  originalSpriteRemoveAllFunction()
+                  -- If you want to preserve the toast instead of shutting it
+                  -- down fully, you can call m.toastSprite:add() here instead
+                  -- of at.destroy() and it will continue displaying.
+                  at.destroy()
+               end
+            end
          end
       end
    end

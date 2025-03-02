@@ -72,7 +72,6 @@ import "achievements/toasts"
 
 local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
---playdate.display.setScale(2)
 achievements.toasts.initialize({ miniMode = false,
 				 numDescriptionLines = 1,
 				 toastOnGrant = true,
