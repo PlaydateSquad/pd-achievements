@@ -42,6 +42,13 @@ local gfx <const> = playdate.graphics
    update first, then draw the toast on top of it. Change the renderMode
    configuration parameter to use sprites or a manual update method instead.
 
+   The default toasts will include the achievement's description, so can take up
+   a pretty large chunk of the screen. You can set numDescriptionLines=1 to make
+   them slightly shorter in height, or miniMode=1 to have the toasts apprear
+   MUCH smaller. (If your game runs with a display scale > 1, toasts will always
+   be mini, as larger toasts won't fit on screen.)
+
+   
 ]]
 
 
@@ -259,6 +266,8 @@ end
 function at.setConstants()
    local numLines = m.config.numDescriptionLines
    m.c = {}
+   -- adjust for scaled displays
+   actualScreenWidth, actualScreenHeight = playdate.display.getSize()
    m.c.TOAST_WIDTH = TOAST_WIDTH
    m.c.TOAST_HEIGHT = math.max(TOAST_HEIGHT_MIN, TOAST_HEIGHT_BASE + numLines * TOAST_HEIGHT_PER_LINE)
    m.c.TOAST_START_Y = TOAST_START_Y
@@ -269,10 +278,10 @@ function at.setConstants()
    if m.currentToast and m.currentToast.mini then
       m.c.TOAST_WIDTH = MINI_TOAST_WIDTH
       m.c.TOAST_HEIGHT = MINI_TOAST_HEIGHT
-      m.c.TOAST_START_Y = MINI_TOAST_START_Y
-      m.c.TOAST_START_X = MINI_TOAST_START_X
-      m.c.TOAST_FINISH_Y = MINI_TOAST_FINISH_Y
-      m.c.TOAST_FINISH_X = MINI_TOAST_FINISH_X
+      m.c.TOAST_START_Y = MINI_TOAST_START_Y - SCREEN_HEIGHT + actualScreenHeight
+      m.c.TOAST_START_X = MINI_TOAST_START_X - SCREEN_WIDTH/2 + actualScreenWidth/2
+      m.c.TOAST_FINISH_Y = MINI_TOAST_FINISH_Y - SCREEN_HEIGHT + actualScreenHeight
+      m.c.TOAST_FINISH_X = MINI_TOAST_FINISH_X - SCREEN_WIDTH/2 + actualScreenWidth/2
    end
 end
 
@@ -388,6 +397,11 @@ function at.initialize(config)
 
    at.setToastOnGrant(m.config.toastOnGrant)
    at.setToastOnAdvance(m.config.toastOnAdvance)
+
+   if playdate.display.getScale() > 1 then
+      -- Mini toasts are required for scale 2. For scale 4 or 8, all bets are off.
+      m.config.miniMode = true
+   end
 end
 
 function at.reinitialize(config)
