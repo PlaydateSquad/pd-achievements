@@ -278,6 +278,12 @@ function at.setConstants()
 end
 
 function at.initialize(config)
+   if not (achievements and achievements.flag_is_playdatesquad_api) then
+      error("ERROR: achievements library achievements.lua not loaded")
+   elseif not achievements.graphics then
+      error("ERROR: achievements library graphics.lua not loaded")
+   end
+
    if m then
       at.reinitialize(config)
       return
@@ -297,7 +303,7 @@ function at.initialize(config)
       gameData = achievements.gameData
    end
    if not gameData then
-      print("ERROR: achievement_viewer.initialize() invalid gameData")
+      print("ERROR: achievements.toasts.initialize() invalid gameData")
       m = nil
       return
    end
