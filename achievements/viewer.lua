@@ -10,15 +10,23 @@ local gfx <const> = playdate.graphics
    your game to display achievements using a consistent UI that feels like part
    of the Playdate OS.
 
-   To use it, ensure all of the required assets are in the "achievements/assets"
-   directory of your game, and call achievements.viewer.launch() when you want
-   to display the achievements viewer. (Ensure that you return out from your
-   playdate.update function as soon after the call as you can.)
+   To use it:
 
-   When you run achievements.viewer.launch(), the viewer will temporarily take
-   over your playdate.update function, blocking execution of your game. When the
-   user exits the achievements viewer by pressing the B button, control will be
-   returned to your previous playdate.update function.
+   - Import achievements.lua, then graphics.lua, then viewer.lua. If you are
+     also using toasts.lua, you can import either viewer.lua or toasts.lua
+     first, it doesn't matter which.
+
+   - Ensure all of the required assets are in the "achievements/assets"
+     directory of your game. Many of these assets are also used by toasts.lua.
+
+   - Call achievements.viewer.launch() when you want to display the achievements
+     viewer. (Ensure that you return out from your playdate.update function
+     immediately after making this call, or at least as soon as possible.)
+
+   - When you run achievements.viewer.launch(), the viewer will temporarily take
+     over your playdate.update function, blocking execution of your game. When
+     the user exits the achievements viewer by pressing the B button, control
+     will be returned to your previous playdate.update function.
 
    For more advanced use, you can set various config options below, for example:
    achievements.viewer.launch({

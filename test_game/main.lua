@@ -16,7 +16,7 @@ local achievementData = {
             id = "test_achievement",
             name = "Achievement 1 Name",
             description = "Achievement 1 Description",
-            isSecret = false,
+            isSecret = true,
             -- icon = "achievements/graphics/achievement-unlock",
             iconLocked = "test_locked",
         },
