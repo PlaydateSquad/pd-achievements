@@ -26,6 +26,26 @@ local defaultConfig = {
    -- Set the path that you've placed the achievements viewer's fonts, images,
    -- and sounds.
    assetPath = "achievements/assets", 
+   
+   -- Set this to true when calling initialize() to automatically show a toast when
+   -- an achievement is granted.
+   --
+   -- You can set this later by calling achievements.toasts.setToastOnGrant().
+   toastOnGrant = false,
+
+   -- Set this to true when calling initialize() to automatically show a toast
+   -- whenever an achievement's progress is advanced via advanceTo() or
+   -- advanceBy(). Or, set this to a number between 0 and 1 to show a toast
+   -- whenever an achievement's progress is advanced past that fraction of its
+   -- maximum (but has not yet been granted).
+   --
+   -- For example, if you have an achievement with progressMax = 20 and set
+   -- toastOnAdvance to 0.25, a progress toast will be displayed whenever the
+   -- achievement is advanced from < 5 to >= 5, from < 10 to >= 10, etc.
+   --
+   -- You can set this later by calling
+   -- achievements.toasts.setToastOnAdvance().
+   toastOnAdvance = false,
 
    -- Number of lines of the achievement description to display. Setting this to 1
    -- lets you fit more achievements on screen, if they all have very short
@@ -35,8 +55,9 @@ local defaultConfig = {
    numDescriptionLines = 2,
 
    -- Normally, a toast is rendered as a white card with black text. Set this to
-   -- render a black card with white text.
-   invertToasts = false,
+   -- render a black card with white text. The shadow will still be rendered in
+   -- shadowColor.
+   invert = false,
 
    -- The default audio volume to use for the toast's sound
    -- effects. This should range from 0 to 1. You can modify this after the
@@ -66,7 +87,7 @@ local defaultConfig = {
    --
    --   manual: the developer must call achievements.toasts.manualUpdate() at
    --   the end of their playdate.update, after everything else has rendered.
-   renderMethod = "update",
+   renderMode = "update",
 
    -- The following can be overridden toast-by-toast via overrideConfig.
    -- This sets the defaults for any toasts where these are unspecified.
@@ -330,6 +351,9 @@ function at.initialize(config)
    m.toastQueue = {} -- additional toasts after this toast
    m.toastSound = at.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/toastSound")
    m.toastProgressSound = at.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/toastProgressSound")
+
+   at.setToastOnGrant(m.config.toastOnGrant)
+   at.setToastOnAdvance(m.config.toastOnAdvance)
 end
 
 function at.reinitialize(config)
@@ -349,10 +373,6 @@ end
 function at.drawCard(achievementId, x, y, width, height, toastOptions)
    if not toastOptions then toastOptions = {} end
 
-   local fgColor = m.config.darkMode and gfx.kColorWhite or gfx.kColorBlack
-   local bgColor = m.config.darkMode and gfx.kColorBlack or gfx.kColorWhite
-   local textDrawMode = m.config.darkMode and gfx.kDrawModeCopy or  gfx.kDrawModeFillWhite
-
    local wantWidth = width + (toastOptions.dropShadowSize or 0)
    local wantHeight = height + (toastOptions.dropShadowSize or 0)
    local image = m.toastImageCache[achievementId]
@@ -364,7 +384,6 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 	 image = gfx.image.new(wantWidth, wantHeight)
 	 toastOptions.updateMinimally = false
       end
-      m.toastImageCache[achievementId] = image
       gfx.pushContext(image)
       local margin = 1
 
@@ -372,13 +391,16 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 
       local iconImgGranted = m.icons[achievementId].granted or m.defaultIcons.granted or
 	    m.icons[achievementId].locked or m.defaultIcons.locked
+      iconImgGranted:setInverted(m.config.invert)
       local iconImgLocked
       if info.secret then
 	 iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.secret or m.defaultIcons.locked or
 	    m.icons[achievementId].granted or m.defaultIcons.granted
+	 iconImgLocked:setInverted(m.config.invert)
       else
 	 iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.locked or
 	    m.icons[achievementId].granted or m.defaultIcons.granted
+	 iconImgLocked:setInverted(m.config.invert)
       end
       if toastOptions.updateMinimally then
 	 local image_margin = toastOptions.miniToast and MINI_TOAST_MARGIN or LAYOUT_MARGIN
@@ -408,9 +430,12 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 	    end
 	 end
       else
-	 if toastOptions.dropShadowSize and toastOptions.dropShadowSize > 0 then
+	 if toastOptions.dropShadowSize and toastOptions.dropShadowSize > 0 and m.config.shadowColor ~= gfx.kColorClear then
 	    gfx.pushContext()
 	    gfx.setColor(m.config.shadowColor)
+	    if m.config.invert then
+	       gfx.setColor(m.config.shadowColor == gfx.kColorBlack and gfx.kColorWhite or gfx.kColorBlack)
+	    end
 	    gfx.setDitherPattern(TOAST_DROP_SHADOW_ALPHA, gfx.image.kDitherTypeBayer8x8)
 	    gfx.fillRoundRect(toastOptions.dropShadowSize, toastOptions.dropShadowSize,
 			      width, height, TOAST_DROP_SHADOW_CORNER)
@@ -426,7 +451,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 
 	 gfx.drawRoundRect(margin, margin, width-2*margin, height-2*margin, TOAST_CORNER)
 
-	 local granted = not not m.achievementData[achievementId].grantedAt
+	 local granted = m.currentToast.granted
 	 --if toastOptions.granted ~= nil then
 	    --granted = toastOptions.granted
          --end
@@ -612,6 +637,15 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 	 end
       end
       gfx.popContext()
+      -- Restore these back to their original value.
+      m.toastImageCache[achievementId] = image
+      if m.config.invert then
+	 m.toastImageCache[achievementId]:setInverted(true)
+      end
+      if m.config.invert then
+	 iconImgLocked:setInverted(false)
+	 iconImgGranted:setInverted(false)
+      end
    end
    m.toastImageCache[achievementId]:draw(x, y)
 end
@@ -639,24 +673,27 @@ function at.updateToast()
 	 if m.overrideConfig.miniMode ~= nil then
 	    m.currentToast.mini = m.overrideConfig.miniMode
 	 end
-	 if m.overrideConfig.assumeGranted ~= nil then
-	    m.currentToast.granted = m.overrideConfig.assumeGranted
-	 end
 	 if m.overrideConfig.animateUnlocking ~= nil then
 	    m.currentToast.anim = m.overrideConfig.animateUnlocking
 	 end
+	 if m.overrideConfig.assumeGranted ~= nil then
+	    m.currentToast.granted = m.overrideConfig.assumeGranted
+	 end
       end
       at.setConstants()
+      m.currentToast.granted = m.currentToast.granted or achievements.isGranted(m.toastAchievement)
    end
-   local isGranted = (m.achievementData[m.toastAchievement] and m.achievementData[m.toastAchievement].grantedAt)
-   if m.currentToast.granted then isGranted = true end -- assume granted
+   local isGranted = m.currentToast.granted
 
    if m.toastAnim == 0 then
+      -- At the start of the toast display, play the sound effect and clear the image cache.
       if m.config.soundVolume > 0 then
 	 if isGranted then
+	    -- Play the "achievement unlocked" sound
 	    m.toastSound:setVolume(m.config.soundVolume)
 	    m.toastSound:play()
 	 else
+	    -- Play the "achievement progress update" sound
 	    m.toastProgressSound:setVolume(m.config.soundVolume)
 	    m.toastProgressSound:play()
 	 end
@@ -756,6 +793,7 @@ function at.updateToast()
 	    m.currentToast.anim = m.overrideConfig.animateUnlocking
 	 end
       end
+      m.currentToast.granted = m.currentToast.granted or achievements.isGranted(m.toastAchievement)
       m.toastImageCache[m.toastAchievement] = nil
       m.toastAnim = 0
       at.setConstants()
@@ -843,26 +881,62 @@ function at.overrideConfig(config)
 end
 
 local originalGrantFunction = nil
-local function grantWithToast()
+local function grantWithToast(achievementId)
+   print("grantWithToast")
+   local wasGrantedBefore = achievements.isGranted(achievementId)
+   if originalGrantFunction(achievementId) then
+      if not wasGrantedBefore and achievements.isGranted(achievementId) then
+	 achievements.toasts.toast(achievementId)
+      end
+   end
 end
 
-function at.setAutoToastOnGrant(autoToast)
+function at.setToastOnGrant(autoToast)
    if not originalGrantFunction then
+      print("saving grant method")
       originalGrantFunction = achievements.grant
    end
    
    achievements.grant = autoToast and grantWithToast or originalGrantFunction
 end
 
+local toastOnAdvanceFraction = nil
 local originalAdvanceToFunction = nil
 local originalAdvanceByFunction = nil
-local function advanceToWithToast()
+local function advanceWithToast(achievementId, advanceFunc, advanceAmount)
+   local wasGrantedBefore = achievements.isGranted(achievementId)
+   local prevProgress = achievements.progress[achievementId] or 0
+   if advanceFunc(achievementId, advanceAmount) then
+      local shouldToast = false
+      if achievements.isGranted(achievementId) then
+	 -- Already toasted by advance* calling grant()
+	 shouldToast = false
+      else
+	 if toastOnAdvanceFraction == nil or toastOnAdvanceFraction == 0 then
+	    shouldToast = true
+	 else
+	    local progressMax = achievements.getInfo(achievementId).progressMax
+	    local newProgress = achievements.progress[achievementId] or 0
+	    local section = math.floor(0.5 + (progressMax * toastOnAdvanceFraction))
+	    if newProgress // section > prevProgress // section then
+	       shouldToast = true
+	    end
+	 end
+      end
+      if shouldToast then
+	 achievements.toasts.toast(achievementId)
+      end
+   end
 end
-local function advanceByWithToast()
+local function advanceToWithToast(achievementId, advanceTo)
+   advanceWithToast(achievementId, originalAdvanceToFunction, advanceTo)
+end
+local function advanceByWithToast(achievementId, advanceBy)
+   advanceWithToast(achievementId, originalAdvanceByFunction, advanceBy)
 end
 
 
-function at.setAutoToastOnAdvance(autoToast)
+function at.setToastOnAdvance(autoToast)
    if not originalAdvanceToFunction then
       originalAdvanceToFunction = achievements.advanceTo
    end
@@ -872,6 +946,11 @@ function at.setAutoToastOnAdvance(autoToast)
    
    achievements.advanceTo = autoToast and advanceToWithToast or originalAdvanceToFunction
    achievements.advanceBy = autoToast and advanceByWithToast or originalAdvanceByFunction
+   if type(autoToast) == "number" then
+      toastOnAdvanceFraction = autoToast
+   else
+      toastOnAdvanceFraction = nil
+   end
 end
 
 achievements.toasts = {
@@ -884,6 +963,8 @@ achievements.toasts = {
 
    manualUpdate = at.updateToast,
 
-   setAutoToastOnGrant = at.setAutoToastOnGrant,
-   setAutoToastOnAdvance = at.setAutoToastOnAdvance,
+   setToastOnGrant = at.setToastOnGrant,
+   setToastOnAdvance = at.setToastOnAdvance,
+
+   getCache = function() return persistentCache end,
 }

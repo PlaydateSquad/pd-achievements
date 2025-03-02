@@ -70,6 +70,8 @@ import "simple_viewer"
 import "achievements/viewer"
 import "achievements/toasts"
 
+achievements.toasts.initialize({ miniMode = false, numDescriptionLines = 1, toastOnGrant = true, toastOnAdvance = 0.5 })
+
 local main_screen = playdate.ui.gridview.new(0, 20)
 local options = {
     {"GENERATE RANDOM DATA", function() 

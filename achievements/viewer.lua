@@ -188,7 +188,13 @@ local av = {}
 local m
 local savedConfig = nil
 
-local persistentCache = {} -- persists between launches
+local persistentCache
+
+if achievements and achievements.toasts and achievements.toasts.getCache then
+   persistentCache = achievements.toasts.getCache()  -- share cache between toasts and viewewr, whichever was loaded first
+else
+   persistentCache = {}
+end
 
 function av.loadFile(loader, path)
    if not path then return nil end
