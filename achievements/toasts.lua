@@ -57,8 +57,6 @@ local defaultConfig = {
 
    -- Set this to true when calling initialize() to automatically show a toast when
    -- an achievement is granted.
-   --
-   -- You can set this later by calling achievements.toasts.setToastOnGrant().
    toastOnGrant = false,
 
    -- Set this to true when calling initialize() to automatically show a toast
@@ -70,9 +68,6 @@ local defaultConfig = {
    -- For example, if you have an achievement with progressMax = 20 and set
    -- toastOnAdvance to 0.25, a progress toast will be displayed whenever the
    -- achievement is advanced from < 5 to >= 5, from < 10 to >= 10, etc.
-   --
-   -- You can set this later by calling
-   -- achievements.toasts.setToastOnAdvance().
    toastOnAdvance = false,
 
    -- Number of lines of the achievement description to display. Setting this to 1
