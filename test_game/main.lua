@@ -68,7 +68,7 @@ end
 import "CoreLibs/ui"
 import "generate_data"
 import "simple_viewer"
-import "achievements/viewer/achievements_viewer"
+import "achievements/viewer"
 
 local main_screen = playdate.ui.gridview.new(0, 20)
 local options = {
@@ -78,11 +78,8 @@ local options = {
     {"GO TO BASIC VIEWER", function()
         CHANGE_SCENE("simple_viewer")
     end},
-    {"GO TO FANCY VIEWER", function()
-	achievementsViewer.launch()
-    end},
-    {"fancy toast", function()
-	achievementsViewer.toast("test_achievement")
+    {"LAUNCH FANCY VIEWER", function()
+	achievements.viewer.launch({fadeColor = gfx.kColorWhite})
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then
