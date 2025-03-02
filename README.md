@@ -33,10 +33,12 @@ local achievementData = {
     description = "The next (r)evolution in cranking technology.",
     version = "1.0.0",
     -- The filepaths to default icon images for granted and ungranted achievements. Optional.
-    defaultIcon = "icon_default",
-    defaultIconLocked = "icon_locked_default",
+    defaultIcon = "icon_default", -- 32x32.png
+    defaultIconLocked = "icon_locked_default", -- 32x32 .png
     -- The filepath to an icon image for locked achievements which are marked as secret. Optional.
-    secretIcon = "my_icon_hidden",
+    secretIcon = "my_icon_hidden", -- 32x32 .png
+    iconPath = "path_to_icons",
+    cardPath = "path_to_game_card", -- dimensions??
     achievements = {
         -- This table should be an array of achievement tables.
         -- Each of these tables stores the data for a single achievement.
@@ -47,16 +49,16 @@ local achievementData = {
             name = "Achievement Name",
             description = "Achievement Description",
             -- Should this achievement appear in viewers if not yet earned?
-            is_secret = false,
+            isSecret = false,
             -- The filepath to an icon image for the achievement once granted. Optional.
             icon = "my_icon",
             -- The filepath to an icon image for the achievement before it's granted. Optional.
-            icon_locked = "my_icon_locked",
+            iconLocked = "my_icon_locked",
             -- These options, if present, make your achievement require multiple steps to unlock.
-            progress_max = 10,
-            progress_is_percentage = false,
+            progressMax = 10,
+            progressIsPercentage = false,
             -- This option determines how much this achievement matters towards 100%. Set to 0 for achievement to be entirely optional. Default 1.
-            score_value = 3,
+            scoreValue = 3,
         },
         -- Continue configuring additional achievements as needed.
     }
