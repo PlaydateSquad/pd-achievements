@@ -532,9 +532,6 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
          gfx.drawRoundRect(margin, margin, width-2*margin, height-2*margin, TOAST_CORNER)
 
          local granted = m.currentToast.granted
-         --if toastOptions.granted ~= nil then
-            --granted = toastOptions.granted
-         --end
          local iconSize = LAYOUT_ICON_SIZE
          local image_margin = toastOptions.miniToast and MINI_TOAST_MARGIN or LAYOUT_MARGIN
          if toastOptions.maskAnimFrame == nil then
@@ -550,7 +547,9 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             -- unlocked icon
             iconImgGranted:draw(width - image_margin - iconImgGranted.width, image_margin)
          elseif type(toastOptions.maskAnimFrame) == "number" then
-            -- this will be handled via the redraw above
+            -- Animated icon. This first frame it will appear locked.
+            -- Afterwards, the animation will be handled via the redraw above.
+            iconImgLocked:draw(width - image_margin - iconImgLocked.width, image_margin)
          end
 
          if toastOptions.miniToast then
