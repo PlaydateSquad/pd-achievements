@@ -191,6 +191,7 @@ local PROGRESS_TEXT <const> = "Locked "  -- could also be "Progress "
 local GRANTED_TEXT <const> = "Unlocked on %s "
 local NUM_HIDDEN_ACHIEVEMENTS_TEXT = "+ %d secret achievement%s."
 local EXTRA_SECRET_TEXT = "Secret achievement"
+local EXTRA_OPTIONAL_TEXT = "Optional achievement"
 local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d", y, m, d) end
 local SORT_ORDER = { "default", "recent", "progress", "name" }
 
@@ -754,6 +755,7 @@ function av.drawCard(achievementId, x, y, width, height)
       end
 
       local progressMax = info.progress_max or info.progressMax
+      local statusImg
       local statusImgWidth, statusImgHeight = 0, 0
       local font = m.fonts.status
       local statusText = ""
@@ -824,10 +826,18 @@ function av.drawCard(achievementId, x, y, width, height)
                            height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
                            progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
       end
-      if granted and info.isSecret then
-	 extraImg = gfx.imageWithText(EXTRA_SECRET_TEXT,
-				      width - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE,
-				      height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
+      if granted and (info.isSecret or info.scoreValue == 0) then
+	 local extraText, extraImg
+	 if info.isSecret then
+	    extraText = EXTRA_SECRET_TEXT
+	 elseif info.scoreValue == 0 then
+	    extraText = EXTRA_OPTIONAL_TEXT
+	 end
+	 if extraText then
+	    extraImg = gfx.imageWithText(extraText,
+					 width - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE,
+					 height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
+	 end
 	 if extraImg then
 	    extraImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
 			  height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)

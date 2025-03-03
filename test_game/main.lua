@@ -23,6 +23,7 @@ local achievementData = {
             name = "Achievement 2 Name",
             description = "Achievement 2 Description",
             isSecret = false,
+	    scoreValue = 0,
             icon = "test",
             iconLocked = "test_locked",
         },
