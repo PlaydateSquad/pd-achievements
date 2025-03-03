@@ -80,7 +80,6 @@ end
 
 import "CoreLibs/ui"
 import "generate_data"
-
 local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
 -- Set numDescriptionLines to 2 (or 3) if you have longer achievement
