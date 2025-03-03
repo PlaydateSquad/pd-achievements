@@ -305,11 +305,13 @@ function av.initialize(config)
    savedAssetPath = assetPath
 
    m.fonts = {}
-   m.fonts.title = av.loadFile(gfx.font.new, assetPath .. "/Roobert-20-Medium")
+   local fontPath = "/System/Fonts"
+   local fontExt = ".pft"
+   m.fonts.title = av.loadFile(gfx.font.new, fontPath .. "/Roobert-20-Medium")
 
    m.fonts.name = {}
-   m.fonts.name.locked = av.loadFile(gfx.font.new, assetPath .. "/Roobert-11-Medium")
-   m.fonts.name.granted = av.loadFile(gfx.font.new, assetPath .. "/Roobert-11-Bold")
+   m.fonts.name.locked = av.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Medium")
+   m.fonts.name.granted = av.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Bold")
    m.fonts.description = {}
    m.fonts.description.locked = av.loadFile(gfx.font.new, assetPath .. "/Nontendo-Light")
    m.fonts.description.locked:setLeading(3)
