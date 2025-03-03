@@ -178,6 +178,7 @@ local TOAST_HEIGHT_PER_LINE <const> = 16
 local TOAST_HEIGHT_MIN <const> = 64
 local TOAST_SPACING <const> = 12
 local TOAST_TEXT <const> = "Achievement unlocked!"
+local TOAST_TEXT_SECRET <const> = "Secret achievement!"
 
 local MINI_TOAST_WIDTH <const> = 184
 local MINI_TOAST_HEIGHT <const> = 44
@@ -694,7 +695,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
          elseif toastOptions.showAchievementUnlockedText and not toastOptions.miniToast then
                font = m.fonts.status
                gfx.setFont(font)
-               local extraImg = gfx.imageWithText(TOAST_TEXT, width - 2*LAYOUT_MARGIN - statusImgWidth -
+               local extraImg = gfx.imageWithText(info.isSecret and TOAST_TEXT_SECRET or TOAST_TEXT, width - 2*LAYOUT_MARGIN - statusImgWidth -
                                                   LAYOUT_STATUS_SPACING - LAYOUT_SPACING - CHECKBOX_SIZE,
                                                   height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
                if extraImg then
