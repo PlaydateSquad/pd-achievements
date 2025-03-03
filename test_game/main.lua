@@ -14,24 +14,24 @@ local achievementData = {
     achievements = {
         {
             id = "test_achievement",
-            name = "Achievement Name",
-            description = "Achievement Description",
+            name = "Achievement 1 Name",
+            description = "Achievement 1 Description",
             isSecret = false,
             -- icon = "achievements/graphics/achievement-unlock",
             iconLocked = "test_locked",
         },
         {
             id = "test_achievement_2",
-            name = "Name Of Achievement",
-            description = "Achievement Description",
+            name = "Achievement 2 Name",
+            description = "Achievement 2 Description",
             isSecret = false,
             icon = nil,
             iconLocked = nil,
         },
         {
             id = "test_achievement_3",
-            name = "Name Of Achievement",
-            description = "Achievement Description",
+            name = "Achievement 3 Name",
+            description = "Achievement 3 Description",
             isSecret = false,
             icon = nil,
             iconLocked = nil,
@@ -41,14 +41,13 @@ local achievementData = {
 }
 
 achievements.initialize(achievementData)
-achievements.graphics.default_toast = achievements.graphics.toasts.falling_card
 
 gfx.setColor(gfx.kColorBlack)
 
 Scenes = {}
 Scenes.fallback = {
     update = function()
-        playdate.graphics.clear()
+       playdate.graphics.clear()
         playdate.graphics.drawText("error: please switch to an actual scene", 10, 20)
     end
 }
@@ -69,6 +68,17 @@ import "CoreLibs/ui"
 import "generate_data"
 import "simple_viewer"
 import "achievements/viewer"
+import "achievements/toasts"
+
+local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
+
+achievements.toasts.initialize({ miniMode = false,
+				 numDescriptionLines = 1,
+				 toastOnGrant = true,
+				 toastOnAdvance = 0.5,
+				 renderMode = TOAST_MODE })
+
+local mainSprite
 
 local main_screen = playdate.ui.gridview.new(0, 20)
 local options = {
@@ -80,6 +90,12 @@ local options = {
     end},
     {"LAUNCH FANCY VIEWER", function()
 	achievements.viewer.launch({fadeColor = gfx.kColorWhite})
+    end},
+    {"set to regular toasts", function()
+	achievements.toasts.initialize({ miniMode = false })
+    end},
+    {"set to mini toasts", function()
+	achievements.toasts.initialize({ miniMode = true })
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then
@@ -142,16 +158,36 @@ Scenes.MAIN_DEBUG = {
         options[main_screen:getSelectedRow()][2]()
     end,
     update = function()
-        gfx.fillRect(0, 0, 400, 240)
-        main_screen:drawInRect(10, 10, 390, 230)
-        playdate.drawFPS(0,0)
-        achievements.graphics.updateVisuals()
+       gfx.fillRect(0, 0, 400, 240)
+       main_screen:drawInRect(10, 10, 390, 230)
+       playdate.drawFPS(0,0)
     end
 }
 
+if TOAST_MODE == "sprite" then
+   mainSprite = gfx.sprite.new(gfx.image.new(400, 240))
+   mainSprite:add()
+   mainSprite:setCenter(0, 0)
+   mainSprite:moveTo(0, 0)
+   mainSprite:setUpdatesEnabled(true)
+   mainSprite.update = function()
+      gfx.pushContext(mainSprite:getImage())
+      CURRENT_SCENE.update()
+      gfx.popContext()
+      mainSprite:markDirty()
+   end
+end
+
 function playdate.update()
-    CURRENT_SCENE.update()
-    playdate.timer.updateTimers()
+   if TOAST_MODE == "sprite" then
+      gfx.sprite.update()
+   else
+      CURRENT_SCENE.update()
+   end
+   playdate.timer.updateTimers()
+   if TOAST_MODE == "manual" then
+      achievements.toasts.manualUpdate()
+   end
 end
 
 CHANGE_SCENE("MAIN_DEBUG")

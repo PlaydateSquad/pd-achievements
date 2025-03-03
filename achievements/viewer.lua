@@ -10,15 +10,23 @@ local gfx <const> = playdate.graphics
    your game to display achievements using a consistent UI that feels like part
    of the Playdate OS.
 
-   To use it, ensure all of the required assets are in the "achievements/assets"
-   directory of your game, and call achievements.viewer.launch() when you want
-   to display the achievements viewer. (Ensure that you return out from your
-   playdate.update function as soon after the call as you can.)
+   To use it:
 
-   When you run achievements.viewer.launch(), the viewer will temporarily take
-   over your playdate.update function, blocking execution of your game. When the
-   user exits the achievements viewer by pressing the B button, control will be
-   returned to your previous playdate.update function.
+   - Import achievements.lua, then graphics.lua, then viewer.lua. If you are
+     also using toasts.lua, you can import either viewer.lua or toasts.lua
+     first, it doesn't matter which.
+
+   - Ensure all of the required assets are in the "achievements/assets"
+     directory of your game. Many of these assets are also used by toasts.lua.
+
+   - Call achievements.viewer.launch() when you want to display the achievements
+     viewer. (Ensure that you return out from your playdate.update function
+     immediately after making this call, or at least as soon as possible.)
+
+   - When you run achievements.viewer.launch(), the viewer will temporarily take
+     over your playdate.update function, blocking execution of your game. When
+     the user exits the achievements viewer by pressing the B button, control
+     will be returned to your previous playdate.update function.
 
    For more advanced use, you can set various config options below, for example:
    achievements.viewer.launch({
@@ -188,7 +196,13 @@ local av = {}
 local m
 local savedConfig = nil
 
-local persistentCache = {} -- persists between launches
+local persistentCache
+
+if achievements and achievements.toasts and achievements.toasts.getCache then
+   persistentCache = achievements.toasts.getCache()  -- share cache between toasts and viewewr, whichever was loaded first
+else
+   persistentCache = {}
+end
 
 function av.loadFile(loader, path)
    if not path then return nil end
@@ -231,7 +245,7 @@ function av.setConstants(config)
 end
 
 function av.initialize(config)
-   if not achievements then
+   if not (achievements and achievements.flag_is_playdatesquad_api) then
       error("ERROR: achievements library achievements.lua not loaded")
    elseif not achievements.graphics then
       error("ERROR: achievements library graphics.lua not loaded")
@@ -253,7 +267,7 @@ function av.initialize(config)
       gameData = achievements.gameData
    end
    if not gameData then
-      print("ERROR: achievement_viewer.initialize() invalid gameData")
+      print("ERROR: achievements.viewer.initialize() invalid gameData")
       m = nil
       return
    end
@@ -291,11 +305,13 @@ function av.initialize(config)
    savedAssetPath = assetPath
 
    m.fonts = {}
-   m.fonts.title = av.loadFile(gfx.font.new, assetPath .. "/Roobert-20-Medium")
+   local fontPath = "/System/Fonts"
+   local fontExt = ".pft"
+   m.fonts.title = av.loadFile(gfx.font.new, fontPath .. "/Roobert-20-Medium")
 
    m.fonts.name = {}
-   m.fonts.name.locked = av.loadFile(gfx.font.new, assetPath .. "/Roobert-11-Medium")
-   m.fonts.name.granted = av.loadFile(gfx.font.new, assetPath .. "/Roobert-11-Bold")
+   m.fonts.name.locked = av.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Medium")
+   m.fonts.name.granted = av.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Bold")
    m.fonts.description = {}
    m.fonts.description.locked = av.loadFile(gfx.font.new, assetPath .. "/Nontendo-Light")
    m.fonts.description.locked:setLeading(3)
@@ -1115,4 +1131,6 @@ achievements.viewer = {
    forceExit = av.forceExit,
    hasLaunched = av.hasLaunched,
    setVolume = av.setVolume,
+
+   getCache = function() return persistentCache end,
 }
