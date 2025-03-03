@@ -597,7 +597,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             if toastOptions.showAchievementUnlockedText then
                font = m.fonts.status
                gfx.setFont(font)
-               local extraImg = gfx.imageWithText(TOAST_TEXT, width, height)
+               local extraImg = gfx.imageWithText(info.isSecret and TOAST_TEXT_SECRET or TOAST_TEXT, width, height)
                extraImg:draw(MINI_TOAST_MARGIN + CHECKBOX_SIZE + MINI_TOAST_MARGIN,
                              height - MINI_TOAST_MARGIN - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
             elseif not granted then
