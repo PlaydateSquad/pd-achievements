@@ -127,7 +127,8 @@ local CARD_HEIGHT_PER_LINE <const> = 16
 local CARD_HEIGHT_MIN <const> = 64
 local CARD_OUTLINE <const> = 2
 local CARD_SPACING <const> = 8
-local SUMMARY_CARD_HEIGHT <const> = 52
+local SUMMARY_CARD_HEIGHT <const> = 48
+local SUMMARY_TWEAK_Y <const> = 0 -- tweak the Y position of the summary text
 
 -- layout of inside the card
 local LAYOUT_MARGIN <const> = 8
@@ -187,8 +188,8 @@ local SCROLLBAR_EASING_OUT <const> = playdate.easingFunctions.inQuint
 local LOCKED_TEXT <const> = "Locked "
 local PROGRESS_TEXT <const> = "Locked "  -- could also be "Progress "
 local GRANTED_TEXT <const> = "Unlocked on %s "
+local NUM_HIDDEN_ACHIEVEMENTS_TEXT = "...and %d hidden achievement%s."
 local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d", y, m, d) end
-
 local SORT_ORDER = { "default", "recent", "progress", "name" }
 
 local av = {}
@@ -674,6 +675,12 @@ function av.drawSecretAchievementSummary(x, y, width, height)
       gfx.setColor(gfx.kColorBlack)
 
       gfx.drawRoundRect(margin, margin, width-2*margin, height-2*margin, CARD_CORNER)
+
+      local font = m.fonts.name.locked
+      local summaryText = string.format(NUM_HIDDEN_ACHIEVEMENTS_TEXT, m.numHiddenCardsToSummarize, m.numHiddenCardsToSummarize == 1 and "" or "s")
+      
+      font:drawTextAligned(summaryText, width/2, height/2 - math.floor(font:getHeight()/2) + SUMMARY_TWEAK_Y, kTextAlignment.center)
+      
       gfx.popContext()
 
       m.secretAchievementSummaryCache = image
@@ -907,7 +914,7 @@ function av.drawCards(x, y, animating)
    end
 
    local isHidden
-   local summaryCard = nil
+   local showedSummary = false
    for i = 1,#m.card do
       if not m.card[i].hidden then
          local card = m.card[i]
@@ -922,20 +929,29 @@ function av.drawCards(x, y, animating)
 			   y + card.drawY,
 			   CARD_WIDTH, m.c.CARD_HEIGHT)
 	       m.card[i].isVisible = true
+	    else
+	       m.card[i].isVisible = false
 	    end
 	 else
-	    if not summaryCard then summaryCard = m.card[i] end
-	    m.card[i].isVisible = false
+	    if not showedSummary and m.numHiddenCardsToSummarize > 0 then
+	       showedSummary = true
+	       count = count + 1
+	       if y + card.drawY + SUMMARY_CARD_HEIGHT > 0 and y + card.drawY < SCREEN_HEIGHT then
+		  av.drawSecretAchievementSummary(x + card.x,
+						  y + card.drawY,
+						  CARD_WIDTH, SUMMARY_CARD_HEIGHT)
+		  m.card[i].isVisible = true
+	       else
+		  m.card[i].isVisible = false
+	       end
+	    else
+	       m.card[i].isVisible = false
+	    end
 	 end
       end
    end
    if m.title.isVisible then
       av.drawTitle(x + m.title.x, titleY)
-   end
-   if m.numHiddenCardsToSummarize > 0 and summaryCard then
-      av.drawSecretAchievementSummary(x + summaryCard.x,
-				      y + summaryCard.drawY,
-				      CARD_WIDTH, SUMMARY_CARD_HEIGHT)
    end
 end
 
