@@ -9,15 +9,13 @@ local achievementData = {
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
-    defaultIcon = "default/test (default)",
-    defaultIconLocked = "default/test_locked (default)",
     achievements = {
         {
             id = "test_achievement",
             name = "Achievement 1 Name",
             description = "Achievement 1 Description",
             isSecret = false,
-            -- icon = "achievements/graphics/achievement-unlock",
+            icon = "test",
             iconLocked = "test_locked",
         },
         {
@@ -25,15 +23,15 @@ local achievementData = {
             name = "Achievement 2 Name",
             description = "Achievement 2 Description",
             isSecret = false,
-            icon = nil,
-            iconLocked = nil,
+            icon = "test",
+            iconLocked = "test_locked",
         },
         {
             id = "test_achievement_3",
             name = "Achievement 3 Name",
             description = "Achievement 3 Description",
             isSecret = false,
-            icon = nil,
+            icon = "test",
             iconLocked = nil,
             progressMax = 5,
         },
@@ -42,8 +40,6 @@ local achievementData = {
             name = "Achievement 4 Name",
             description = "Achievement 4 Description",
             isSecret = true,
-            icon = nil,
-            iconLocked = nil,
             progressMax = 5,
         },
         {
@@ -52,7 +48,7 @@ local achievementData = {
             description = "Achievement 5 Description",
             isSecret = true,
             icon = nil,
-            iconLocked = nil,
+            iconLocked = "test_locked",
         },
     }
 }
@@ -95,6 +91,7 @@ achievements.viewer.initialize({ fadeColor = gfx.kColorWhite,
 				 numDescriptionLines = 1 }) 
 
 achievements.toasts.initialize({ miniMode = false,
+				 invert = false,  -- set to true to try dark toasts
 				 numDescriptionLines = 1,
 				 toastOnGrant = true,
 				 toastOnAdvance = 0.5,

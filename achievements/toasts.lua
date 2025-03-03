@@ -353,16 +353,11 @@ function at.initialize(config)
    m.toastImageCache = {}
 
    m.defaultIcons = {}
-   if (gameData.defaultIcon) then
-      m.defaultIcons.granted = at.loadFile(gfx.image.new, m.imagePath .. (gameData.defaultIcon or gameData.default_icon))
-   else
-      m.defaultIcons.granted = achievements.graphics.get_image("*_default_icon")
-   end
-   if (gameData.defaultIconLocked or gameData.default_icon_locked) then
-      m.defaultIcons.locked = at.loadFile(gfx.image.new, m.imagePath .. (gameData.defaultIconLocked or gameData.default_icon_locked))
-   else
-      m.defaultIcons.locked = achievements.graphics.get_image("*_default_locked")
-   end
+   m.defaultIcons.granted = achievements.graphics.get_image("*_default_icon")
+   m.defaultIcons.granted:addMask(true)
+   m.defaultIcons.locked = achievements.graphics.get_image("*_default_locked")
+   m.defaultIcons.locked:addMask(true)
+   m.defaultIcons.blank = gfx.image.new(32, 32)
 
    m.assetPath = assetPath
    savedAssetPath = assetPath
@@ -409,7 +404,7 @@ function at.initialize(config)
          m.icons[id].locked = at.loadFile(gfx.image.new, m.imagePath .. iconLocked)
       end
       if icon then
-         m.icons[id].granted = at.loadFile(gfx.image.new, m.imagePath .. data.icon)
+         m.icons[id].granted = at.loadFile(gfx.image.new, m.imagePath .. icon)
       end
    end
 
@@ -463,12 +458,9 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 
       local info = m.achievementData[achievementId]
 
-      local iconImgGranted = m.icons[achievementId].granted or m.defaultIcons.granted or
-            m.icons[achievementId].locked or m.defaultIcons.locked
+      local iconImgGranted = m.icons[achievementId].granted or m.defaultIcons.granted or m.defaultIcons.blank
       iconImgGranted:setInverted(m.config.invert)
-      local iconImgLocked
-      iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.locked or
-	 m.icons[achievementId].granted or m.defaultIcons.granted
+      local iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.locked or m.defaultIcons.blank
       iconImgLocked:setInverted(m.config.invert)
 
       if toastOptions.updateMinimally then
@@ -479,22 +471,20 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
          end
 
          if toastOptions.maskAnimFrame ~= nil then
-            if toastOptions.maskAnimFrame == false then
+            if toastOptions.maskAnimFrame == false or toastOptions.maskAnimFrame == 1 then
                -- locked icon
                iconImgLocked:draw(width - image_margin - iconImgLocked.width, image_margin)
-            elseif toastOptions.maskAnimFrame == true then
+            elseif toastOptions.maskAnimFrame == true or toastOptions.maskAnimFrame == 0 then
                -- unlocked icon
                iconImgGranted:draw(width - image_margin - iconImgGranted.width, image_margin)
             elseif type(toastOptions.maskAnimFrame) == "number" then
-               local backupMask = iconImgLocked:getMaskImage():copy()
+	       -- draw the "granted" image on top of a solid background that matches the card
                gfx.pushContext(m.iconBuffer)
-               gfx.clear(gfx.kColorClear)
-               iconImgGranted:draw(0, 0)
-               iconImgLocked:setMaskImage(m.maskAnim:getImage(toastOptions.maskAnimFrame))
-               iconImgLocked:draw(0, 0)
-               iconImgLocked:setMaskImage(backupMask)
-               gfx.popContext()
-               m.iconBuffer:setMaskImage(backupMask)
+               gfx.clear(gfx.kColorWhite)
+	       iconImgGranted:draw(0, 0)
+	       gfx.popContext()
+	       m.iconBuffer:setMaskImage(m.maskAnim:getImage(toastOptions.maskAnimFrame))
+	       iconImgLocked:draw(width - image_margin - m.iconBuffer.width, image_margin)
                m.iconBuffer:draw(width - image_margin - m.iconBuffer.width, image_margin)
             end
          end
