@@ -1,6 +1,7 @@
 import "CoreLibs/graphics"
 import "CoreLibs/object"
 import "CoreLibs/crank"
+import "CoreLibs/ui"
 
 local gfx <const> = playdate.graphics
 
@@ -248,8 +249,6 @@ end
 function av.initialize(config)
    if not (achievements and achievements.flag_is_playdatesquad_api) then
       error("ERROR: achievements library achievements.lua not loaded")
-   elseif not achievements.graphics then
-      error("ERROR: achievements library graphics.lua not loaded")
    end
 
    config = av.setupDefaults(config)

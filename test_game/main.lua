@@ -79,9 +79,6 @@ end
 
 import "CoreLibs/ui"
 import "generate_data"
-import "simple_viewer"
-import "achievements/viewer"
-import "achievements/toasts"
 
 local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
@@ -104,10 +101,7 @@ local options = {
     {"GENERATE RANDOM DATA", function() 
         CHANGE_SCENE("GENERATE_DATA")
     end},
-    {"GO TO BASIC VIEWER", function()
-        CHANGE_SCENE("simple_viewer")
-    end},
-    {"LAUNCH FANCY VIEWER", function()
+    {"LAUNCH VIEWER", function()
 	achievements.viewer.launch()
     end},
     {"set to regular toasts", function()

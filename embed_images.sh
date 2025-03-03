@@ -6,7 +6,6 @@ echo "NOTE: Running this script should only be necesary whenever the base defaul
 echo "      Setting custom default icons for your game can be done by simply adding 'defaultIcon' and 'defaultIconLocked' fields in your initialization-data."
 
 python  ./maintainer_resources/embed_images.py \
-	--image-file  ./maintainer_resources/achievement-unlock.png    b64_default_icon    \
-	--image-file  ./maintainer_resources/achievement-lock.png      b64_default_locked  \
-	--image-file  ./maintainer_resources/achievement-secret.png    b64_default_secret  \
-	--embed-into  ./achievements/graphics.lua
+	--image-file  ./maintainer_resources/achievement-unlock.png    '["*_b64_default_icon"]'    \
+	--image-file  ./maintainer_resources/achievement-lock.png      '{"*_b64_default_locked"]'  \
+	--embed-into  ./achievements/toasts.lua
