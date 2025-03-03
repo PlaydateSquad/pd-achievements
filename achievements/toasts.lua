@@ -164,7 +164,6 @@ local PROGRESS_BAR_CORNER <const> = 2
 
 local LOCKED_TEXT <const> = "Locked"
 local PROGRESS_TEXT <const> = "Locked"  -- could also be "Progress "
-local GRANTED_TEXT <const> = "Unlocked on %s"
 local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d", y, m, d) end
 
 local SECRET_DESCRIPTION <const> = "This is a secret achievement."
@@ -489,7 +488,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
          local image_margin = toastOptions.miniToast and MINI_TOAST_MARGIN or LAYOUT_MARGIN
          if toastOptions.checkBoxAnimFrame ~= nil then
             local img = m.checkBox.anim:getImage(toastOptions.checkBoxAnimFrame)
-            img:draw(image_margin, height - CHECKBOX_SIZE - image_margin)
+            img:draw(image_margin, height - img.height - image_margin)
          end
 
          if toastOptions.maskAnimFrame ~= nil then
@@ -610,16 +609,16 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             if toastOptions.showAchievementUnlockedText then
                font = m.fonts.status
                gfx.setFont(font)
-               local extraImg = gfx.imageWithText(info.isSecret and TOAST_TEXT_SECRET_SHORT or TOAST_TEXT, width, height)
-               extraImg:draw(MINI_TOAST_MARGIN + CHECKBOX_SIZE + MINI_TOAST_MARGIN,
-                             height - MINI_TOAST_MARGIN - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
+               local statusImg = gfx.imageWithText(info.isSecret and TOAST_TEXT_SECRET_SHORT or TOAST_TEXT, width, height)
+               statusImg:draw(MINI_TOAST_MARGIN + CHECKBOX_SIZE + MINI_TOAST_MARGIN - 1,
+			      height - MINI_TOAST_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
             elseif not granted then
                if not progressMax then
                   font = m.fonts.status
                   gfx.setFont(font)
-                  local extraImg = gfx.imageWithText(LOCKED_TEXT, width, height)
-                  extraImg:draw(width - extraImg.width - MINI_TOAST_MARGIN - LAYOUT_ICON_SIZE - LAYOUT_SPACING,
-                                height - MINI_TOAST_MARGIN - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
+                  local statusImg = gfx.imageWithText(LOCKED_TEXT, width, height)
+                  statusImg:draw(width - statusImg.width - MINI_TOAST_MARGIN - LAYOUT_ICON_SIZE - LAYOUT_SPACING - 1,
+				 height - MINI_TOAST_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
                end
             end
             statusImgWidth = LAYOUT_ICON_SIZE
@@ -632,7 +631,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 	       statusText = info.isSecret and TOAST_TEXT_SECRET or TOAST_TEXT
 	    else
                statusText = LOCKED_TEXT
-               if progressMax and toastOptions.isToast then
+               if progressMax then
                   statusText = PROGRESS_TEXT
                end
             end
@@ -642,7 +641,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
                                                   height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
 	    end
             if statusImg then
-	       statusImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
+	       statusImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING + 3,
 			      height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
                statusImgWidth = statusImg.width
             end
@@ -672,7 +671,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             local progressTextHeight = height - LAYOUT_MARGIN - iconSize - LAYOUT_SPACING
             local progressSpacing = LAYOUT_STATUS_SPACING
             local progressMargin = LAYOUT_MARGIN
-	    local progressXdiff = toastOptions.miniToast and 0 or statusImgWidth + 3
+	    local progressXdiff = toastOptions.miniToast and 0 or statusImgWidth + 5
 	    local progressXdiffText = toastOptions.miniToast and -statusImgWidth or 5
             if toastOptions.miniToast then
                progressTextWidth = width
@@ -805,7 +804,6 @@ function at.updateToast()
 
    -- Render options passed to drawCard each frame.
    local toastOptions = {
-      isToast = true,
       checkBoxAnimFrame = isGranted and m.checkBox.anim:getLength() or nil,
       maskAnimFrame = isGranted and true or nil,
       updateMinimally = true,
@@ -990,6 +988,11 @@ local function advanceWithToast(achievementId, advanceFunc, advanceAmount)
       if achievements.isGranted(achievementId) then
          -- Already toasted by advance* calling grant()
          shouldToast = false
+      elseif achievements.getInfo(achievementId).isSecret and not achievements.isGranted(achievementId) then
+	 shouldToast = false
+      elseif toastOnAdvanceFraction == nil or toastOnAdvanceFraction == 0 then
+	 local newProgress = achievements.progress[achievementId] or 0
+	 shouldToast = (newProgress > prevProgress)
       else
          if toastOnAdvanceFraction == nil or toastOnAdvanceFraction == 0 then
             shouldToast = true
