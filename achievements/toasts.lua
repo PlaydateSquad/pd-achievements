@@ -153,7 +153,7 @@ local LAYOUT_SPACING <const> = 4
 local LAYOUT_ICON_SIZE <const> = 32
 local LAYOUT_ICON_SPACING <const> = 8
 local LAYOUT_STATUS_SPACING <const> = 10
-local LAYOUT_STATUS_TWEAK_Y <const> = 0
+local LAYOUT_STATUS_TWEAK_Y <const> = -1
 local LAYOUT_PROGRESS_TWEAK_Y <const> = 0
 
 local CHECKBOX_SIZE <const> = 15
