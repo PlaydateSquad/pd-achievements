@@ -352,6 +352,7 @@ function at.initialize(config)
    m.toastImageCache = {}
 
    m.defaultIcons = {}
+
    m.defaultIcons.granted = at.loadFile(at.loadDefaultIcon, "*_b64_default_icon")
    m.defaultIcons.granted:addMask(true)
    m.defaultIcons.locked = at.loadFile(at.loadDefaultIcon, "*_b64_default_locked")
