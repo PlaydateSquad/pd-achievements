@@ -776,7 +776,7 @@ function at.updateToast()
 
    if m.currentToast == nil then
       -- Check if the queue contains any toasts
-      m.currentToast = table.remove(m.toastQueue, 1)
+      m.currentToast = table.remove(m.toastQueue or {}, 1)
       if not m.currentToast then
          -- finished toasting
          at.destroy()
@@ -891,7 +891,7 @@ function at.abortToasts()
       m.toastAnim < TOAST_ANIM_IN_SECONDS + TOAST_ANIM_CHECKBOX_SECONDS then
       m.toastAnim = TOAST_ANIM_IN_SECONDS + TOAST_ANIM_PAUSE_SECONDS
    end
-   m.toastQueue = nil
+   m.toastQueue = {}
 end
 
 function at.toast(achievementId, config)
