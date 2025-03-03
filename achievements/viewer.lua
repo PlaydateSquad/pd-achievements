@@ -285,18 +285,6 @@ function av.initialize(config)
 
    m.scrollToTop = false
 
-   m.defaultIcons = {}
-   if (gameData.defaultIcon) then
-      m.defaultIcons.granted = av.loadFile(gfx.image.new, m.imagePath .. (gameData.defaultIcon or gameData.default_icon))
-   else
-      m.defaultIcons.granted = achievements.graphics.get_image("*_default_icon")
-   end
-   if (gameData.defaultIconLocked or gameData.default_icon_locked) then
-      m.defaultIcons.locked = av.loadFile(gfx.image.new, m.imagePath .. (gameData.defaultIconLocked or gameData.default_icon_locked))
-   else
-      m.defaultIcons.locked = achievements.graphics.get_image("*_default_locked")
-   end
-
    m.assetPath = assetPath
    savedAssetPath = assetPath
 
@@ -705,11 +693,8 @@ function av.drawCard(achievementId, x, y, width, height)
 
       local info = m.achievementData[achievementId]
 
-      local iconImgGranted = m.icons[achievementId].granted or m.defaultIcons.granted or
-            m.icons[achievementId].locked or m.defaultIcons.locked
-      local iconImgLocked
-      iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.locked or
-	 m.icons[achievementId].granted or m.defaultIcons.granted
+      local iconImgGranted = m.icons[achievementId].granted 
+      local iconImgLocked = m.icons[achievementId].locked
 
       gfx.setColor(gfx.kColorWhite)
       gfx.fillRoundRect(0, 0, width, height, CARD_CORNER)
@@ -725,12 +710,14 @@ function av.drawCard(achievementId, x, y, width, height)
       local imageMargin = LAYOUT_MARGIN
 
       local iconImg = granted and iconImgGranted or iconImgLocked
-      if m.config.invertCards then
+      if m.config.invertCards and iconImg then
          iconImg = iconImg:invertedImage()
       end
       if iconImg then
          iconSize = math.min(iconSize, iconImg.width)
          iconImg:draw(width - imageMargin - iconImg.width, imageMargin)
+      else
+	 iconSize = 0
       end
 
       local font = granted and m.fonts.name.granted or m.fonts.name.locked
@@ -738,7 +725,7 @@ function av.drawCard(achievementId, x, y, width, height)
       local name = info.name
       
       local nameImg = gfx.imageWithText(name,
-                                        width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
+                                        width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - iconSize,
                                         height - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE)
 
       font = granted and m.fonts.description.granted or m.fonts.description.locked
@@ -752,7 +739,7 @@ function av.drawCard(achievementId, x, y, width, height)
          end
 
          descImg = gfx.imageWithText(description,
-                                     width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
+                                     width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - iconSize,
                                      heightRemaining)
       end
 
