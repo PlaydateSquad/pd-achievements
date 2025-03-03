@@ -162,9 +162,9 @@ local PROGRESS_BAR_HEIGHT <const> = 8
 local PROGRESS_BAR_OUTLINE <const> = 1
 local PROGRESS_BAR_CORNER <const> = 2
 
-local LOCKED_TEXT <const> = "Locked "
-local PROGRESS_TEXT <const> = "Locked "  -- could also be "Progress "
-local GRANTED_TEXT <const> = "Unlocked on %s "
+local LOCKED_TEXT <const> = "Locked"
+local PROGRESS_TEXT <const> = "Locked"  -- could also be "Progress "
+local GRANTED_TEXT <const> = "Unlocked on %s"
 local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d", y, m, d) end
 
 local TOAST_CORNER <const> = 6
@@ -178,7 +178,8 @@ local TOAST_HEIGHT_PER_LINE <const> = 16
 local TOAST_HEIGHT_MIN <const> = 64
 local TOAST_SPACING <const> = 12
 local TOAST_TEXT <const> = "Achievement unlocked!"
-local TOAST_TEXT_SECRET <const> = "Secret achievement!"
+local TOAST_TEXT_SECRET <const> = "Secret achievement unlocked!"
+local TOAST_TEXT_SECRET_SHORT <const> = "Secret achievement!"
 
 local MINI_TOAST_WIDTH <const> = 184
 local MINI_TOAST_HEIGHT <const> = 44
@@ -595,7 +596,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             if toastOptions.showAchievementUnlockedText then
                font = m.fonts.status
                gfx.setFont(font)
-               local extraImg = gfx.imageWithText(info.isSecret and TOAST_TEXT_SECRET or TOAST_TEXT, width, height)
+               local extraImg = gfx.imageWithText(info.isSecret and TOAST_TEXT_SECRET_SHORT or TOAST_TEXT, width, height)
                extraImg:draw(MINI_TOAST_MARGIN + CHECKBOX_SIZE + MINI_TOAST_MARGIN,
                              height - MINI_TOAST_MARGIN - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
             elseif not granted then
@@ -610,24 +611,25 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             statusImgWidth = LAYOUT_ICON_SIZE
          else
             local font = m.fonts.status
-            local statusText = ""
+            local statusText = nil
+	    local statusImg
             gfx.setFont(font)
-            if granted then
-               local dateStr = at.formatDate(info.grantedAt or playdate.getSecondsSinceEpoch())
-               if dateStr then
-                  statusText = string.format(GRANTED_TEXT, dateStr)
-               end
-            else
+	    if granted then
+	       statusText = info.isSecret and TOAST_TEXT_SECRET or TOAST_TEXT
+	    else
                statusText = LOCKED_TEXT
                if progressMax and toastOptions.isToast then
                   statusText = PROGRESS_TEXT
                end
             end
-            statusImg = gfx.imageWithText(statusText, width - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE,
-                                          height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
+	    if statusText then
+	       statusImg = gfx.imageWithText(statusText, width - 2*LAYOUT_MARGIN - statusImgWidth -
+                                                  LAYOUT_STATUS_SPACING - LAYOUT_SPACING - CHECKBOX_SIZE,
+                                                  height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
+	    end
             if statusImg then
-               statusImg:draw(width - LAYOUT_MARGIN - statusImg.width,
-                              height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
+	       statusImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
+			      height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
                statusImgWidth = statusImg.width
             end
          end
@@ -656,6 +658,8 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             local progressTextHeight = height - LAYOUT_MARGIN - iconSize - LAYOUT_SPACING
             local progressSpacing = LAYOUT_STATUS_SPACING
             local progressMargin = LAYOUT_MARGIN
+	    local progressXdiff = toastOptions.miniToast and 0 or statusImgWidth + 3
+	    local progressXdiffText = toastOptions.miniToast and -statusImgWidth or 5
             if toastOptions.miniToast then
                progressTextWidth = width
                progressTextHeight = height
@@ -664,8 +668,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             end
             local progressTextImg = gfx.imageWithText(progressText, progressTextWidth, progressTextHeight)
 
-            progressTextImg:draw(width - progressMargin - statusImgWidth -
-                                 progressSpacing - progressTextImg.width,
+            progressTextImg:draw(width - progressMargin - progressSpacing - progressTextImg.width + progressXdiffText,
                                  height - progressMargin - progressTextImg.height + LAYOUT_STATUS_TWEAK_Y)
 
             local progressBarWidth =
@@ -681,26 +684,15 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             gfx.setColor(gfx.kColorBlack)
             gfx.pushContext()
             gfx.setDitherPattern(.5, gfx.image.kDitherTypeBayer8x8)
-            gfx.fillRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
+            gfx.fillRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing + progressXdiff,
                               height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
                               frac * progressBarWidth,
                               PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
             gfx.popContext()
             gfx.setLineWidth(PROGRESS_BAR_OUTLINE)
-            gfx.drawRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
+            gfx.drawRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing  + progressXdiff,
                               height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
                               progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
-         elseif toastOptions.showAchievementUnlockedText and not toastOptions.miniToast then
-               font = m.fonts.status
-               gfx.setFont(font)
-               local extraImg = gfx.imageWithText(info.isSecret and TOAST_TEXT_SECRET or TOAST_TEXT, width - 2*LAYOUT_MARGIN - statusImgWidth -
-                                                  LAYOUT_STATUS_SPACING - LAYOUT_SPACING - CHECKBOX_SIZE,
-                                                  height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
-               if extraImg then
-                  extraImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
-                                height - LAYOUT_MARGIN - extraImg.height + LAYOUT_STATUS_TWEAK_Y)
-               end
-
          end
       end
       gfx.popContext()
