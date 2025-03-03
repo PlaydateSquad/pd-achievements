@@ -44,7 +44,7 @@ local gfx <const> = playdate.graphics
 
    The default toasts will include the achievement's description, so can take up
    a pretty large chunk of the screen. You can set numDescriptionLines=1 to make
-   them slightly shorter in height, or miniMode=1 to have the toasts apprear
+   them slightly shorter in height, or miniMode=1 to have the toasts appear
    MUCH smaller. (If your game runs with a display scale > 1, toasts will always
    be mini, as larger toasts won't fit on screen.)
 
