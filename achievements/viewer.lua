@@ -70,6 +70,10 @@ local defaultConfig = {
    -- can also use clear to not fade the BG at all.
    fadeColor = gfx.kColorBlack,
 
+   -- Allow the user to press the A button to view a popup with a QR code with
+   -- more information about Playdate Achievements.
+   enableAboutScreen = true,
+
    -- Normally, a black header row is displayed, followed by white cards for the
    -- achievements. Set this to true to show dark cards with a light header row
    -- instead. (Achievement icons will still display normally and won't be
@@ -165,6 +169,21 @@ local BACK_BUTTON_START_X <const> = 4
 local BACK_BUTTON_START_Y <const> = 242
 local BACK_BUTTON_EASING_IN <const> = playdate.easingFunctions.outQuint
 local BACK_BUTTON_EASING_OUT <const> = playdate.easingFunctions.inQuint
+
+local ABOUT_BUTTON_X <const> = 352
+local ABOUT_BUTTON_Y <const> = 216
+local ABOUT_BUTTON_START_X <const> = 352
+local ABOUT_BUTTON_START_Y <const> = 242
+local ABOUT_BUTTON_EASING_IN <const> = playdate.easingFunctions.outQuint
+local ABOUT_BUTTON_EASING_OUT <const> = playdate.easingFunctions.inQuint
+
+local ABOUT_SCREEN_ANIM_FRAMES <const> = 25
+local ABOUT_SCREEN_X <const> = SCREEN_WIDTH/2 - 154/2
+local ABOUT_SCREEN_Y <const> = SCREEN_HEIGHT/2 - 130/2
+local ABOUT_SCREEN_START_X <const> = SCREEN_WIDTH
+local ABOUT_SCREEN_START_Y <const> = ABOUT_SCREEN_Y
+local ABOUT_SCREEN_EASING_IN <const> = playdate.easingFunctions.outQuint
+local ABOUT_SCREEN_EASING_OUT <const> = playdate.easingFunctions.inQuint
 
 local PROGRESS_BAR_HEIGHT <const> = 8
 local PROGRESS_BAR_OUTLINE <const> = 1
@@ -312,6 +331,7 @@ function av.initialize(config)
    m.checkBox.granted = av.loadFile(gfx.image.new, assetPath .. "/check_box_checked")
 
    m.backButtonImg = av.loadFile(gfx.image.new, assetPath .. "/back_button")
+   m.aboutButtonImg = av.loadFile(gfx.image.new, assetPath .. "/about_button")
 
    m.launchSound = av.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/launchSound")
    m.exitSound = av.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/exitSound")
@@ -862,13 +882,18 @@ function av.drawScrollbar(x, y)
 
    gfx.pushContext()
    gfx.setColor(gfx.kColorWhite)
-   gfx.fillRoundRect(x, SCROLLBAR_Y_BUFFER, SCROLLBAR_WIDTH, 240 - 2*SCROLLBAR_Y_BUFFER, SCROLLBAR_CORNER)
+   local scrollbarYLimit = SCREEN_HEIGHT
+   if m.config.enableAboutScreen then
+      scrollbarYLimit = ABOUT_BUTTON_Y+4
+   end
+   
+   gfx.fillRoundRect(x, SCROLLBAR_Y_BUFFER, SCROLLBAR_WIDTH, scrollbarYLimit - 2*SCROLLBAR_Y_BUFFER, SCROLLBAR_CORNER)
    local margin = 1
    gfx.setColor(gfx.kColorBlack)
    gfx.drawRoundRect(x+margin, SCROLLBAR_Y_BUFFER+margin,
-                     SCROLLBAR_WIDTH-2*margin, 240 - 2*SCROLLBAR_Y_BUFFER-2*margin,
+                     SCROLLBAR_WIDTH-2*margin, scrollbarYLimit - 2*SCROLLBAR_Y_BUFFER-2*margin,
                      SCROLLBAR_CORNER)
-   local totalHeight = 240 - 2*SCROLLBAR_Y_BUFFER
+   local totalHeight = scrollbarYLimit - 2*SCROLLBAR_Y_BUFFER
 
    local barPagePixels = barPageFrac * totalHeight
    local startPos = (totalHeight - barPagePixels) * barPosFrac
@@ -1005,6 +1030,13 @@ function av.animateInUpdate()
    local backButtonY = BACK_BUTTON_Y * backButtonAnimFrac + BACK_BUTTON_START_Y * (1-backButtonAnimFrac)
    m.backButtonImg:draw(backButtonX, backButtonY)
 
+   if m.config.enableAboutScreen then
+      local aboutButtonAnimFrac = ABOUT_BUTTON_EASING_IN(m.rawAnimFrac, 0, 1, 1)
+      local aboutButtonX = ABOUT_BUTTON_X * aboutButtonAnimFrac + ABOUT_BUTTON_START_X * (1-aboutButtonAnimFrac)
+      local aboutButtonY = ABOUT_BUTTON_Y * aboutButtonAnimFrac + ABOUT_BUTTON_START_Y * (1-aboutButtonAnimFrac)
+      m.aboutButtonImg:draw(aboutButtonX, aboutButtonY)
+   end
+
    if m.fadeAmount >= FADE_AMOUNT and m.animFrame > ANIM_FRAMES then
       m.cardSpacing = 0
       m.animFrame = 0
@@ -1045,6 +1077,13 @@ function av.animateOutUpdate()
    local backButtonX = BACK_BUTTON_X * backButtonAnimFrac + BACK_BUTTON_START_X * (1-backButtonAnimFrac)
    local backButtonY = BACK_BUTTON_Y * backButtonAnimFrac + BACK_BUTTON_START_Y * (1-backButtonAnimFrac)
    m.backButtonImg:draw(backButtonX, backButtonY)
+
+   if m.config.enableAboutScreen then
+      local aboutButtonAnimFrac = ABOUT_BUTTON_EASING_OUT(m.rawAnimFrac, 0, 1, 1)
+      local aboutButtonX = ABOUT_BUTTON_X * aboutButtonAnimFrac + ABOUT_BUTTON_START_X * (1-aboutButtonAnimFrac)
+      local aboutButtonY = ABOUT_BUTTON_Y * aboutButtonAnimFrac + ABOUT_BUTTON_START_Y * (1-aboutButtonAnimFrac)
+      m.aboutButtonImg:draw(aboutButtonX, aboutButtonY)
+   end
 
    if m.fadeAmount >= FADE_AMOUNT and m.animFrame > ANIM_FRAMES then
       if m.backdropImage then
@@ -1151,10 +1190,25 @@ function av.mainUpdate()
    end
 
    m.backButtonImg:draw(BACK_BUTTON_X, BACK_BUTTON_Y)
+   if m.config.enableAboutScreen then
+      m.aboutButtonImg:draw(ABOUT_BUTTON_X, ABOUT_BUTTON_Y)
+   end
 
    if playdate.buttonJustPressed(playdate.kButtonB) then
-      m.fadedBackdropImage = nil
-      av.beginExit()
+      if (m.aboutScreenAnim or nil) ~= 0 then
+	 m.exitSound.play()
+	 m.aboutScreenAnimSpeed = -1
+      else
+	 m.fadedBackdropImage = nil
+	 av.beginExit()
+      end
+   elseif m.config.enableAboutScreen and playdate.buttonJustPressed(playdate.kButtonA) then
+      m.launchSound.play()
+      m.aboutScreenAnimSpeed = 1
+      if not m.aboutScreenAnim then m.aboutScreenAnim = 0 end
+   end
+
+   if (m.aboutScreenAnim or 0) ~= 0 then
    end
 end
 
