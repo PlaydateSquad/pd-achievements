@@ -544,9 +544,6 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             local font = granted and m.fonts.name.miniToast or m.fonts.name.miniToastLocked
             gfx.setFont(font)
 	    local name = info.name
-	    if info.nameLocked and not granted then
-	       name = info.nameLocked
-	    end
             local nameImg = gfx.imageWithText(info.name, width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
                                               height - 2*LAYOUT_MARGIN - CHECKBOX_SIZE)
             if nameImg then nameImg:draw(MINI_TOAST_MARGIN, MINI_TOAST_MARGIN+2) end

@@ -734,9 +734,6 @@ function av.drawCard(achievementId, x, y, width, height)
       local font = granted and m.fonts.name.granted or m.fonts.name.locked
       gfx.setFont(font)
       local name = info.name
-      if info.nameLocked and not granted then
-	 name = info.nameLocked
-      end
       
       local nameImg = gfx.imageWithText(name,
                                         width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
