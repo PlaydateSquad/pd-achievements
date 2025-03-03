@@ -378,7 +378,6 @@ function av.reinitialize(config)
    m.possibleScore = 0
    m.completionScore = 0
    m.numHiddenCards = 0
-   m.numHiddenCardsToSummarize = 0
    m.secretAchievementSummaryCache = nil
 
    for i = 1,#m.gameData.achievements do
@@ -394,9 +393,6 @@ function av.reinitialize(config)
       local isHidden = not not (data.isSecret and not data2.grantedAt)
       if isHidden then
 	 m.numHiddenCards = m.numHiddenCards + 1
-	 if data.scoreValue > 0 then
-	    m.numHiddenCardsToSummarize = m.numHiddenCardsToSummarize + 1
-	 end
       end
       local achScore = data.score_value or data.scoreValue or 0
       m.possibleScore += achScore
@@ -591,10 +587,9 @@ function av.drawTitle(x, y)
          local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
          summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), TITLE_WIDTH, TITLE_HEIGHT)
       elseif m.config.summaryMode == "count" then
-	 local fullyHidden = m.numHiddenCards - m.numHiddenCardsToSummarize
          summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
                                                       tostring(m.numCompleted or 0),
-                                                      tostring((#m.gameData.achievements or 0) - fullyHidden)),
+                                                      tostring((#m.gameData.achievements or 0))),
                                         TITLE_WIDTH, TITLE_HEIGHT)
       elseif m.config.summaryMode == "score" then
          summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
@@ -679,7 +674,7 @@ function av.drawSecretAchievementSummary(x, y, width, height)
       gfx.drawRoundRect(margin, margin, width-2*margin, height-2*margin, CARD_CORNER)
 
       local font = m.fonts.name.locked
-      local summaryText = string.format(NUM_HIDDEN_ACHIEVEMENTS_TEXT, m.numHiddenCardsToSummarize, m.numHiddenCardsToSummarize == 1 and "" or "s")
+      local summaryText = string.format(NUM_HIDDEN_ACHIEVEMENTS_TEXT, m.numHiddenCards, m.numHiddenCards == 1 and "" or "s")
       
       font:drawTextAligned(summaryText, width/2, height/2 - math.floor(font:getHeight()/2) + SUMMARY_TWEAK_Y, kTextAlignment.center)
       
@@ -944,7 +939,7 @@ function av.drawCards(x, y, animating)
 	       m.card[i].isVisible = false
 	    end
 	 else
-	    if not showedSummary and m.numHiddenCardsToSummarize > 0 then
+	    if not showedSummary and m.numHiddenCards > 0 then
 	       showedSummary = true
 	       count = count + 1
 	       if y + card.drawY + SUMMARY_CARD_HEIGHT > 0 and y + card.drawY < SCREEN_HEIGHT then
@@ -982,7 +977,7 @@ function av.animateInUpdate()
    local summarySpace = 0
    if m.numHiddenCards > 0 then
       maxCard = maxCard - m.numHiddenCards  -- one extra card to say "plus X hidden achievements!"
-      if m.numHiddenCardsToSummarize > 0 then
+      if m.numHiddenCards > 0 then
 	 summarySpace = SUMMARY_CARD_HEIGHT + CARD_SPACING
       end
    end
@@ -1081,7 +1076,7 @@ function av.mainUpdate()
    local summarySpace = 0
    if m.numHiddenCards > 0 then
       maxCard = maxCard - m.numHiddenCards  -- one extra card to say "plus X hidden achievements!"
-      if m.numHiddenCardsToSummarize > 0 then
+      if m.numHiddenCards > 0 then
 	 summarySpace = SUMMARY_CARD_HEIGHT + CARD_SPACING
       end
    end

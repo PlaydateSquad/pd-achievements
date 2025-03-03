@@ -54,15 +54,6 @@ local achievementData = {
             icon = nil,
             iconLocked = nil,
         },
-        {
-            id = "test_achievement_6",
-            name = "Achievement 6 Name",
-            description = "Achievement 6 Description",
-            isSecret = true,
-            icon = nil,
-            iconLocked = nil,
-	    scoreValue = 0,
-        },
     }
 }
 
@@ -169,15 +160,6 @@ local options = {
         else
             print("granting example achievement 5")
             achievements.grant("test_achievement_5")
-        end
-    end},
-    {"grant/revoke 6", function() 
-        if achievements.isGranted("test_achievement_6") then
-            print("revoking example achievement 6")
-            achievements.revoke("test_achievement_6")
-        else
-            print("granting example achievement 6")
-            achievements.grant("test_achievement_6")
         end
     end},
     {"grant invalid", function() 
