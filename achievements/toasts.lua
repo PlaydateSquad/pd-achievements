@@ -368,11 +368,12 @@ function at.initialize(config)
    savedAssetPath = assetPath
 
    m.fonts = {}
-   m.fonts.title = at.loadFile(gfx.font.new, assetPath .. "/Roobert-20-Medium")
+   local fontPath = "/System/Fonts"
+   m.fonts.title = at.loadFile(gfx.font.new, fontPath .. "/Roobert-20-Medium")
 
    m.fonts.name = {}
-   m.fonts.name.locked = at.loadFile(gfx.font.new, assetPath .. "/Roobert-11-Medium")
-   m.fonts.name.granted = at.loadFile(gfx.font.new, assetPath .. "/Roobert-11-Bold")
+   m.fonts.name.locked = at.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Medium")
+   m.fonts.name.granted = at.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Bold")
    m.fonts.description = {}
    m.fonts.description.locked = at.loadFile(gfx.font.new, assetPath .. "/Nontendo-Light")
    m.fonts.description.locked:setLeading(3)
