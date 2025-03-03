@@ -98,6 +98,11 @@ import "achievements/toasts"
 
 local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
+-- Set numDescriptionLines to 2 (or 3) if you have longer achievement
+-- descriptions.
+achievements.viewer.initialize({ fadeColor = gfx.kColorWhite,
+				 numDescriptionLines = 1 }) 
+
 achievements.toasts.initialize({ miniMode = false,
 				 numDescriptionLines = 1,
 				 toastOnGrant = true,
@@ -115,7 +120,7 @@ local options = {
         CHANGE_SCENE("simple_viewer")
     end},
     {"LAUNCH FANCY VIEWER", function()
-	achievements.viewer.launch({fadeColor = gfx.kColorWhite})
+	achievements.viewer.launch()
     end},
     {"set to regular toasts", function()
 	achievements.toasts.initialize({ miniMode = false })
