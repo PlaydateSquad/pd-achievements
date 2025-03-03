@@ -37,6 +37,32 @@ local achievementData = {
             iconLocked = nil,
             progressMax = 5,
         },
+        {
+            id = "test_achievement_4",
+            name = "Achievement 4 Name",
+            description = "Achievement 4 Description",
+            isSecret = true,
+            icon = nil,
+            iconLocked = nil,
+            progressMax = 5,
+        },
+        {
+            id = "test_achievement_5",
+            name = "Achievement 5 Name",
+            description = "Achievement 5 Description",
+            isSecret = true,
+            icon = nil,
+            iconLocked = nil,
+        },
+        {
+            id = "test_achievement_6",
+            name = "Achievement 6 Name",
+            description = "Achievement 6 Description",
+            isSecret = true,
+            icon = nil,
+            iconLocked = nil,
+	    scoreValue = 0,
+        },
     }
 }
 
@@ -103,7 +129,7 @@ local options = {
             achievements.revoke("test_achievement")
         else
             print("granting example achievement 1")
-            achievements.grant("test_achievement", achievements.graphics.toasts.unlock)
+            achievements.grant("test_achievement")
         end
     end},
     {"grant/revoke 2", function() 
@@ -112,7 +138,41 @@ local options = {
             achievements.revoke("test_achievement_2")
         else
             print("granting example achievement 2")
-            achievements.grant("test_achievement_2", achievements.graphics.toasts.secret)
+            achievements.grant("test_achievement_2")
+        end
+    end},
+    {"achievement 3 progress -1", function() 
+        print("achiement 3: -1 completion")
+        achievements.advance("test_achievement_3", -1)
+    end},
+    {"achievement 3 progress +1", function() 
+        print("achiement 3: +1 completion")
+        achievements.advance("test_achievement_3", 1)
+    end},
+    {"achievement 4 progress -1", function() 
+        print("achiement 4: -1 completion")
+        achievements.advance("test_achievement_4", -1)
+    end},
+    {"achievement 4 progress +1", function() 
+        print("achiement 4: +1 completion")
+        achievements.advance("test_achievement_4", 1)
+    end},
+    {"grant/revoke 5", function() 
+        if achievements.isGranted("test_achievement_5") then
+            print("revoking example achievement 5")
+            achievements.revoke("test_achievement_5")
+        else
+            print("granting example achievement 5")
+            achievements.grant("test_achievement_5")
+        end
+    end},
+    {"grant/revoke 6", function() 
+        if achievements.isGranted("test_achievement_6") then
+            print("revoking example achievement 6")
+            achievements.revoke("test_achievement_6")
+        else
+            print("granting example achievement 6")
+            achievements.grant("test_achievement_6")
         end
     end},
     {"grant invalid", function() 
@@ -126,14 +186,6 @@ local options = {
     {"save/export data", function() 
         print("saving/exporting")
         achievements.save()
-    end},
-    {"achievement 3 progress -1", function() 
-        print("achiement 3: -1 completion")
-        achievements.advance("test_achievement_3", -1)
-    end},
-    {"achievement 3 progress +1", function() 
-        print("achiement 3: +1 completion")
-        achievements.advance("test_achievement_3", 1)
     end},
 }
 main_screen:setNumberOfRows(#options)

@@ -127,7 +127,7 @@ local CARD_HEIGHT_PER_LINE <const> = 16
 local CARD_HEIGHT_MIN <const> = 64
 local CARD_OUTLINE <const> = 2
 local CARD_SPACING <const> = 8
-local SUMMARY_CARD_HEIGHT <const> = 48
+local SUMMARY_CARD_HEIGHT <const> = 40
 local SUMMARY_TWEAK_Y <const> = 0 -- tweak the Y position of the summary text
 
 -- layout of inside the card
@@ -136,7 +136,7 @@ local LAYOUT_SPACING <const> = 4
 local LAYOUT_ICON_SIZE <const> = 32
 local LAYOUT_ICON_SPACING <const> = 8
 local LAYOUT_STATUS_SPACING <const> = 10
-local LAYOUT_STATUS_TWEAK_Y <const> = 0
+local LAYOUT_STATUS_TWEAK_Y <const> = -1
 local LAYOUT_PROGRESS_TWEAK_Y <const> = 0
 
 local CHECKBOX_SIZE <const> = 15
@@ -188,7 +188,8 @@ local SCROLLBAR_EASING_OUT <const> = playdate.easingFunctions.inQuint
 local LOCKED_TEXT <const> = "Locked "
 local PROGRESS_TEXT <const> = "Locked "  -- could also be "Progress "
 local GRANTED_TEXT <const> = "Unlocked on %s "
-local NUM_HIDDEN_ACHIEVEMENTS_TEXT = "...and %d hidden achievement%s."
+local NUM_HIDDEN_ACHIEVEMENTS_TEXT = "+ %d secret achievement%s."
+local EXTRA_SECRET_TEXT = "Secret achievement"
 local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d", y, m, d) end
 local SORT_ORDER = { "default", "recent", "progress", "name" }
 
@@ -590,9 +591,10 @@ function av.drawTitle(x, y)
          local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
          summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), TITLE_WIDTH, TITLE_HEIGHT)
       elseif m.config.summaryMode == "count" then
+	 local fullyHidden = m.numHiddenCards - m.numHiddenCardsToSummarize
          summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
                                                       tostring(m.numCompleted or 0),
-                                                      tostring(#m.gameData.achievements or 0)),
+                                                      tostring((#m.gameData.achievements or 0) - fullyHidden)),
                                         TITLE_WIDTH, TITLE_HEIGHT)
       elseif m.config.summaryMode == "score" then
          summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
@@ -841,6 +843,15 @@ function av.drawCard(achievementId, x, y, width, height)
          gfx.drawRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
                            height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
                            progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
+      end
+      if granted and info.isSecret then
+	 extraImg = gfx.imageWithText(EXTRA_SECRET_TEXT,
+				      width - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE,
+				      height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
+	 if extraImg then
+	    extraImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
+			  height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
+	 end
       end
       gfx.popContext()
       if m.config.invertCards then

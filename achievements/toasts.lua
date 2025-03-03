@@ -167,8 +167,6 @@ local PROGRESS_TEXT <const> = "Locked "  -- could also be "Progress "
 local GRANTED_TEXT <const> = "Unlocked on %s "
 local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d", y, m, d) end
 
-local SECRET_DESCRIPTION <const> = "This is a secret achievement."
-
 local TOAST_CORNER <const> = 6
 local TOAST_OUTLINE <const> = 2
 local TOAST_WIDTH <const> = 300
@@ -364,11 +362,6 @@ function at.initialize(config)
    else
       m.defaultIcons.locked = achievements.graphics.get_image("*_default_locked")
    end
-   if (gameData.secretIcon or gameData.secret_icon) then
-      m.defaultIcons.secret = at.loadFile(gfx.image.new, m.imagePath .. (gameData.secretIcon or gameData.secret_icon))
-   else
-      m.defaultIcons.secret = achievements.graphics.get_image("*_default_secret")
-   end
 
    m.assetPath = assetPath
    savedAssetPath = assetPath
@@ -395,7 +388,6 @@ function at.initialize(config)
    m.checkBox.anim = at.loadFile(gfx.imagetable.new, assetPath .. "/check_box_anim")
    m.checkBox.locked = at.loadFile(gfx.image.new, assetPath .. "/check_box")
    m.checkBox.granted = at.loadFile(gfx.image.new, assetPath .. "/check_box_checked")
-   m.checkBox.secret = at.loadFile(gfx.image.new, assetPath .. "/check_box_secret")
 
    m.icons = { }
    m.iconBuffer = gfx.image.new(LAYOUT_ICON_SIZE, LAYOUT_ICON_SIZE)  -- for masking
@@ -473,15 +465,10 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             m.icons[achievementId].locked or m.defaultIcons.locked
       iconImgGranted:setInverted(m.config.invert)
       local iconImgLocked
-      if info.secret then
-         iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.secret or m.defaultIcons.locked or
-            m.icons[achievementId].granted or m.defaultIcons.granted
-         iconImgLocked:setInverted(m.config.invert)
-      else
-         iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.locked or
-            m.icons[achievementId].granted or m.defaultIcons.granted
-         iconImgLocked:setInverted(m.config.invert)
-      end
+      iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.locked or
+	 m.icons[achievementId].granted or m.defaultIcons.granted
+      iconImgLocked:setInverted(m.config.invert)
+
       if toastOptions.updateMinimally then
          local image_margin = toastOptions.miniToast and MINI_TOAST_MARGIN or LAYOUT_MARGIN
          if toastOptions.checkBoxAnimFrame ~= nil then
@@ -555,6 +542,10 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
          if toastOptions.miniToast then
             local font = granted and m.fonts.name.miniToast or m.fonts.name.miniToastLocked
             gfx.setFont(font)
+	    local name = info.name
+	    if info.nameLocked and not granted then
+	       name = info.nameLocked
+	    end
             local nameImg = gfx.imageWithText(info.name, width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
                                               height - 2*LAYOUT_MARGIN - CHECKBOX_SIZE)
             if nameImg then nameImg:draw(MINI_TOAST_MARGIN, MINI_TOAST_MARGIN+2) end
@@ -571,8 +562,8 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             local descImage
             if heightRemaining >= font:getHeight() then
                local description = info.description
-               if info.isSecret and not granted then
-                  description = SECRET_DESCRIPTION
+               if info.descriptionLocked and not granted then
+                  description = info.descriptionLocked
                end
 
                descImg = gfx.imageWithText(description,
@@ -595,8 +586,6 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             img:draw(toastMargin, height - CHECKBOX_SIZE - toastMargin)
          elseif granted then
             m.checkBox.granted:draw(toastMargin, height - CHECKBOX_SIZE - toastMargin)
-         elseif info.isSecret then
-            m.checkBox.secret:draw(toastMargin, height - CHECKBOX_SIZE - toastMargin)
          else
             m.checkBox.locked:draw(toastMargin, height - CHECKBOX_SIZE - toastMargin)
          end
@@ -996,17 +985,17 @@ local function advanceWithToast(achievementId, advanceFunc, advanceAmount)
       if achievements.isGranted(achievementId) then
          -- Already toasted by advance* calling grant()
          shouldToast = false
+      elseif achievements.getInfo(achievementId).isSecret and not achievements.isGranted(achievementId) then
+	 shouldToast = false
+      elseif toastOnAdvanceFraction == nil or toastOnAdvanceFraction == 0 then
+	 shouldToast = true
       else
-         if toastOnAdvanceFraction == nil or toastOnAdvanceFraction == 0 then
-            shouldToast = true
-         else
-            local progressMax = achievements.getInfo(achievementId).progressMax
-            local newProgress = achievements.progress[achievementId] or 0
-            local section = math.floor(0.5 + (progressMax * toastOnAdvanceFraction))
-            if newProgress // section > prevProgress // section then
-               shouldToast = true
-            end
-         end
+	 local progressMax = achievements.getInfo(achievementId).progressMax
+	 local newProgress = achievements.progress[achievementId] or 0
+	 local section = math.floor(0.5 + (progressMax * toastOnAdvanceFraction))
+	 if newProgress // section > prevProgress // section then
+	    shouldToast = true
+	 end
       end
       if shouldToast then
          achievements.toasts.toast(achievementId)
