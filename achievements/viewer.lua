@@ -376,6 +376,7 @@ function av.reinitialize(config)
    m.possibleScore = 0
    m.completionScore = 0
    m.numHiddenCards = 0
+   m.numHiddenCardsToSummarize = 0
    m.secretAchievementSummaryCache = nil
 
    for i = 1,#m.gameData.achievements do
@@ -391,6 +392,9 @@ function av.reinitialize(config)
       local isHidden = not not (data.isSecret and not data2.grantedAt)
       if isHidden then
 	 m.numHiddenCards = m.numHiddenCards + 1
+	 if data.scoreValue > 0 then
+	    m.numHiddenCardsToSummarize = m.numHiddenCardsToSummarize + 1
+	 end
       end
       local achScore = data.score_value or data.scoreValue or 0
       m.possibleScore += achScore
@@ -928,7 +932,7 @@ function av.drawCards(x, y, animating)
    if m.title.isVisible then
       av.drawTitle(x + m.title.x, titleY)
    end
-   if m.numHiddenCards > 0 and summaryCard then
+   if m.numHiddenCardsToSummarize > 0 and summaryCard then
       av.drawSecretAchievementSummary(x + summaryCard.x,
 				      y + summaryCard.drawY,
 				      CARD_WIDTH, SUMMARY_CARD_HEIGHT)
@@ -951,7 +955,9 @@ function av.animateInUpdate()
    local summarySpace = 0
    if m.numHiddenCards > 0 then
       maxCard = maxCard - m.numHiddenCards  -- one extra card to say "plus X hidden achievements!"
-      summarySpace = SUMMARY_CARD_HEIGHT + CARD_SPACING
+      if m.numHiddenCardsToSummarize > 0 then
+	 summarySpace = SUMMARY_CARD_HEIGHT + CARD_SPACING
+      end
    end
    m.maxScroll = m.card[maxCard].y + m.c.CARD_HEIGHT - SCREEN_HEIGHT + 2*CARD_SPACING + summarySpace
 
@@ -1048,7 +1054,9 @@ function av.mainUpdate()
    local summarySpace = 0
    if m.numHiddenCards > 0 then
       maxCard = maxCard - m.numHiddenCards  -- one extra card to say "plus X hidden achievements!"
-      summarySpace = SUMMARY_CARD_HEIGHT + CARD_SPACING
+      if m.numHiddenCardsToSummarize > 0 then
+	 summarySpace = SUMMARY_CARD_HEIGHT + CARD_SPACING
+      end
    end
    m.maxScroll = m.card[maxCard].y + m.c.CARD_HEIGHT - SCREEN_HEIGHT + 2*CARD_SPACING + summarySpace
 
