@@ -177,13 +177,10 @@ local ABOUT_BUTTON_START_Y <const> = 242
 local ABOUT_BUTTON_EASING_IN <const> = playdate.easingFunctions.outQuint
 local ABOUT_BUTTON_EASING_OUT <const> = playdate.easingFunctions.inQuint
 
-local ABOUT_SCREEN_ANIM_FRAMES <const> = 25
+local ABOUT_SCREEN_ANIM_FRAMES <const> = 12
 local ABOUT_SCREEN_X <const> = SCREEN_WIDTH/2 - 154/2
 local ABOUT_SCREEN_Y <const> = SCREEN_HEIGHT/2 - 130/2
-local ABOUT_SCREEN_START_X <const> = SCREEN_WIDTH
-local ABOUT_SCREEN_START_Y <const> = ABOUT_SCREEN_Y
-local ABOUT_SCREEN_EASING_IN <const> = playdate.easingFunctions.outQuint
-local ABOUT_SCREEN_EASING_OUT <const> = playdate.easingFunctions.inQuint
+local ABOUT_SCREEN_DITHER <const> = gfx.image.kDitherTypeBayer8x8
 
 local PROGRESS_BAR_HEIGHT <const> = 8
 local PROGRESS_BAR_OUTLINE <const> = 1
@@ -332,6 +329,7 @@ function av.initialize(config)
 
    m.backButtonImg = av.loadFile(gfx.image.new, assetPath .. "/back_button")
    m.aboutButtonImg = av.loadFile(gfx.image.new, assetPath .. "/about_button")
+   m.aboutScreenImg = av.loadFile(gfx.image.new, assetPath .. "/about_screen")
 
    m.launchSound = av.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/launchSound")
    m.exitSound = av.loadFile(playdate.sound.sampleplayer.new, assetPath .. "/exitSound")
@@ -1103,7 +1101,9 @@ function av.mainUpdate()
       m.fadedBackdropImage:draw(0, 0)
    end
 
-   m.continuousAnimFrame = m.continuousAnimFrame + 1
+   if m.aboutScreenAnim == nil then
+      m.continuousAnimFrame = m.continuousAnimFrame + 1
+   end
    m.animFrame = m.animFrame + 1
 
    local maxCard = #m.card
@@ -1118,26 +1118,28 @@ function av.mainUpdate()
 
    av.drawCards(0, 0, 0)
 
-   if playdate.buttonJustPressed(playdate.kButtonRight) then
-      local i = table.indexOfElement(SORT_ORDER, m.sortOrder)
-      if i < #SORT_ORDER then i = i + 1 else i = 1 end
-      m.sortOrder = SORT_ORDER[i] or SORT_ORDER[1]
-      av.sortCards()
-      if m.config.soundVolume > 0 then
-         m.sortSound:setVolume(m.config.soundVolume)
-         m.sortSound:play()
+   if m.aboutScreenAnim == nil then
+      if playdate.buttonJustPressed(playdate.kButtonRight) then
+	 local i = table.indexOfElement(SORT_ORDER, m.sortOrder)
+	 if i < #SORT_ORDER then i = i + 1 else i = 1 end
+	 m.sortOrder = SORT_ORDER[i] or SORT_ORDER[1]
+	 av.sortCards()
+	 if m.config.soundVolume > 0 then
+	    m.sortSound:setVolume(m.config.soundVolume)
+	    m.sortSound:play()
+	 end
+	 m.scrollToTop = true
+      elseif playdate.buttonJustPressed(playdate.kButtonLeft) then
+	 local i = table.indexOfElement(SORT_ORDER, m.sortOrder)
+	 if i > 1 then i = i - 1 else i = #SORT_ORDER end
+	 m.sortOrder = SORT_ORDER[i] or SORT_ORDER[1]
+	 av.sortCards()
+	 if m.config.soundVolume > 0 then
+	    m.sortSound:setVolume(m.config.soundVolume)
+	    m.sortSound:play()
+	 end
+	 m.scrollToTop = true
       end
-      m.scrollToTop = true
-   elseif playdate.buttonJustPressed(playdate.kButtonLeft) then
-      local i = table.indexOfElement(SORT_ORDER, m.sortOrder)
-      if i > 1 then i = i - 1 else i = #SORT_ORDER end
-      m.sortOrder = SORT_ORDER[i] or SORT_ORDER[1]
-      av.sortCards()
-      if m.config.soundVolume > 0 then
-         m.sortSound:setVolume(m.config.soundVolume)
-         m.sortSound:play()
-      end
-      m.scrollToTop = true
    end
    local oldScroll = m.scroll
    if m.scrollToTop then
@@ -1147,9 +1149,9 @@ function av.mainUpdate()
       end
       m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL_DOWN, 0)
    else
-      if playdate.buttonIsPressed(playdate.kButtonUp) then
+      if playdate.buttonIsPressed(playdate.kButtonUp) and m.aboutScreenAnim == nil then
          m.scrollSpeed = math.min(m.scrollSpeed + SCROLL_ACCEL, SCROLL_SPEED)
-      elseif playdate.buttonIsPressed(playdate.kButtonDown) then
+      elseif playdate.buttonIsPressed(playdate.kButtonDown) and m.aboutScreenAnim == nil then
          m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL, -SCROLL_SPEED)
       elseif m.scrollSpeed > 0 then
          m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL_DOWN, 0)
@@ -1164,7 +1166,10 @@ function av.mainUpdate()
       m.scroll = m.scroll - scrollAmount
    end
 
-   local crankChanged, accelChanged = playdate.getCrankChange()
+   local crankChanged, accelChanged = 0,0
+   if m.aboutScreenAnim == nil then
+      crankChanged, accelChanged = playdate.getCrankChange()
+   end
    m.scroll = m.scroll + accelChanged
    if m.scroll < 3 and m.scrollSpeed == 0 then m.scroll = m.scroll - 1 end
 
@@ -1195,20 +1200,48 @@ function av.mainUpdate()
    end
 
    if playdate.buttonJustPressed(playdate.kButtonB) then
-      if (m.aboutScreenAnim or nil) ~= 0 then
-	 m.exitSound.play()
+      if m.aboutScreenAnim == ABOUT_SCREEN_ANIM_FRAMES then
+	 m.exitSound:setVolume(m.config.soundVolume)
+	 m.exitSound:play(1, 1.2)
 	 m.aboutScreenAnimSpeed = -1
-      else
+      elseif m.aboutScreenAnim == nil then
 	 m.fadedBackdropImage = nil
 	 av.beginExit()
       end
    elseif m.config.enableAboutScreen and playdate.buttonJustPressed(playdate.kButtonA) then
-      m.launchSound.play()
-      m.aboutScreenAnimSpeed = 1
-      if not m.aboutScreenAnim then m.aboutScreenAnim = 0 end
+      if m.aboutScreenAnim == nil then
+	 m.launchSound:setVolume(m.config.soundVolume)
+	 m.launchSound:play(1, 1.2)
+	 m.aboutScreenAnimSpeed = 1
+	 m.aboutScreenAnim = (m.aboutScreenAnim or 0)
+      end
    end
 
-   if (m.aboutScreenAnim or 0) ~= 0 then
+   if m.aboutScreenAnim ~= nil then
+      m.aboutScreenAnim = m.aboutScreenAnim + (m.aboutScreenAnimSpeed or 0)
+      if m.aboutScreenAnimSpeed > 0 and m.aboutScreenAnim >= ABOUT_SCREEN_ANIM_FRAMES then
+	 m.aboutScreenAnim = ABOUT_SCREEN_ANIM_FRAMES
+	 gfx.pushContext()
+	 gfx.setColor(m.config.fadeColor)
+	 gfx.setDitherPattern(0.5, gfx.image.kDitherTypeBayer8x8)
+	 gfx.fillRect(0, 0, 400, 240)
+	 gfx.popContext()
+	 m.aboutScreenImg:draw(math.floor(SCREEN_WIDTH/2 - m.aboutScreenImg.width/2),
+			       math.floor(SCREEN_HEIGHT/2 - m.aboutScreenImg.height/2))
+      elseif m.aboutScreenAnimSpeed < 0 and m.aboutScreenAnim <= 0 then
+	 m.aboutScreenAnim = nil
+	 m.aboutScreenAnimSpeed = 0
+      else
+	 gfx.pushContext()
+	 gfx.setColor(m.config.fadeColor)
+	 gfx.setDitherPattern(1 - (m.aboutScreenAnim / ABOUT_SCREEN_ANIM_FRAMES / 2), gfx.image.kDitherTypeBayer8x8)
+	 gfx.fillRect(0, 0, 400, 240)
+	 gfx.popContext()
+	 m.aboutScreenImg:drawFaded(math.floor(SCREEN_WIDTH/2 - m.aboutScreenImg.width/2),
+				    math.floor(SCREEN_HEIGHT/2 - m.aboutScreenImg.height/2),
+				    m.aboutScreenAnim / ABOUT_SCREEN_ANIM_FRAMES, ABOUT_SCREEN_DITHER)
+      end
+      m.backButtonImg:draw(BACK_BUTTON_X, BACK_BUTTON_Y)
    end
 end
 
