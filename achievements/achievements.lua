@@ -407,7 +407,7 @@ end
 achievements.advanceTo = function(achievement_id, advance_to)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
-		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
+		error("attempt to progress unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
 	if not ach.progressMax then
@@ -428,7 +428,7 @@ end
 achievements.advance = function(achievement_id, advance_by)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
-		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
+		error("attempt to progress unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
 	if not ach.progressMax then
