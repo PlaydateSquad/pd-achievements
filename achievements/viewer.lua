@@ -72,7 +72,7 @@ local defaultConfig = {
 
    -- Allow the user to press the A button to view a popup with a QR code with
    -- more information about Playdate Achievements.
-   enableAboutScreen = true,
+   enableAboutScreen = false,
 
    -- Normally, a black header row is displayed, followed by white cards for the
    -- achievements. Set this to true to show dark cards with a light header row
