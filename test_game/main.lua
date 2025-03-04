@@ -9,15 +9,13 @@ local achievementData = {
     name = "My Awesome Game",
     author = "You, Inc",
     description = "The next (r)evolution in cranking technology.",
-    defaultIcon = "default/test (default)",
-    defaultIconLocked = "default/test_locked (default)",
     achievements = {
         {
             id = "test_achievement",
             name = "Achievement 1 Name",
             description = "Achievement 1 Description",
             isSecret = false,
-            -- icon = "achievements/graphics/achievement-unlock",
+            icon = "test",
             iconLocked = "test_locked",
         },
         {
@@ -25,17 +23,33 @@ local achievementData = {
             name = "Achievement 2 Name",
             description = "Achievement 2 Description",
             isSecret = false,
-            icon = nil,
-            iconLocked = nil,
+	    scoreValue = 0,
+            icon = "test",
+            iconLocked = "test_locked",
         },
         {
             id = "test_achievement_3",
             name = "Achievement 3 Name",
             description = "Achievement 3 Description",
             isSecret = false,
-            icon = nil,
+            icon = "test",
             iconLocked = nil,
             progressMax = 5,
+        },
+        {
+            id = "test_achievement_4",
+            name = "Achievement 4 Name",
+            description = "Achievement 4 Description",
+            isSecret = true,
+            progressMax = 5,
+        },
+        {
+            id = "test_achievement_5",
+            name = "Achievement 5 Name",
+            description = "Achievement 5 Description",
+            isSecret = true,
+            icon = nil,
+            iconLocked = "test_locked",
         },
     }
 }
@@ -66,13 +80,15 @@ end
 
 import "CoreLibs/ui"
 import "generate_data"
-import "simple_viewer"
-import "achievements/viewer"
-import "achievements/toasts"
-
 local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
+-- Set numDescriptionLines to 2 (or 3) if you have longer achievement
+-- descriptions.
+achievements.viewer.initialize({ fadeColor = gfx.kColorWhite,
+				 numDescriptionLines = 1 }) 
+
 achievements.toasts.initialize({ miniMode = false,
+				 invert = false,  -- set to true to try dark toasts
 				 numDescriptionLines = 1,
 				 toastOnGrant = true,
 				 toastOnAdvance = 0.5,
@@ -85,11 +101,8 @@ local options = {
     {"GENERATE RANDOM DATA", function() 
         CHANGE_SCENE("GENERATE_DATA")
     end},
-    {"GO TO BASIC VIEWER", function()
-        CHANGE_SCENE("simple_viewer")
-    end},
-    {"LAUNCH FANCY VIEWER", function()
-	achievements.viewer.launch({fadeColor = gfx.kColorWhite})
+    {"LAUNCH VIEWER", function()
+	achievements.viewer.launch()
     end},
     {"set to regular toasts", function()
 	achievements.toasts.initialize({ miniMode = false })
@@ -103,7 +116,7 @@ local options = {
             achievements.revoke("test_achievement")
         else
             print("granting example achievement 1")
-            achievements.grant("test_achievement", achievements.graphics.toasts.unlock)
+            achievements.grant("test_achievement")
         end
     end},
     {"grant/revoke 2", function() 
@@ -112,7 +125,32 @@ local options = {
             achievements.revoke("test_achievement_2")
         else
             print("granting example achievement 2")
-            achievements.grant("test_achievement_2", achievements.graphics.toasts.secret)
+            achievements.grant("test_achievement_2")
+        end
+    end},
+    {"achievement 3 progress -1", function() 
+        print("achiement 3: -1 completion")
+        achievements.advance("test_achievement_3", -1)
+    end},
+    {"achievement 3 progress +1", function() 
+        print("achiement 3: +1 completion")
+        achievements.advance("test_achievement_3", 1)
+    end},
+    {"achievement 4 progress -1", function() 
+        print("achiement 4: -1 completion")
+        achievements.advance("test_achievement_4", -1)
+    end},
+    {"achievement 4 progress +1", function() 
+        print("achiement 4: +1 completion")
+        achievements.advance("test_achievement_4", 1)
+    end},
+    {"grant/revoke 5", function() 
+        if achievements.isGranted("test_achievement_5") then
+            print("revoking example achievement 5")
+            achievements.revoke("test_achievement_5")
+        else
+            print("granting example achievement 5")
+            achievements.grant("test_achievement_5")
         end
     end},
     {"grant invalid", function() 
@@ -126,14 +164,6 @@ local options = {
     {"save/export data", function() 
         print("saving/exporting")
         achievements.save()
-    end},
-    {"achievement 3 progress -1", function() 
-        print("achiement 3: -1 completion")
-        achievements.advance("test_achievement_3", -1)
-    end},
-    {"achievement 3 progress +1", function() 
-        print("achiement 3: +1 completion")
-        achievements.advance("test_achievement_3", 1)
     end},
 }
 main_screen:setNumberOfRows(#options)

@@ -1,6 +1,7 @@
 import "CoreLibs/graphics"
 import "CoreLibs/object"
 import "CoreLibs/crank"
+import "CoreLibs/ui"
 
 local gfx <const> = playdate.graphics
 
@@ -166,8 +167,6 @@ local LOCKED_TEXT <const> = "Locked"
 local PROGRESS_TEXT <const> = "Locked"  -- could also be "Progress "
 local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d", y, m, d) end
 
-local SECRET_DESCRIPTION <const> = "This is a secret achievement."
-
 local TOAST_CORNER <const> = 6
 local TOAST_OUTLINE <const> = 2
 local TOAST_WIDTH <const> = 300
@@ -318,8 +317,6 @@ end
 function at.initialize(config)
    if not (achievements and achievements.flag_is_playdatesquad_api) then
       error("ERROR: achievements library achievements.lua not loaded")
-   elseif not achievements.graphics then
-      error("ERROR: achievements library graphics.lua not loaded")
    end
 
    if m then
@@ -355,21 +352,13 @@ function at.initialize(config)
    m.toastImageCache = {}
 
    m.defaultIcons = {}
-   if (gameData.defaultIcon) then
-      m.defaultIcons.granted = at.loadFile(gfx.image.new, m.imagePath .. (gameData.defaultIcon or gameData.default_icon))
-   else
-      m.defaultIcons.granted = achievements.graphics.get_image("*_default_icon")
-   end
-   if (gameData.defaultIconLocked or gameData.default_icon_locked) then
-      m.defaultIcons.locked = at.loadFile(gfx.image.new, m.imagePath .. (gameData.defaultIconLocked or gameData.default_icon_locked))
-   else
-      m.defaultIcons.locked = achievements.graphics.get_image("*_default_locked")
-   end
-   if (gameData.secretIcon or gameData.secret_icon) then
-      m.defaultIcons.secret = at.loadFile(gfx.image.new, m.imagePath .. (gameData.secretIcon or gameData.secret_icon))
-   else
-      m.defaultIcons.secret = achievements.graphics.get_image("*_default_secret")
-   end
+
+   m.defaultIcons.granted = at.loadFile(at.loadDefaultIcon, "*_b64_default_icon")
+   m.defaultIcons.granted:addMask(true)
+   m.defaultIcons.locked = at.loadFile(at.loadDefaultIcon, "*_b64_default_locked")
+   m.defaultIcons.locked:addMask(true)
+   m.defaultIcons.blank = gfx.image.new(LAYOUT_ICON_SIZE, LAYOUT_ICON_SIZE)
+   m.defaultIcons.blank:addMask(true)
 
    m.assetPath = assetPath
    savedAssetPath = assetPath
@@ -397,7 +386,6 @@ function at.initialize(config)
    m.checkBox.anim = at.loadFile(gfx.imagetable.new, assetPath .. "/check_box_anim")
    m.checkBox.locked = at.loadFile(gfx.image.new, assetPath .. "/check_box")
    m.checkBox.granted = at.loadFile(gfx.image.new, assetPath .. "/check_box_checked")
-   m.checkBox.secret = at.loadFile(gfx.image.new, assetPath .. "/check_box_secret")
 
    m.icons = { }
    m.iconBuffer = gfx.image.new(LAYOUT_ICON_SIZE, LAYOUT_ICON_SIZE)  -- for masking
@@ -417,7 +405,7 @@ function at.initialize(config)
          m.icons[id].locked = at.loadFile(gfx.image.new, m.imagePath .. iconLocked)
       end
       if icon then
-         m.icons[id].granted = at.loadFile(gfx.image.new, m.imagePath .. data.icon)
+         m.icons[id].granted = at.loadFile(gfx.image.new, m.imagePath .. icon)
       end
    end
 
@@ -471,19 +459,11 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
 
       local info = m.achievementData[achievementId]
 
-      local iconImgGranted = m.icons[achievementId].granted or m.defaultIcons.granted or
-            m.icons[achievementId].locked or m.defaultIcons.locked
+      local iconImgGranted = m.icons[achievementId].granted or m.defaultIcons.granted or m.defaultIcons.blank
       iconImgGranted:setInverted(m.config.invert)
-      local iconImgLocked
-      if info.secret then
-         iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.secret or m.defaultIcons.locked or
-            m.icons[achievementId].granted or m.defaultIcons.granted
-         iconImgLocked:setInverted(m.config.invert)
-      else
-         iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.locked or
-            m.icons[achievementId].granted or m.defaultIcons.granted
-         iconImgLocked:setInverted(m.config.invert)
-      end
+      local iconImgLocked = m.icons[achievementId].locked or m.defaultIcons.locked or m.defaultIcons.blank
+      iconImgLocked:setInverted(m.config.invert)
+
       if toastOptions.updateMinimally then
          local image_margin = toastOptions.miniToast and MINI_TOAST_MARGIN or LAYOUT_MARGIN
          if toastOptions.checkBoxAnimFrame ~= nil then
@@ -492,22 +472,20 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
          end
 
          if toastOptions.maskAnimFrame ~= nil then
-            if toastOptions.maskAnimFrame == false then
+            if toastOptions.maskAnimFrame == false or toastOptions.maskAnimFrame == 1 then
                -- locked icon
                iconImgLocked:draw(width - image_margin - iconImgLocked.width, image_margin)
-            elseif toastOptions.maskAnimFrame == true then
+            elseif toastOptions.maskAnimFrame == true or toastOptions.maskAnimFrame == 0 then
                -- unlocked icon
                iconImgGranted:draw(width - image_margin - iconImgGranted.width, image_margin)
             elseif type(toastOptions.maskAnimFrame) == "number" then
-               local backupMask = iconImgLocked:getMaskImage():copy()
+	       -- draw the "granted" image on top of a solid background that matches the card
                gfx.pushContext(m.iconBuffer)
-               gfx.clear(gfx.kColorClear)
-               iconImgGranted:draw(0, 0)
-               iconImgLocked:setMaskImage(m.maskAnim:getImage(toastOptions.maskAnimFrame))
-               iconImgLocked:draw(0, 0)
-               iconImgLocked:setMaskImage(backupMask)
-               gfx.popContext()
-               m.iconBuffer:setMaskImage(backupMask)
+               gfx.clear(gfx.kColorWhite)
+	       iconImgGranted:draw(0, 0)
+	       gfx.popContext()
+	       m.iconBuffer:setMaskImage(m.maskAnim:getImage(toastOptions.maskAnimFrame))
+	       iconImgLocked:draw(width - image_margin - m.iconBuffer.width, image_margin)
                m.iconBuffer:draw(width - image_margin - m.iconBuffer.width, image_margin)
             end
          end
@@ -557,6 +535,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
          if toastOptions.miniToast then
             local font = granted and m.fonts.name.miniToast or m.fonts.name.miniToastLocked
             gfx.setFont(font)
+	    local name = info.name
             local nameImg = gfx.imageWithText(info.name, width - 2*LAYOUT_MARGIN - LAYOUT_ICON_SPACING - LAYOUT_ICON_SIZE,
                                               height - 2*LAYOUT_MARGIN - CHECKBOX_SIZE)
             if nameImg then nameImg:draw(MINI_TOAST_MARGIN, MINI_TOAST_MARGIN+2) end
@@ -573,8 +552,8 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             local descImage
             if heightRemaining >= font:getHeight() then
                local description = info.description
-               if info.isSecret and not granted then
-                  description = SECRET_DESCRIPTION
+               if info.descriptionLocked and not granted then
+                  description = info.descriptionLocked
                end
 
                descImg = gfx.imageWithText(description,
@@ -597,8 +576,6 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
             img:draw(toastMargin, height - CHECKBOX_SIZE - toastMargin)
          elseif granted then
             m.checkBox.granted:draw(toastMargin, height - CHECKBOX_SIZE - toastMargin)
-         elseif info.isSecret then
-            m.checkBox.secret:draw(toastMargin, height - CHECKBOX_SIZE - toastMargin)
          else
             m.checkBox.locked:draw(toastMargin, height - CHECKBOX_SIZE - toastMargin)
          end
@@ -994,16 +971,12 @@ local function advanceWithToast(achievementId, advanceFunc, advanceAmount)
 	 local newProgress = achievements.progress[achievementId] or 0
 	 shouldToast = (newProgress > prevProgress)
       else
-         if toastOnAdvanceFraction == nil or toastOnAdvanceFraction == 0 then
-            shouldToast = true
-         else
-            local progressMax = achievements.getInfo(achievementId).progressMax
-            local newProgress = achievements.progress[achievementId] or 0
-            local section = math.floor(0.5 + (progressMax * toastOnAdvanceFraction))
-            if newProgress // section > prevProgress // section then
-               shouldToast = true
-            end
-         end
+	 local progressMax = achievements.getInfo(achievementId).progressMax
+	 local newProgress = achievements.progress[achievementId] or 0
+	 local section = math.floor(0.5 + (progressMax * toastOnAdvanceFraction))
+	 if newProgress // section > prevProgress // section then
+	    shouldToast = true
+	 end
       end
       if shouldToast then
          achievements.toasts.toast(achievementId)
@@ -1034,6 +1007,101 @@ function at.setToastOnAdvance(autoToast)
       toastOnAdvanceFraction = nil
    end
 end
+
+local defaultIcons = {
+   -- NOTE: Please don't edit the auto-generated part below by hand (unless you really know what you're doing); use the 'embed_images' script(s) instead.
+   -- #START AUTOGEN# --
+   ["*_b64_default_icon"] = { pattern = "AcfAQQTAQRBA/DAA/////Dw/AAw///vPA8OCAyCCgiSJTRfPTRdMT8/589w4+888DH////f/fPvSs+yysuCyMScGRTRAQQQA/ea7PjPHABB/f++885gAgMSi4iCCACCCQQQAQQQAfDADBHf/AAw/Awwg+8OAA8PAACCCACCC/CA" },
+   ["*_b64_default_locked"] = { pattern = "AcfAQQQBQTDA/DAA//vBAAw/AAAAgwwAA8OCACCCACSDQTTATTfPTDAAAAw/////wwwAA8ww88DCACCCACCCcSfPTTfPTTfP5zzDw73n573z8/z39/ww8cCCACCCACCCTTfPTTQAfDw/////AAw/A8ww88AAA8PAACCCACCC/CA" },
+   -- #END AUTOGEN# --
+}
+
+local base64 <const> = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local lookup_base64 = table.create(0, 65)
+local lookup_base64_reverse = table.create(65, 0)
+local i_b64 = 0
+for ch in base64:gmatch(".") do
+   lookup_base64[ch] = i_b64
+   lookup_base64_reverse[i_b64] = ch
+   i_b64 += 1
+end
+
+local function b64ToBytes(str_b64)
+   local max_6bit <const> = 63
+   local res_table = {}
+   local bitcount = 0
+   local part_a = 0
+   local bitmask_a = max_6bit
+   for ch in str_b64:gmatch(".") do
+      -- parse and paste the next 6-bit value into the next byte(s)
+      bitcount += 6
+      local mod8 = bitcount % 8
+      local part_b = part_a       -- b is the first one read
+      part_a = lookup_base64[ch]  -- a is the current 'head'
+      if part_a == nil then
+	 error("out-of-charset character '"..ch.."' in base-64 near position "..(bitcount//6))
+	 part_a = lookup_base64["A"]
+      end
+      local bitmask_b = max_6bit - bitmask_a
+      bitmask_a = (1 << (6 - mod8)) - 1
+      -- write the next byte, unless the last 6-bit value didn't fill up the current output-byte completely
+      if mod8 ~= 6 then
+	 local next_byte = (part_a & bitmask_a) + ((part_b & bitmask_b) << 2)
+	 table.insert(res_table, string.pack("B", next_byte))
+      end
+   end
+   return table.concat(res_table, "")
+end
+
+local function parse_and_draw_b64(str_b64)
+   -- set some constants
+   local pattern_dim <const> = 8
+   local iconWidth <const> = LAYOUT_ICON_SIZE
+
+   -- get all bytes from the string in a format that can be iterated over
+   local byte_str = b64ToBytes(str_b64)
+
+   -- iterate over all bytes (draw an 8x8 block each time we've got enough)
+   local start_x = 0
+   local start_y = 0
+   local pattern = {}
+   for ch in byte_str:gmatch(".") do
+      local byte = string.unpack("B", ch)
+      table.insert(pattern, byte)
+      if #pattern == pattern_dim then
+	 -- if the pattern-buffer is full then draw & empty it
+	 gfx.setPattern(pattern)
+	 gfx.fillRect(start_x, start_y, pattern_dim, pattern_dim)
+	 pattern = {}
+	 -- (re)set position
+	 start_x += pattern_dim
+	 if start_x >= iconWidth then
+	    start_y += pattern_dim
+	    start_x = 0
+	 end
+      end
+   end
+   gfx.setColor(gfx.kColorBlack)  -- unset pattern
+end
+
+function at.loadDefaultIcon(iconKey)
+   local iconDef = defaultIcons[iconKey]
+   if iconDef == nil then
+      error("Please run the 'embed_images.sh' script to create default icon data.")
+      return
+   end
+   local iconImage = gfx.image.new(LAYOUT_ICON_SIZE, LAYOUT_ICON_SIZE)
+   gfx.pushContext(iconImage)
+   parse_and_draw_b64(iconDef.pattern)
+   gfx.popContext()
+   if iconDef.alpha ~= nil then
+      gfx.pushContext(iconImage:getMaskImage())
+      parse_and_draw_b64(iconDef.alpha)
+      gfx.popContext()
+   end
+   return iconImage
+end
+
 
 achievements.toasts = {
    initialize = at.initialize,
