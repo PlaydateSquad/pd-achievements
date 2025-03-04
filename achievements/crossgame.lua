@@ -4,6 +4,7 @@ if not (achievements and achievements.flag_is_playdatesquad_api) then
 end
 
 local crossgame = {}
+local gfx <const> = playdate.graphics
 achievements.crossgame = crossgame
 
 -- Returns whether a game has any listed achievement data.
@@ -31,7 +32,7 @@ crossgame.getData = function(game_id)
 	end
 	local data = json.decodeFile(achievements.paths.get_achievement_data_file_path(game_id))
 	-- Quick sanity check...
-	if not (data.libversion and data.specversion) then
+	if not data.specVersion then
 		return false, "Achievement file was found but not valid."
 	end
 	local completion_total = 0
@@ -39,9 +40,9 @@ crossgame.getData = function(game_id)
 	local keys = {}
 	for _, ach in ipairs(data.achievements) do
 		keys[ach.id] = ach
-		completion_total += score_value
-		if ach.granted_at then
-			completion_obtained += score_value
+		completion_total = completion_total + ach.scoreValue
+		if ach.grantedAt then
+			completion_obtained = completion_obtained + ach.scoreValue
 		end
 	end
 	data.keyedAchievements = keys
@@ -49,7 +50,7 @@ crossgame.getData = function(game_id)
 	return data
 end
 
-crossgame.loadImage(game_id, filepath)
+function crossgame.loadImage(game_id, filepath)
 	local image_path = achievements.paths.get_shared_images_path(game_id) .. filepath
 	local img, err = gfx.image.new(image_path)
 	return img, err

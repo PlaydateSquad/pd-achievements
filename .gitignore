@@ -1,2 +1,5 @@
 .vscode/
 *.pdx
+test_game/achievements/*
+test_game/achievements/crossgame.lua
+test_game/achievements/toast_graphics.lua
