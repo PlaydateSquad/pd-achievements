@@ -28,16 +28,17 @@ local data = {
     cardPath = "assets/achievements/game_card", 
     achievements = {
         {
+            -- these are the only required fields for a basic achievement.
             id = "my_achievement_1",
             name = "Achievement 1",
             description = "Achievement 1 Description",
-            scoreValue = 3 -- this achievement is 3x more important to game completion as other achievements
         },
         {
             id = "my_achievement_2",
             name = "Achievement 2",
             description = "Achievement 2 Description",
-            icon = "assets/achievements/icons/my_achievement_2_icon" -- Update this path to match your game's file structure. See below for more details.
+            icon = "assets/achievements/icons/my_achievement_2_icon", -- Update this path to match your game's file structure. See below for more details.
+            iconLocked = "assets/achievements/icons/my_locked_icon_2"
         },
         {
             id = "my_progress_achievement",
@@ -75,18 +76,16 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 | `author`            | `string?`               | Nicely formatted author for your game. Defaults to `author` from your `pdxinfo`.                                                                    |
 | `description`       | `string?`               | Short description about your game. Defaults to `description` from your `pdxinfo`.                                                                   |
 | `version`           | `string?`               | Nicely formatted version string for your game. Defaults to `version` from your `pdxinfo`.                                                           |
-| `defaultIcon`       | `string?`               | Path to the default 32x32 `.png` icon to use for achievements. Defaults to `nil`.                                                                   |
-| `defaultIconLocked` | `string?`               | Path to the default 32x32 `.png` icon to use for ungranted achievements. Defaults to `nil`.                                                         |
-| `secretIcon`        | `string?`               | Path to the 32x32 `.png` icon to use for hidden achievements. Defaults to `nil`.                                                                    |
 | `iconPath`          | `string?`               | Path to the 32x32 `.png` icon to use as your game's icon. Recommended to use your `icon.png` from your game metadata. Defaults to `nil`.            |
 | `cardPath`          | `string?`               | Path to the 380x90 `.png` art to use as your game's card art. Recommended to use your wide Catalog image asset (if you have it). Defaults to `nil`. |
 
 #### AchievementData
-| key                  | type     | description                                                                                                                                           |
-|----------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| key                    | type       | description                                                                                                                                       |
+|------------------------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
 | `id`                   | `string`   | Uniquely identifies the achievement. **Required.**                                                                                                |
 | `name`                 | `string`   | Nicely formatted name for the achievement. Shown to the player. **Required.**                                                                     |
 | `description`          | `string`   | Nicely formatted description for the achievement. Shown to the player. **Required.**                                                              |
+| `descriptionLocked`    | `string?`  | Nicely formatted description for the ungranted version of the achievement. Shown the the player. Defaults to `nil`.                               |
 | `isSecret`             | `bool?`    | Determines if the achievement should be hidden until granted. Defaults to `false`.                                                                |
 | `icon`                 | `string?`  | Path to the achievement's 32x32 `.png` icon. The root folder is where "main.lua" is. Defaults to `nil`.                                           |
 | `iconLocked`           | `string?`  | Path to the achievement's 32x32 `.png` locked icon (shown when achievement is not yet granted). Defaults to `nil`.                                |
