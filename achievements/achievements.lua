@@ -452,7 +452,7 @@ achievements.completionPercentage = function()
 			completion_obtained += ach.scoreValue * (ach.progress / ach.progressMax)
 		end
 	end
-	return completion_total > 0 and 100 * completion_obtained / completion_total or 0
+	return completion_total > 0 and completion_obtained / completion_total or 0
 end
 
 function achievements.save()

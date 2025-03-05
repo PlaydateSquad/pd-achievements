@@ -125,7 +125,7 @@ Sets the achievement `achievement_id`'s completion score to `advance_to` Attempt
 Returns `true` on success, otherwise throws an error.
 
 ### achievements.completionPercentage()
-Returns the total weighted completion percentage in the range [0, 100]. Granted achievements count for their full weight; progressive achievements count towards the total according to their weighted partial completion.
+Returns the total weighted completion percentage in the range [0-1]. Granted achievements count for their full weight; progressive achievements count towards the total according to their weighted partial completion.
 
 ### achievements.save()
 Saves the player's earned achievements as "Achievements.json" in your game's data, and exports the updated achievement information to `/Shared`.
