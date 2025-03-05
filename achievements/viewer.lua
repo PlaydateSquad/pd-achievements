@@ -584,8 +584,8 @@ function av.drawTitle(x, y)
                                         TITLE_WIDTH, TITLE_HEIGHT)
       elseif m.config.summaryMode == "score" then
          summaryImg = gfx.imageWithText(string.format(TITLE_SCORE_TEXT,
-                                                      tostring(m.completionScore or 0),
-                                                      tostring(m.possibleScore or 0)),
+                                                      string.format("%g", m.completionScore or 0),
+                                                      string.format("%g",m.possibleScore or 0)),
                                         TITLE_WIDTH, TITLE_HEIGHT)
       end
       if summaryImg then
