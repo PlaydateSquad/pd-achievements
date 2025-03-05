@@ -389,6 +389,8 @@ function av.reinitialize(config)
       if data.grantedAt then
          m.completionScore += achScore
          m.numCompleted += 1
+      elseif data.progressMax and data.progress then
+			m.completionScore += achScore * (data.progress / data.progressMax)
       end
       m.card[i] = {
          x = SCREEN_WIDTH / 2 - CARD_WIDTH / 2,
@@ -396,8 +398,7 @@ function av.reinitialize(config)
          hidden = false
       }
    end
-   m.completionPercentage = achievements.completionPercentage
-   if not m.completionPercentage and m.possibleScore > 0 then
+   if m.possibleScore > 0 then
       m.completionPercentage = m.completionScore / m.possibleScore
    else
       m.completionPercentage = 1
