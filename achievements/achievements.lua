@@ -31,9 +31,8 @@
 ---@field gameID string A unique ID to identify the game. Analogous to BundleID in pdxinfo.
 ---@field version string The version string of the game, as in pdxinfo.
 ---@field specVersion string The version string of the specification used.
----@field defaultIcon string | nil The filepath for the game's default unlocked achievement icon, relative to the value of achievements.imagePath.
----@field defaultIconLocked string | nil The filepath for the game's default locked achievement icon, relative to the value of achievements.imagePath.
----@field secretIcon string | nil The filepath for the game's 'hidden achievement' icon.
+---@field iconPath string | nil The filepath for the game's 32x32 list icon to be used in viewers.
+---@field cardPath string | nil The filepath for the game's 380x90 card art to be used in viewers.
 ---@field achievements achievement[] An array of valid achievements for the game.
 ---@field completionPercentage float The current 100%-completion percentage of a game as a float 0..1. Only calculated when loading a game's data through the crossgame module.
 ---@field keyedAchievements { [string]: achievement} All configured achievements for the game, indexed by string keys. Automatically assembled by achievements.initialize and crossgame.loadData.
@@ -41,6 +40,7 @@
 ---@class achievement
 ---@field name string The name of the achievement.
 ---@field description string The description of the achievement.
+---@field descriptionLocked string? The description of the achievement, if it has not yet been earned.
 ---@field id string A unique ID by which to identify the achievement. Used in various API functions.
 ---@field grantedAt boolean | number False if the achievement has not been earned, otherwise the Playdate epoch second the achievement was earned at as returned by playdate.getSecondsSinceEpoch().
 ---@field isSecret boolean | nil If true, this achievement should not appear in any player-facing lists while the .grantedAt field is false. Defaut false.
@@ -262,14 +262,12 @@ local function validate_gamedata(ach_root, prevent_debug)
 	print("game version saved as \"" .. ach_root.version .. "\"")
 	print("specification version saved as \"" .. ach_root.specVersion .. "\"")
 
-	if type(ach_root.defaultIcon) ~= 'string' and ach_root.defaultIcon ~= nil then
-		error("expected 'defaultIcon' to be type string, got " .. type(ach_root.defaultIconcon), 3)
+
+	if type(ach_root.iconPath) ~= 'string' and ach_root.iconPath ~= nil then
+		error("expected 'iconPath' to be type string, got " .. type(ach_root.iconPath), 3)
 	end
-	if type(ach_root.defaultIconLocked) ~= 'string' and ach_root.defaultIconLocked ~= nil then
-		error("expected 'defaultIconLocked' to be type string, got " .. type(ach_root.defaultIconLocked), 3)
-	end
-	if type(ach_root.secretIcon) ~= 'string' and ach_root.secretIcon ~= nil then
-		error("expected 'secretIcon' to be type string, got " .. type(ach_root.secretIcon), 3)
+	if type(ach_root.cardPath) ~= 'string' and ach_root.cardPath ~= nil then
+		error("expected 'cardPath' to be type string, got " .. type(ach_root.cardPath), 3)
 	end
 	
 	if ach_root.achievements == nil then
@@ -283,9 +281,18 @@ end
 ---@param ach achievement The achievement being validated.
 -- Takes in an achievement table, validates correct data, and sets defaults.
 local function validate_achievement(ach)
+	-- Required Strings
 	for _, key in ipairs{"name", "description", "id",} do
 		local valtype = type(ach[key])
 		if valtype ~= "string" then
+			error(("expected '%s' to be type string, got %s"):format(key, valtype), 3)
+		end
+	end
+
+	-- Optional Strings
+	for _, key in ipairs{"descriptionLocked", "icon", "iconLocked",} do
+		local valtype = type(ach[key])
+		if valtype ~= "string" and valtype ~= "nil" then
 			error(("expected '%s' to be type string, got %s"):format(key, valtype), 3)
 		end
 	end
@@ -294,13 +301,6 @@ local function validate_achievement(ach)
 		ach.isSecret = false
 	elseif type(ach.isSecret) ~= "boolean" then
 		error("expected 'isSecret' to be type boolean, got " .. type(ach.isSecret), 3)
-	end
-
-	if type(ach.icon) ~= 'string' and ach.icon ~= nil then
-		error("expected 'icon' to be type string, got " .. type(ach.icon), 3)
-	end
-	if type(ach.iconLocked) ~= 'string' and ach.iconLocked ~= nil then
-		error("expected 'iconLocked' to be type string, got " .. type(ach.iconLocked), 3)
 	end
 
 	if ach.progressMax then
