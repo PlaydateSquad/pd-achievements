@@ -429,13 +429,13 @@ function av.reinitialize(config)
       if isHidden then
          m.numHiddenCards = m.numHiddenCards + 1
       end
-      local achScore = data.score_value or data.scoreValue or 0
+      local achScore = data.score_value or data.scoreValue or 1
       m.possibleScore += achScore
-      if data.grantedAt then
+      if data2.grantedAt then
          m.completionScore += achScore
          m.numCompleted += 1
-      elseif data.progressMax and data.progress then
-			m.completionScore += achScore * (data.progress / data.progressMax)
+      elseif data.progressMax and data2.progress then
+	 m.completionScore += achScore * (data2.progress / data.progressMax)
       end
       m.card[i] = {
          x = SCREEN_WIDTH / 2 - CARD_WIDTH / 2,
@@ -620,7 +620,7 @@ function av.drawTitle(x, y)
       gfx.setFont(font)
       local summaryImg
       if m.config.summaryMode == "percent" or m.config.summaryMode == "percentage" then
-         local pct = tostring(math.floor(0.5 + 100 * (m.completionPercentage or 0))) .. "%"
+         local pct = tostring(math.floor(100 * (m.completionPercentage or 0))) .. "%"
          summaryImg = gfx.imageWithText(string.format(TITLE_PERCENTAGE_TEXT, pct), TITLE_WIDTH, TITLE_HEIGHT)
       elseif m.config.summaryMode == "count" then
          summaryImg = gfx.imageWithText(string.format(TITLE_COUNT_TEXT,
@@ -738,6 +738,7 @@ function av.drawCard(achievementId, x, y, width, height)
       local margin = 1
 
       local info = m.achievementData[achievementId]
+      local info2 = m.additionalAchievementData[achievementId]
 
       local iconImgGranted = m.icons[achievementId].granted
       local iconImgLocked = m.icons[achievementId].locked
@@ -807,7 +808,7 @@ function av.drawCard(achievementId, x, y, width, height)
       local statusText = ""
       gfx.setFont(font)
       if granted then
-         local dateStr = av.formatDate(info.grantedAt or playdate.getSecondsSinceEpoch())
+         local dateStr = av.formatDate(info2.grantedAt or playdate.getSecondsSinceEpoch())
          if dateStr then
             statusText = string.format(GRANTED_TEXT, dateStr)
          end
@@ -825,7 +826,7 @@ function av.drawCard(achievementId, x, y, width, height)
       if not granted and progressMax then
          local font = m.fonts.status
          gfx.setFont(font)
-         local progress = m.additionalAchievementData[achievementId].progress or info.progress or 0
+         local progress = info2.progress or 0
          local progressIsPercentage = info.progressIsPercentage
 
          local progressText, frac

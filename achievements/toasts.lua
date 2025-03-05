@@ -876,7 +876,7 @@ function at.toast(achievementId, config)
                                 mini = not not config.miniMode,
                                 anim = not not config.animateUnlocking,
                                 granted = config.assumeGranted or achievements.isGranted(achievementId),
-                                progress = achievements.progress[achievementId] or m.achievementData[achievementId].progress,
+                                progress = achievements.progress[achievementId],
    })
 
    if not m.toasting then
