@@ -347,6 +347,9 @@ function achievements.initialize(gamedata, prevent_debug)
 		end
 		achievements.keyedAchievements[ach.id] = ach
 		ach.grantedAt = achievements.granted[ach.id] or false
+		if ach.progressMax then
+			ach.progress = achievements.progress[ach.id] or 0
+		end
 		validate_achievement(ach)
 	end
 
