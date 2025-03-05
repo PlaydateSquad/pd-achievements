@@ -1,7 +1,7 @@
 
 --[[
 	==PlaydateSquad Achievements Library - Alpha==
-	This was originally a prototype implementation, but is now being built for 
+	This was originally a prototype implementation, but is now being built for
 	  full use in real games.
 	Basic error checking is provided. Functionality is implemented as a series
 	  of single-file modules. Only Lua or Lua/C games are supported at the moment.
@@ -20,7 +20,7 @@
         graphics-related functionality, primarily notifications and default icons.
 --]]
 
---[[ 
+--[[
 	== Technical Specifications ==
 --]]
 
@@ -222,7 +222,7 @@ local function export_images(gameID, current_build_nr)
 			copy_file(asset_path, shared_game_data_path .. asset_path)
 		end
 	end
-		
+
 	-- also write the version-file
 	local ver_file, err = playdate.file.open(verfile_path, playdate.file.kFileWrite)
 	if not ver_file then
@@ -273,7 +273,7 @@ local function validate_gamedata(ach_root, prevent_debug)
 	if type(ach_root.secretIcon) ~= 'string' and ach_root.secretIcon ~= nil then
 		error("expected 'secretIcon' to be type string, got " .. type(ach_root.secretIcon), 3)
 	end
-	
+
 	if ach_root.achievements == nil then
 		print("WARNING: no achievements configured")
 		ach_root.achievements = {}
@@ -320,7 +320,7 @@ local function validate_achievement(ach)
 			error("expected 'progressIsPercentage' to be type boolean, got " .. type(ach.progressIsPercentage), 3)
 		end
 	end
-	
+
 	if ach.scoreValue == nil then
 		ach.scoreValue = 1
 	elseif type(ach.scoreValue) ~= "number" then
@@ -437,6 +437,22 @@ achievements.advance = function(achievement_id, advance_by)
 	end
 	local progress = achievements.progress[achievement_id] or 0
 	return achievements.advanceTo(achievement_id, progress + advance_by)
+end
+
+achievements.completionPercentage = function()
+	local completion_total = 0
+	local completion_obtained = 0
+	for _, ach in pairs(achievements.keyedAchievements) do
+		completion_total += ach.scoreValue
+		-- granted achievements score their full weight
+		if ach.grantedAt then
+			completion_obtained += ach.scoreValue
+		-- progressive achievements score partial progress
+		elseif ach.progressMax and ach.progress then
+			completion_obtained += ach.scoreValue * (ach.progress / ach.progressMax)
+		end
+	end
+	return completion_total > 0 and 100 * completion_obtained / completion_total or 0
 end
 
 function achievements.save()
