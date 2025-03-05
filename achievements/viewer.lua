@@ -236,6 +236,7 @@ local EXTRA_SECRET_TEXT = "Secret achievement"
 local EXTRA_OPTIONAL_TEXT = "Optional achievement"
 local DATE_FORMAT <const> = function(y, m, d) return string.format("%d-%02d-%02d", y, m, d) end
 local SORT_ORDER = { "default", "recent", "progress", "name" }
+local CRANK_MULT <const> = 1.1
 
 local av = {}
 local m
@@ -1196,7 +1197,7 @@ function av.mainUpdate()
    if m.aboutScreenAnim == nil then
       crankChanged, accelChanged = playdate.getCrankChange()
    end
-   m.scroll = m.scroll + accelChanged
+   m.scroll = m.scroll + (CRANK_MULT*accelChanged)
    if m.scroll < 3 and m.scrollSpeed == 0 then m.scroll = m.scroll - 1 end
 
    if m.scroll < 0 then
