@@ -50,7 +50,7 @@ crossgame.getData = function(game_id)
 		end
 	end
 	data.keyedAchievements = keys
-	data.completionPercentage = completion_total > 0 and completion_obtained / completion_total or 0
+	data.completionPercentage = completion_total > 0 and completion_obtained / completion_total or 1
 	return data
 end
 
