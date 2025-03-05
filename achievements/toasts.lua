@@ -353,9 +353,9 @@ function at.initialize(config)
 
    m.defaultIcons = {}
 
-   m.defaultIcons.granted = at.loadFile(at.loadDefaultIcon, "*_b64_default_icon")
+   m.defaultIcons.granted = at.loadFile(gfx.image.new, assetPath .. "/default_icon")
    m.defaultIcons.granted:addMask(true)
-   m.defaultIcons.locked = at.loadFile(at.loadDefaultIcon, "*_b64_default_locked")
+   m.defaultIcons.locked = at.loadFile(gfx.image.new, assetPath .. "/default_icon_locked")
    m.defaultIcons.locked:addMask(true)
    m.defaultIcons.blank = gfx.image.new(LAYOUT_ICON_SIZE, LAYOUT_ICON_SIZE)
    m.defaultIcons.blank:addMask(true)
@@ -1007,101 +1007,6 @@ function at.setToastOnAdvance(autoToast)
       toastOnAdvanceFraction = nil
    end
 end
-
-local defaultIcons = {
-   -- NOTE: Please don't edit the auto-generated part below by hand (unless you really know what you're doing); use the 'embed_images' script(s) instead.
-   -- #START AUTOGEN# --
-   ["*_b64_default_icon"] = { pattern = "AcfAQQTAQRBA/DAA/////Dw/AAw///vPA8OCAyCCgiSJTRfPTRdMT8/589w4+888DH////f/fPvSs+yysuCyMScGRTRAQQQA/ea7PjPHABB/f++885gAgMSi4iCCACCCQQQAQQQAfDADBHf/AAw/Awwg+8OAA8PAACCCACCC/CA" },
-   ["*_b64_default_locked"] = { pattern = "AcfAQQQBQTDA/DAA//vBAAw/AAAAgwwAA8OCACCCACSDQTTATTfPTDAAAAw/////wwwAA8ww88DCACCCACCCcSfPTTfPTTfP5zzDw73n573z8/z39/ww8cCCACCCACCCTTfPTTQAfDw/////AAw/A8ww88AAA8PAACCCACCC/CA" },
-   -- #END AUTOGEN# --
-}
-
-local base64 <const> = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-local lookup_base64 = table.create(0, 65)
-local lookup_base64_reverse = table.create(65, 0)
-local i_b64 = 0
-for ch in base64:gmatch(".") do
-   lookup_base64[ch] = i_b64
-   lookup_base64_reverse[i_b64] = ch
-   i_b64 += 1
-end
-
-local function b64ToBytes(str_b64)
-   local max_6bit <const> = 63
-   local res_table = {}
-   local bitcount = 0
-   local part_a = 0
-   local bitmask_a = max_6bit
-   for ch in str_b64:gmatch(".") do
-      -- parse and paste the next 6-bit value into the next byte(s)
-      bitcount += 6
-      local mod8 = bitcount % 8
-      local part_b = part_a       -- b is the first one read
-      part_a = lookup_base64[ch]  -- a is the current 'head'
-      if part_a == nil then
-	 error("out-of-charset character '"..ch.."' in base-64 near position "..(bitcount//6))
-	 part_a = lookup_base64["A"]
-      end
-      local bitmask_b = max_6bit - bitmask_a
-      bitmask_a = (1 << (6 - mod8)) - 1
-      -- write the next byte, unless the last 6-bit value didn't fill up the current output-byte completely
-      if mod8 ~= 6 then
-	 local next_byte = (part_a & bitmask_a) + ((part_b & bitmask_b) << 2)
-	 table.insert(res_table, string.pack("B", next_byte))
-      end
-   end
-   return table.concat(res_table, "")
-end
-
-local function parse_and_draw_b64(str_b64)
-   -- set some constants
-   local pattern_dim <const> = 8
-   local iconWidth <const> = LAYOUT_ICON_SIZE
-
-   -- get all bytes from the string in a format that can be iterated over
-   local byte_str = b64ToBytes(str_b64)
-
-   -- iterate over all bytes (draw an 8x8 block each time we've got enough)
-   local start_x = 0
-   local start_y = 0
-   local pattern = {}
-   for ch in byte_str:gmatch(".") do
-      local byte = string.unpack("B", ch)
-      table.insert(pattern, byte)
-      if #pattern == pattern_dim then
-	 -- if the pattern-buffer is full then draw & empty it
-	 gfx.setPattern(pattern)
-	 gfx.fillRect(start_x, start_y, pattern_dim, pattern_dim)
-	 pattern = {}
-	 -- (re)set position
-	 start_x += pattern_dim
-	 if start_x >= iconWidth then
-	    start_y += pattern_dim
-	    start_x = 0
-	 end
-      end
-   end
-   gfx.setColor(gfx.kColorBlack)  -- unset pattern
-end
-
-function at.loadDefaultIcon(iconKey)
-   local iconDef = defaultIcons[iconKey]
-   if iconDef == nil then
-      error("Please run the 'embed_images.sh' script to create default icon data.")
-      return
-   end
-   local iconImage = gfx.image.new(LAYOUT_ICON_SIZE, LAYOUT_ICON_SIZE)
-   gfx.pushContext(iconImage)
-   parse_and_draw_b64(iconDef.pattern)
-   gfx.popContext()
-   if iconDef.alpha ~= nil then
-      gfx.pushContext(iconImage:getMaskImage())
-      parse_and_draw_b64(iconDef.alpha)
-      gfx.popContext()
-   end
-   return iconImage
-end
-
 
 achievements.toasts = {
    initialize = at.initialize,
