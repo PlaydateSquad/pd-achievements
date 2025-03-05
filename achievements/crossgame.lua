@@ -40,13 +40,17 @@ crossgame.getData = function(game_id)
 	local keys = {}
 	for _, ach in ipairs(data.achievements) do
 		keys[ach.id] = ach
-		completion_total = completion_total + ach.scoreValue
+		completion_total += ach.scoreValue
+		-- granted achievements score their full weight
 		if ach.grantedAt then
-			completion_obtained = completion_obtained + ach.scoreValue
+			completion_obtained += ach.scoreValue
+		-- progressive achievements score partial progress
+		elseif ach.progressMax and ach.progress then
+			completion_obtained += ach.scoreValue * (ach.progress / ach.progressMax)
 		end
 	end
 	data.keyedAchievements = keys
-	data.completionPercentage = completion_obtained / completion_total
+	data.completionPercentage = completion_total > 0 and completion_obtained / completion_total or 1
 	return data
 end
 
