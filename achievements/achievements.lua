@@ -145,9 +145,7 @@ local function copy_file(src_path, dest_path)
 	if playdate.file.exists(subfolder) and not playdate.file.isdir(subfolder) then
 		error("Directory-name for destination, '"..subfolder.."', is not a folder.")
 	end
-	if not playdate.file.exists(subfolder) then
-		playdate.file.mkdir(subfolder)
-	end
+	playdate.file.mkdir(subfolder)
 
 	-- open both the source and the destination paths (one for reading, the other for writing to)
 	local in_file, err = playdate.file.open(src_path, playdate.file.kFileRead)
@@ -183,6 +181,8 @@ local function copy_file(src_path, dest_path)
 end
 
 local function export_images(gameID, current_build_nr)
+	local shared_images_path = achievements.paths.get_shared_images_path(gameID)
+	playdate.file.mkdir(shared_images_path)
 	-- if >= the current version of the gamedata already exists, no need to re-copy the images
 	local verfile_path = achievements.paths.get_shared_images_updated_file_path(gameID)
 	if playdate.file.exists(verfile_path) and not playdate.file.isdir(verfile_path) then
@@ -199,8 +199,6 @@ local function export_images(gameID, current_build_nr)
 	end
 
 	-- otherwise, the structure should be copied
-
-	local shared_images_path = achievements.paths.get_shared_images_path(gameID)
 	-- This is a set, so the iteration is a little different than usual.
 	for filename, _ in pairs(crawlImagePaths("icon", "iconLocked")) do
 		copy_file(filename, shared_images_path .. filename)
