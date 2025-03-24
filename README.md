@@ -109,7 +109,7 @@ You scrolled too fast! [Check out the growing list of games](#show-me-the-games)
 
 <details><summary><b>How does it work?</b></summary><br>
 
-Playdate Achievements takes advantage of the `Shared/` folder that Playdate makes available to all games. By establishing an open standard for achievements, games can record available and earned achievements in dedicated subfolders which any other game or viewer app can read. This enables apps like [Trophy Case](https://github.com/gurtt/trophy-case) to present an aggregated list of all achievements earned across games.
+Playdate Achievements takes advantage of the `Shared/` folder that Playdate makes available to all games. By establishing an open standard for achievements, games can record available and earned achievements in dedicated subfolders which any other game or viewer app can read. This enables apps like [Trophy Case](https://gurtt.dev/trophy-case) to present an aggregated list of all achievements earned across games.
 
 </details>
 
