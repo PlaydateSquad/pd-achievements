@@ -22,23 +22,23 @@ Of course, games may also present their earned achievements themselves. Addition
 
 It’s all about the games. Here’s a (non-comprehensive) list of games that award Playdate Achievements. Made your own? [Add it to the list!](https://github.com/PlaydateSquad/pd-achievements#contributing)
 
-<a href="https://play.date/games/bona-fido/" alt="Bona Fido">
-	<img src="https://media-cdn.play.date/media/games/374881/IMG_3666.gif" width="400"/>
+<a href="https://play.date/games/bona-fido/">
+	<img src="https://media-cdn.play.date/media/games/374881/IMG_3666.gif" alt="Bona Fido" width="400"/>
 </a>
-<a href="https://play.date/games/cranky-cove/" alt="Cranky Cove">
-	<img src="https://media-cdn.play.date/media/games/377192/cranky_cove_banner_small_noalpha_6YTos8R.png" width="400"/>
+<a href="https://play.date/games/cranky-cove/">
+	<img src="https://media-cdn.play.date/media/games/377192/cranky_cove_banner_small_noalpha_6YTos8R.png" alt="Cranky Cove" width="400"/>
 </a>
-<a href="https://play.date/games/first-in-line/" alt="First in… Line?">
-	<img src="https://media-cdn.play.date/media/games/318634/web_small.gif" width="400"/>
+<a href="https://play.date/games/first-in-line/">
+	<img src="https://media-cdn.play.date/media/games/318634/web_small.gif" alt="First in… Line?" width="400"/>
 </a>
-<a href="https://play.date/games/hexa/" alt="Hexa">
-	<img src="https://media-cdn.play.date/media/games/345269/web_small.gif" width="400"/>
+<a href="https://play.date/games/hexa/">
+	<img src="https://media-cdn.play.date/media/games/345269/web_small.gif" alt="Hexa" width="400"/>
 </a>
-<a href="https://play.date/games/rowbot-rally/" alt="Rowbot Rally">
-	<img src="https://media-cdn.play.date/media/games/243372/Web_Small.gif" width="400"/>
+<a href="https://play.date/games/rowbot-rally/">
+	<img src="https://media-cdn.play.date/media/games/243372/Web_Small.gif" alt="Rowbot Rally" width="400"/>
 </a>
-<a href="https://play.date/games/xtris/" alt="Xtris">
-	<img src="https://media-cdn.play.date/media/games/375945/web-cover-small.png" width="400"/>
+<a href="https://play.date/games/xtris/">
+	<img src="https://media-cdn.play.date/media/games/375945/web-cover-small.png" alt="Xtris" width="400"/>
 </a>
 
 ## Made a Game for Playdate?
