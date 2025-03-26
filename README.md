@@ -53,68 +53,68 @@ Don’t forget to [add it to this page](https://github.com/PlaydateSquad/pd-achi
 
 ## FAQ
 
-<details><summary><b>What games support it?</b></summary><br>
+<details><summary><b>What games support it?</b></summary>
 
-You scrolled too fast! [Check out the growing list of games](#show-me-the-games) that offer Playdate Achievements above.
-
-</details>
-
-<details><summary><b>How does it work?</b></summary><br>
-
-Playdate Achievements takes advantage of the `Shared/` folder that Playdate makes available to all games. By establishing an open standard for achievements, games can record available and earned achievements in dedicated subfolders which any other game or viewer app can read. This enables apps like [Trophy Case](https://github.com/gurtt/trophy-case) to present an aggregated list of all achievements earned across games.
+You scrolled too fast! <a href="#show-me-the-games">Check out the growing list of games</a> that offer Playdate Achievements above.
 
 </details>
 
-<details><summary><b>Does it support non-Catalog games?</b></summary><br>
+<details><summary><b>How does it work?</b></summary>
 
-Yes! Playdate Achievements is an open standard available to _all_ games regardless of whether they’ve been accepted to Catalog or their distribution method. Games hosted on [itch.io]() or your own site are absolutely welcome and fully supported.
-
-</details>
-
-<details><summary><b>Does it work with games made in Pulp?</b></summary><br>
-
-[Pulp](https://play.date/pulp/) games don't have access to the `Shared/` folder or Lua code libraries, and therefore aren’t compatible with Playdate Achievements. However, you may be able to integrate the library after using [Pulp Mill](https://github.com/nstbayless/pulp-to-lua), a Pulp-to-Lua transpiler.
+Playdate Achievements takes advantage of the <code>Shared/</code> folder that Playdate makes available to all games. By establishing an open standard for achievements, games can record available and earned achievements in dedicated subfolders which any other game or viewer app can read. This enables apps like <a href="https://github.com/gurtt/trophy-case">Trophy Case</a> to present an aggregated list of all achievements earned across games.
 
 </details>
 
-<details><summary><b>How can I add Playdate Achievements to my game?</b></summary><br>
+<details><summary><b>Does it support non-Catalog games?</b></summary>
 
-Check out our [getting started guide](https://github.com/PlaydateSquad/pd-achievements/blob/main/README.md) in the [`pd-achievements`](https://github.com/PlaydateSquad/pd-achievements) repo on GitHub.
-
-</details>
-
-<details><summary><b>Can I add my game to this page?</b></summary><br>
-
-All games that integrate Playdate Achievements are welcome! [Open a pull request](https://github.com/PlaydateSquad/pd-achievements/compare) to add your game to the list and a member of the community will review and merge the changes.
+Yes! Playdate Achievements is an open standard available to <em>all</em> games regardless of whether they’ve been accepted to Catalog or their distribution method. Games hosted on <a href="itch.io">itch.io</a> or your own site are absolutely welcome and fully supported.
 
 </details>
 
-<details><summary><b>How do I report a bug?</b></summary><br>
+<details><summary><b>Does it work with games made in Pulp?</b></summary>
 
-All framework development occurs in the [`pd-achievements`](https://github.com/PlaydateSquad/pd-achievements) repo on GitHub. Please open an issue to report any bugs you find. If you find bugs in the Trophy Case viewer app, report them in the separate [`trophy-case`](https://github.com/gurtt/trophy-case) repo.
+<a href="https://play.date/pulp/">Pulp</a> games don't have access to the <code>Shared</code> folder or Lua code libraries, and therefore aren’t compatible with Playdate Achievements. However, you may be able to integrate the library after using <a href="https://github.com/nstbayless/pulp-to-lua">Pulp Mill</a>, a Pulp-to-Lua transpiler.
 
 </details>
 
-<details><summary><b>I already implemented my own achievements system—what should I do?</b></summary><br>
+<details><summary><b>How can I add Playdate Achievements to my game?</b></summary>
+
+Check out our <a href="https://github.com/PlaydateSquad/pd-achievements/blob/main/README.md">getting started guide</a> in the <a href="https://github.com/PlaydateSquad/pd-achievements"><code>pd-achievement</code></a> repo on GitHub.
+
+</details>
+
+<details><summary><b>Can I add my game to this page?</b></summary>
+
+Yes! All games that integrate Playdate Achievements are welcome. <a href="https://github.com/PlaydateSquad/pd-achievements/compare">Open a pull request</a> to add your game to the list and a member of the community will review and merge the changes.
+
+</details>
+
+<details><summary><b>How do I report a bug?</b></summary>
+
+All framework development occurs in the <a href="https://github.com/PlaydateSquad/pd-achievements"><code>pd-achievements</code></a> repo on GitHub. Please open an issue to report any bugs you find. If you find bugs in the Trophy Case viewer app, report them in the separate <a href="https://github.com/gurtt/trophy-case"><code>trophy-case</code></a> repo.
+
+</details>
+
+<details><summary><b>I already implemented my own achievements system—what should I do?</b></summary>
 
 That’s awesome! It’s up to you whether to add support for Playdate Achievements (but we urge you to consider it). The more games that support it, the better it is for the community and the more fun it is for players, who can view all the achievements they've earned together in one place. We've designed the open standard with the goal of supporting most types of achievements, and you can integrate support for Playdate Achievements in parallel with your own implementation, so the cost of migration is low.
 
 </details>
 
-<details><summary><b>Cool, but can it do…? (What if it doesn’t support the features I want?)</b></summary><br>
+<details><summary><b>Cool, but can it do…? (What if it doesn’t support the features I want?)</b></summary>
 
-We believe strongly in creating a shared open standard suitable for _all_ Playdate games. The more games that support it, the better the experience for players and the better for the Playdate community as a whole. We need to strike a balance between simplicity (so it’s easy for anyone to integrate) and capability (so that it serves the needs of most games/devs).
+We believe strongly in creating a shared open standard suitable for <em>all</em> Playdate games. The more games that support it, the better the experience for players and the better for the Playdate community as a whole. We need to strike a balance between simplicity (so it’s easy for anyone to integrate) and capability (so that it serves the needs of most games/devs).
 
-If you have ideas for achievements which can’t be…ahem, _achieved_… using the current standard, [join the discussion on Discord](https://discord.com/channels/675983554655551509/1213250459851292713) or [open an issue](https://github.com/PlaydateSquad/pd-achievements/issues/new) (or [a pull request](https://github.com/PlaydateSquad/pd-achievements/compare)) in GitHub. Be sure to include a summary of the idea and a clear explanation of the use case it serves. Ideas are more likely to be accepted when they are backwards compatible with the current standard, making them opt-in for those already using Playdate Achievements.
+If you have ideas for achievements which can’t be…ahem, <em>achieved</em>… using the current standard, <a href="https://discord.com/channels/675983554655551509/1213250459851292713">join the discussion on Discord</a> or <a href="https://github.com/PlaydateSquad/pd-achievements/issues/new">open an issue</a> (or <a href="https://github.com/PlaydateSquad/pd-achievements/compare">a pull request</a>) in GitHub. Be sure to include a summary of the idea and a clear explanation of the use case it serves. Ideas are more likely to be accepted when they are backwards compatible with the current standard, making them opt-in for those already using Playdate Achievements.
 
 We can’t guarantee all ideas will be accepted, but we absolutely want to hear from you so we can make the standard as effective as possible for everyone in the community, developers and players alike.
 
 </details>
 
-<details><summary><b>How can I contribute?</b></summary><br>
+<details><summary><b>How can I contribute?</b></summary>
 
-Fix a bug? Have feature ideas? Want to help make this page awesome? Regardless of your background and skill set, we welcome members of the community to help us make Playdate Achievements the best it can be. Peruse the [`pd-achievements`](https://github.com/PlaydateSquad/pd-achievements) repo on GitHub and [join the discussion in the Playdate Squad Discord](https://discord.com/channels/675983554655551509/1213250459851292713) to get involved.
+Fix a bug? Have feature ideas? Want to help make this page awesome? Regardless of your background and skill set, we welcome members of the community to help us make Playdate Achievements the best it can be. Peruse the <a href="https://github.com/PlaydateSquad/pd-achievements"><code>pd-achievements</code></a> repo on GitHub and <a href="https://discord.com/channels/675983554655551509/1213250459851292713">join the discussion in the Playdate Squad Discord</a> to get involved.
 
 </details>
 
-_Playdate is a registered trademark of [Panic](https://panic.com/). Playdate Achievements is a community project, and is not affiliated with, endorsed by, or sponsored by Panic (but we’re confident they think it’s cool)._
+<p><em>Playdate is a registered trademark of [Panic](https://panic.com/). Playdate Achievements is a community project, and is not affiliated with, endorsed by, or sponsored by Panic (but we’re confident they think it’s cool).</em></p>
