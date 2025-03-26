@@ -1,0 +1,8 @@
+@import "{{ site.theme }}";
+
+details {
+  margin-bottom: 1em;
+  summary {
+    margin-bottom: 0.5em;
+  }
+}
