@@ -8,7 +8,7 @@
 
 - question: Does it support non-Catalog games?
   answer: |
-    Yes! Playdate Achievements is an open standard available to _all_ games regardless of whether they’ve been accepted to Catalog or their distribution method. Games hosted on [itch.io]() or your own site are absolutely welcome and fully supported.
+    Yes! Playdate Achievements is an open standard available to _all_ games regardless of whether they’ve been accepted to Catalog or their distribution method. Games hosted on [itch.io](https://itch.io) or your own site are absolutely welcome and fully supported.
 
 - question: Does it work with games made in Pulp?
   answer: |
