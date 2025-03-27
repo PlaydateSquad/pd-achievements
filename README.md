@@ -23,13 +23,17 @@ Of course, games may also present their earned achievements themselves. Addition
 It’s all about the games. Here’s a (non-comprehensive) list of games that award Playdate Achievements. Made your own? [Add it to the list!](https://github.com/PlaydateSquad/pd-achievements#contributing)
 
 <div class="game-grid">
-	{% for game in site.data.games %}
-	<div class="game">
-		<a href="{{ game.url }}">
-			<img src="{{ game.image }}" alt="{{ game.name }}" title="{{ game.name }}" width="400"/>
-		</a>
-	</div>
-	{% endfor %}
+
+{% for game in site.data.games %}
+
+<div class="game">
+	<a href="{{ game.url }}">
+		<img src="{{ game.image }}" alt="{{ game.name }}" title="{{ game.name }}" width="400"/>
+	</a>
+</div>
+
+{% endfor %}
+
 </div>
 
 ## Made a Game for Playdate?
