@@ -24,7 +24,8 @@ It’s all about the games. Here’s a (non-comprehensive) list of games that aw
 
 <div class="game-grid">
 
-{% for game in site.data.games %}
+{% assign sortedGames = site.data.games | sort: 'name' %}
+{% for game in sortedGames %}
 
 <div class="game">
 	<a href="{{ game.url }}">

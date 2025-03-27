@@ -1,3 +1,11 @@
+# - name: Your Game
+#   url: https://yourgame.com # The download page for your game on itch.io, catalog, or elsewhere
+#   image: ./assets/images/games/your-game.png # OR: a hosted URL (e.g. a catalog image)
+#   # The following fields are currently undisplayed, but give us flexibility in the future.
+#   description: A brief, one sentence description of your game.
+#   author: Your name or alias
+#   achievementCount: 0 # The number of Playdate Achievements in your game
+
 - name: Bona Fido
   url: https://play.date/games/bona-fido/
   image: https://media-cdn.play.date/media/games/374881/IMG_3666.gif
@@ -39,11 +47,3 @@
   description:
   author: Fletch Makes Stuff
   achievementCount: 0
-# - name: Your Game
-#   url: https://yourgame.com # The download page for your game on itch.io, catalog, or elsewhere
-#   image: ./assets/images/games/your-game.png # OR: a hosted URL (e.g. a catalog image)
-#   # The following fields are currently undisplayed, but give us flexibility in the future.
-#   description: A brief, one sentence description of your game.
-#   author: Your name or alias
-#   achievementCount: 0 # The number of Playdate Achievements in your game
-
