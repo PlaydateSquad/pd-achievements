@@ -1,0 +1,12 @@
+items:
+  - question: What games support it?
+    answer: |
+      You scrolled too fast! [Check out the growing list of games](#show-me-the-games) that offer Playdate Achievements above.
+
+  - question: How does it work?
+    answer: |
+      Playdate Achievements takes advantage of the `Shared/` folder that Playdate makes available to all games. By establishing an open standard for achievements, games can record available and earned achievements in dedicated subfolders which any other game or viewer app can read. This enables apps like [Trophy Case](https://github.com/gurtt/trophy-case) to present an aggregated list of all achievements earned across games.
+
+  - question: Does it support non-Catalog games?
+    answer: |
+      Yes! Playdate Achievements is an open standard available to _all_ games regardless of whether they’ve been accepted to Catalog or their distribution method. Games hosted on [itch.io]() or your own site are absolutely welcome and fully supported.
