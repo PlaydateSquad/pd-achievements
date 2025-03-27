@@ -1,0 +1,49 @@
+# - name: Your Game
+#   url: https://yourgame.com # The download page for your game on itch.io, catalog, or elsewhere
+#   image: ./assets/images/games/your-game.png # OR: a hosted URL (e.g. a catalog image)
+#   # The following fields are currently undisplayed, but give us flexibility in the future.
+#   description: A brief, one sentence description of your game.
+#   author: Your name or alias
+#   achievementCount: 0 # The number of Playdate Achievements in your game
+
+- name: Bona Fido
+  url: https://play.date/games/bona-fido/
+  image: https://media-cdn.play.date/media/games/374881/IMG_3666.gif
+  description:
+  author: Rae
+  achievementCount: 0
+
+- name: RowBot Rally
+  url: https://play.date/games/rowbot-rally/
+  image: https://media-cdn.play.date/media/games/243372/Web_Small.gif
+  description:
+  author: Rae
+  achievementCount: 0
+
+- name: Cranky Cove
+  url: https://play.date/games/cranky-cove/
+  image: https://media-cdn.play.date/media/games/377192/cranky_cove_banner_small_noalpha_6YTos8R.png
+  description:
+  author: Jon Simantov
+  achievementCount: 0
+
+- name: First in… Line?
+  url: https://play.date/games/first-in-line/
+  image: https://media-cdn.play.date/media/games/318634/web_small.gif
+  description:
+  author: Rae
+  achievementCount: 0
+
+- name: HEXA
+  url: https://play.date/games/hexa/
+  image: https://media-cdn.play.date/media/games/345269/web_small.gif
+  description:
+  author: Rae
+  achievementCount: 0
+
+- name: XTRIS
+  url: https://play.date/games/xtris/
+  image: https://media-cdn.play.date/media/games/375945/web-cover-small.png
+  description:
+  author: Fletch Makes Stuff
+  achievementCount: 0
