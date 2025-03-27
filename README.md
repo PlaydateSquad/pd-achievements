@@ -55,7 +55,7 @@ Don’t forget to [add it to this page](https://github.com/PlaydateSquad/pd-achi
 
 {% for faq in site.data.faq %}
 
-<details><summary>{{ faq.question | markdownify }}</summary>{{ faq.answer | markdownify }}</details>
+<details><summary>{{ faq.question }}</summary>{{ faq.answer | markdownify }}</details>
 
 {% endfor %}
 
