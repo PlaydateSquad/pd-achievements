@@ -13,7 +13,7 @@ Playdate Achievements is a community project establishing an open standard for a
 [Trophy Case](https://github.com/gurtt/trophy-case) is a dedicated viewer which displays the achievements you’ve earned across _all_ Playdate games in one place. Trophy Case was designed in parallel with the Playdate Achievements standard, providing first-class support for its features and showcasing any games which choose to integrate with it.
 
 <div align="center">
-	<img src="./images/viewers/trophy-case-pd.png" width="400"/>
+	<img src="./assets/images/viewers/trophy-case-pd.png" width="400"/>
 </div>
 
 Of course, games may also present their earned achievements themselves. Additionally, the open standard makes it possible for others to create dedicated achievement viewer apps in the future.
@@ -22,24 +22,15 @@ Of course, games may also present their earned achievements themselves. Addition
 
 It’s all about the games. Here’s a (non-comprehensive) list of games that award Playdate Achievements. Made your own? [Add it to the list!](https://github.com/PlaydateSquad/pd-achievements#contributing)
 
-<a href="https://play.date/games/bona-fido/">
-	<img src="https://media-cdn.play.date/media/games/374881/IMG_3666.gif" alt="Bona Fido" title="Bona Fido" width="400"/>
-</a>
-<a href="https://play.date/games/cranky-cove/">
-	<img src="https://media-cdn.play.date/media/games/377192/cranky_cove_banner_small_noalpha_6YTos8R.png" alt="Cranky Cove"  title="Cranky Cove" width="400"/>
-</a>
-<a href="https://play.date/games/first-in-line/">
-	<img src="https://media-cdn.play.date/media/games/318634/web_small.gif" alt="First in… Line?" title="First in… Line?" width="400"/>
-</a>
-<a href="https://play.date/games/hexa/">
-	<img src="https://media-cdn.play.date/media/games/345269/web_small.gif" alt="Hexa" title="Hexa" width="400"/>
-</a>
-<a href="https://play.date/games/rowbot-rally/">
-	<img src="https://media-cdn.play.date/media/games/243372/Web_Small.gif" alt="Rowbot Rally" title="Rowbot Rally" width="400"/>
-</a>
-<a href="https://play.date/games/xtris/">
-	<img src="https://media-cdn.play.date/media/games/375945/web-cover-small.png" alt="Xtris" title="Xtris" width="400"/>
-</a>
+<div class="game-grid">
+	{% for game in site.data.games %}
+	<div class="game">
+		<a href="{{ game.url }}">
+			<img src="{{ game.image }}" alt="{{ game.name }}" title="{{ game.name }}" width="400"/>
+		</a>
+	</div>
+	{% endfor %}
+</div>
 
 ## Made a Game for Playdate?
 
