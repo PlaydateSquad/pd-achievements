@@ -1177,6 +1177,7 @@ function av.mainUpdate()
          m.scroll = 0
       end
       m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL_DOWN, 0)
+      m.scrollToTop = m.scroll ~= 0
    else
       if playdate.buttonIsPressed(playdate.kButtonUp) and m.aboutScreenAnim == nil then
          m.scrollSpeed = math.min(m.scrollSpeed + SCROLL_ACCEL, SCROLL_SPEED)
@@ -1187,39 +1188,33 @@ function av.mainUpdate()
       elseif m.scrollSpeed < 0 then
          m.scrollSpeed = math.min(m.scrollSpeed + SCROLL_ACCEL_DOWN, 0)
       end
-   end
 
-   if m.scrollSpeed ~= 0 then
-      local scrollMax = SCROLL_SPEED *  m.scrollSpeed / math.abs(m.scrollSpeed)
-      local scrollAmount = SCROLL_EASING(m.scrollSpeed, 0, scrollMax, scrollMax)
-      m.scroll = m.scroll - scrollAmount
-   end
-
-   local crankChanged, accelChanged = 0,0
-   if m.aboutScreenAnim == nil then
-      crankChanged, accelChanged = playdate.getCrankChange()
-   end
-   m.scroll = m.scroll + (CRANK_MULT*accelChanged)
-   if m.scroll < 3 and m.scrollSpeed == 0 then m.scroll = m.scroll - 1 end
-
-   if m.scroll < 0 then
-      m.scroll = 0
-      m.scrollSpeed = 0
-   elseif m.scroll > m.maxScroll then
-      m.scroll = m.maxScroll
-      m.scrollSpeed = 0
-   end
-
-   if m.scroll == 0 then
-      if m.scrollToTop then
-         m.scrollToTop = false
+      if m.scrollSpeed ~= 0 then
+         local scrollMax = SCROLL_SPEED *  m.scrollSpeed / math.abs(m.scrollSpeed)
+         local scrollAmount = SCROLL_EASING(m.scrollSpeed, 0, scrollMax, scrollMax)
+         m.scroll = m.scroll - scrollAmount
       end
-   end
-
-   if not m.scrollToTop and m.scroll // 32 ~= oldScroll // 32 then
-      if m.config.soundVolume > 0 then
-         m.scrollSound:setVolume(m.config.soundVolume)
-         m.scrollSound:play()
+   
+      local crankChanged, accelChanged = 0,0
+      if m.aboutScreenAnim == nil then
+         crankChanged, accelChanged = playdate.getCrankChange()
+      end
+      m.scroll = m.scroll + (CRANK_MULT*accelChanged)
+      if m.scroll < 3 and m.scrollSpeed == 0 then m.scroll = m.scroll - 1 end
+   
+      if m.scroll < 0 then
+         m.scroll = 0
+         m.scrollSpeed = 0
+      elseif m.scroll > m.maxScroll then
+         m.scroll = m.maxScroll
+         m.scrollSpeed = 0
+      end
+   
+      if m.scroll // 32 ~= oldScroll // 32 then
+         if m.config.soundVolume > 0 then
+            m.scrollSound:setVolume(m.config.soundVolume)
+            m.scrollSound:play()
+         end
       end
    end
 
