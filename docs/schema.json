@@ -1,0 +1,154 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "title": "Playdate Squad Achievements Schema",
+	"description": "The necessary structure for a game's achievements.json file.",
+    "required": [
+		"author",
+		"name",
+		"description",
+		"gameID",
+		"version",
+		"specVersion",
+        "achievements"
+    ],
+    "properties": {
+		"gameID": {
+            "type": "string",
+			"description":"Bundle identifier for your game. Defaults to 'bundleID' from your pdxinfo."
+        },
+		"name": {
+            "type": "string",
+            "description":"Nicely formatted name for your game."
+        },
+		"author": {
+            "type": "string",
+            "description": "Nicely formatted author for your game."
+        },
+        "description": {
+            "type": "string",
+            "description": "Short description about your game."
+        },
+		"version": {
+            "type": "string",
+			"description": "Nicely formatted version string for your game."
+        },
+		"iconPath": {
+			"type": "string",
+			"description": "Path to the 32x32 .png icon to use as your game's icon."
+		},
+		"cardPath": {
+			"type": "string",
+			"description": "Path to the 380x90 .png art to use as your game's card art."
+		},
+        "specVersion": {
+            "type": "string",
+            "description": "The specification version this data is based on in semver."
+        },
+        "achievements": {
+            "type": "array",
+            "description": "List of configured achievements for your game.",
+			"minItems":1,
+			"uniqueItems":true,
+            "items": {
+                "type": "object",
+                "required": [
+					"name",
+                    "description",
+					"id",
+                    "grantedAt",
+					"isSecret",
+					"scoreValue"
+                ],
+				"dependentRequired": {
+					"progressMax": ["progress", "progressIsPercentage"],
+					"progress": ["progressMax", "progressIsPercentage"],
+					"progressIsPercentage": ["progress", "progressMax"],
+					"iconLocked": ["icon"]
+				},
+                "properties": {
+					"id": {
+                        "type": "string",
+						"description": "Uniquely identifies the achievement.",
+                        "examples": [
+                            "achievement_1"
+                        ]
+                    },
+					"name": {
+                        "type": "string",
+                        "description": "Nicely formatted name for the achievement. Shown to the player.",
+                        "examples": [
+                            "Achievement 1"
+                        ]
+                    },
+                    "description": {
+                        "type": "string",
+						"description": "Nicely formatted description for the achievement. Shown to the player.",
+						"examples": [
+							"Did the thing."
+						]
+                    },
+					"descriptionLocked": {
+						"type": "string",
+						"description": "Nicely formatted description for the ungranted version of the achievement. Shown the the player.",
+						"examples": [
+							"Do the thing."
+						]
+					},
+					"isSecret": {
+                        "type": "boolean",
+                        "description": "Determines if the achievement should be hidden until granted."
+                    },
+					"icon": {
+                        "type": "boolean",
+                        "description": "Path to the achievement's 32x32 .png icon within AchievementImages/."
+                    },
+					"iconLocked": {
+                        "type": "boolean",
+                        "description": "Path to the achievement's 32x32 .png icon within AchievementImages/ (shown when the achievement is not yet granted)."
+                    },
+                    "grantedAt": {
+                        "type": [
+                            "boolean",
+                            "integer"
+                        ],
+                        "description": "If this is false, the achievement has not yet been granted. If it is an integer, that integer is the Playdate epoch second at which the achievement was granted.",
+                        "examples": [
+                            false,
+                            788058272
+                        ]
+                    },
+                    "progressMax": {
+                        "type": "integer",
+                        "description": "If this achievement is progression based, this is the limit at which the achievement will be automatically granted.",
+                        "exclusiveMinimum": 0
+                    },
+					"progress": {
+                        "type": "integer",
+                        "description": "How much progress has been made towards 'progressMax'.",
+                        "minimum": 0
+                    },
+                    "progressIsPercentage": {
+                        "type": "boolean",
+                        "description": "Indicates if this achievement's progress should be shown to the player as a percentage."
+                    },
+					"scoreValue": {
+                        "type": "integer",
+                        "description": "How much weight this achievement carries towards 100% game completion.",
+                        "minimum:": 0
+                    }
+                },
+                "examples": [{
+                    "description": "Auto-generated random achievement for achievement viewer testing.",
+                    "grantedAt": false,
+                    "id": "generated_achievement_1",
+                    "isSecret": false,
+                    "name": "Generated Achievement 1",
+                    "progress": 3,
+                    "progressMax": 19,
+                    "scoreValue": 0
+                }]
+            }
+        }
+    }
+}
