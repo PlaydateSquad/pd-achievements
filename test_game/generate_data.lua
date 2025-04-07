@@ -31,7 +31,8 @@ function generate_game_data(numgames, achievements_min, achievements_max)
         }
         -- Begin generating achievement data.
         local achievement_number = 0
-        for i = achievements_min, achievements_max do
+        local max = math.random(achievements_min, achievements_max)
+        for i = 1, max do
             achievement_number += 1
             local ach = {
                 id = "generated_achievement_" .. achievement_number,
@@ -65,6 +66,7 @@ function generate_game_data(numgames, achievements_min, achievements_max)
             if achievement_type > 4 then
                 ach.progressMax = math.random(prog_min, prog_max)
                 ach.progress = math.random(0, ach.progressMax - 1)
+                ach.progressIsPercentage = false
                 -- Ensure continuity between completion and progress.
                 if ach.grantedAt then
                     ach.progress = ach.progressMax
