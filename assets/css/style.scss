@@ -3,15 +3,358 @@
 
 @import "{{ site.theme }}";
 
-details {
-  margin-bottom: 1em;
-  summary {
-    margin-bottom: 0.5em;
-    font-size: 18px;
-    font-weight: bold;
-  }
+$bg-color: #42008d;
+$font-color: #ffffff;
+$dimmed-font-color: rgba(255, 255, 255, 0.6);
+$link-color: #ffc500;
+$footer-color: #212223;
+$transparent: rgba(0, 0, 0, 0);
+
+$banner-border-default-color: #ffffff;
+$banner-border-radius: 12px;
+$banner-border-weight: 8px;
+
+$tablet: 720px;
+
+html,
+body {
+  background-color: $bg-color;
+  width: 100%;
+  margin: 0;
+  overflow-x: clip;
 }
 
-.game {
-  display: inline-block;
+.markdown-body {
+  color: $font-color;
+  font-size: 24px;
+  font-weight: normal;
+  line-height: 1.8em;
+  font-family: "Poppins", "Helvetica", sans-serif;
+  margin-bottom: 0 !important;
+
+  @media screen and (max-width: $tablet) {
+    font-size: 18px;
+  }
+
+  a {
+    color: $link-color;
+    text-decoration: underline;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: bold;
+    border: none;
+    position: relative;
+  }
+
+  h1 {
+    font-size: 3em;
+  }
+
+  h2 {
+    font-size: 2.5em;
+  }
+
+  h3 {
+    font-size: 1.5em;
+  }
+
+  h4 {
+    font-size: 1.25em;
+  }
+
+  h5,
+  h6 {
+    font-size: 1em;
+  }
+
+  img {
+    background-color: transparent;
+  }
+  img.centered {
+    display: block;
+    margin: auto;
+  }
+  img.highDPI {
+    zoom: 0.5; // for high DPI (@2x) images
+  }
+
+  details {
+    margin-bottom: 1em;
+    summary {
+      margin-bottom: 0.5em;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+  }
+
+  .section {
+    padding: 1em;
+  }
+
+  .section#hero {
+    // hidden because it appears in the hero image
+    h1 {
+      display: none;
+    }
+
+    // logo image
+    img {
+      display: block;
+      margin: auto;
+      max-width: 45vmin;
+      @media screen and (max-width: $tablet) {
+        max-width: 60vmin;
+      }
+    }
+
+    // open standard banner
+    h5 {
+      text-align: center;
+      color: $bg-color;
+      background-color: white;
+      padding: 0.25em;
+      min-height: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 20px rgba(0, 0, 0, 0.25);
+      margin: 1em 90px 3em 90px;
+      &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: -25%;
+        left: -94px;
+        width: 90px;
+        height: 90px;
+        background-image: url("../images/banner-tail-left.png");
+        background-size: cover;
+        background-position: left center;
+      }
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: -25%;
+        right: -94px;
+        width: 90px;
+        height: 90px;
+        background-image: url("../images/banner-tail-right.png");
+        background-size: cover;
+        background-position: right center;
+      }
+
+      @media screen and (max-width: $tablet) {
+        margin: 1em 24px 3em 24px;
+        &::after {
+          width: 24px;
+          right: -28px;
+        }
+        &::before {
+          width: 24px;
+          left: -28px;
+        }
+      }
+    }
+
+    ol,
+    ul {
+      margin: 2em 0;
+      li {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 0.5em;
+        em {
+          color: $link-color;
+          font-style: normal;
+        }
+        &::marker {
+          color: $link-color;
+        }
+      }
+    }
+  }
+
+  .section#games {
+    ol {
+      em {
+        opacity: 0.6; // Used for "(optional)" callouts
+        font-style: normal;
+      }
+    }
+  }
+
+  .grid {
+    margin: 2em 0;
+    display: grid;
+    gap: 48px;
+    grid-template-columns: auto auto;
+
+    @media screen and (max-width: $tablet) {
+      grid-template-columns: auto;
+      .game {
+        margin: auto;
+      }
+    }
+
+    .game {
+      display: inline-block;
+      line-height: 1.5em;
+
+      img {
+        display: block;
+        position: relative;
+        border: solid $banner-border-weight $banner-border-default-color;
+        border-radius: $banner-border-radius;
+        box-sizing: border-box;
+        margin-bottom: 0.5em;
+      }
+      a,
+      a:hover,
+      a:active,
+      a:visited {
+        display: inline-block;
+        color: $font-color;
+        text-decoration: none;
+        img {
+          transition: all 0.1s ease-out;
+        }
+      }
+      // raised card with shadow on hover
+      a:hover {
+        img {
+          margin-top: -0.5em;
+          margin-bottom: 1em;
+          box-shadow: 0 0.5em rgba(0, 0, 0, 0.25);
+        }
+      }
+
+      .count {
+        float: right;
+        font-family: "Poppins", "Helvetica", sans-serif;
+        font-weight: 800;
+        font-size: 2.5em;
+        line-height: 1.25em;
+        color: $dimmed-font-color;
+        &::before {
+          content: "";
+          display: inline-block;
+          background-image: url("../images/trophy-count-icon.png");
+          background-position: bottom right;
+          // background-size: 42px 36px;
+          // width: 42px;
+          // height: 36px;
+          background-size: 28px 24px;
+          width: 28px;
+          height: 24px;
+          margin: 0 0.1em;
+        }
+      }
+      .title {
+        color: $font-color;
+        font-weight: bold;
+        font-size: 1.5em;
+        line-height: 1.25em;
+        text-overflow: ellipsis;
+        line-clamp: 1;
+      }
+      .author {
+        color: $dimmed-font-color;
+        line-height: 1em;
+        text-overflow: ellipsis;
+        line-clamp: 1;
+      }
+
+      &.badge .banner {
+        position: relative;
+      }
+      &.badge .banner::after {
+        color: $transparent;
+        font-size: 0.1em; // don't let the invisible text force the container size to grow
+        display: block;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        height: 80%;
+        aspect-ratio: 1;
+        background-size: cover;
+        background-position: top right;
+        border-top-right-radius: $banner-border-radius;
+      }
+      &.badge-soon-released .banner::after {
+        content: "SOON*"; // for accessibility only; shown rotated in image instead
+        background-image: url("../images/badge-soon-released.png");
+      }
+      &.badge-soon .banner::after {
+        content: "SOON!"; // for accessibility only; shown rotated in image instead
+        background-image: url("../images/badge-soon.png");
+      }
+      &.badge-new .banner::after {
+        content: "NEW!"; // for accessibility only; shown rotated in image instead
+        background-image: url("../images/badge-new.png");
+      }
+      &.badge-more .banner::after {
+        content: "MORE!"; // for accessibility only; shown rotated in image instead
+        background-image: url("../images/badge-more.png");
+      }
+    }
+
+    .stat {
+      font-weight: bold;
+      .number {
+        color: $link-color;
+        font-size: 6em;
+        line-height: 1em;
+        font-family: "Poppins", "Helvetica", sans-serif;
+        font-weight: 800;
+        font-style: normal;
+      }
+    }
+  }
+
+  .section#faq_ {
+    z-index: 1;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      left: -5000px;
+      right: -5000px;
+      background-color: $footer-color;
+      z-index: -1;
+    }
+    position: relative;
+  }
+
+  .markdown-body {
+    font-family: Helvetica, sans-serif;
+    font-size: 28px;
+    line-height: 1.4;
+    color: white;
+  }
+
+  .footnote,
+  .footer {
+    font-size: 0.75em;
+    line-height: 1.5em;
+    color: $dimmed-font-color;
+    grid-column-start: 1;
+  }
+
+  .footer {
+    opacity: 0.6;
+    a,
+    a:hover,
+    a:active,
+    a:visited {
+      color: $font-color;
+    }
+  }
 }
