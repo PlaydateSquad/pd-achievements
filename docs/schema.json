@@ -101,7 +101,7 @@
 					},
 					"descriptionLocked": {
 						"type": "string",
-						"description": "Nicely formatted description for the ungranted version of the achievement. Shown the the player.",
+						"description": "Nicely formatted description for the ungranted version of the achievement. Shown to the player.",
 						"examples": [
 							"Do the thing."
 						]
