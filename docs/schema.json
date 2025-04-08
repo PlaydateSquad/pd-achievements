@@ -112,11 +112,11 @@
 					},
 					"icon": {
 						"type": "boolean",
-						"description": "Path to the achievement's 32x32 .png icon within AchievementImages/."
+						"description": "Path to a 32x32 .pdi image to use as this achievement's icon when unlocked, relative to the AchievementImages directory at the same level as this file. Supports transparency."
 					},
 					"iconLocked": {
 						"type": "boolean",
-						"description": "Path to the achievement's 32x32 .png icon within AchievementImages/ (shown when the achievement is not yet granted)."
+						"description": "Path to a 32x32 .pdi image to use as this achievement's icon when locked, relative to the AchievementImages directory at the same level as this file. Supports transparency."
 					},
 					"grantedAt": {
 						"type": [
