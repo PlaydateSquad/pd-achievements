@@ -4,10 +4,10 @@
 	"title": "Playdate Squad Achievements Schema",
 	"description": "The necessary structure for a game's achievements.json file.",
 	"required": [
-		"author",
-		"name",
-		"description",
 		"gameID",
+		"name",
+		"author",
+		"description",
 		"version",
 		"specVersion",
 		"achievements"
