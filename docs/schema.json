@@ -123,7 +123,7 @@
 							"boolean",
 							"integer"
 						],
-						"description": "If this is false, the achievement has not yet been granted. If it is an integer, that integer is the Playdate epoch second at which the achievement was granted.",
+						"description": "If this is false, the achievement has not yet been granted. If it is an integer, that integer is the number of seconds elapsed since midnight (hour 0), January 1 2000 UTC at which the achievement was granted.",
 						"examples": [
 							false,
 							788058272
