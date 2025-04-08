@@ -15,7 +15,7 @@
 	"properties": {
 		"gameID": {
 			"type": "string",
-			"description": "Bundle identifier for your game. Defaults to 'bundleID' from your pdxinfo."
+			"description": "Bundle identifier for your game."
 		},
 		"name": {
 			"type": "string",
