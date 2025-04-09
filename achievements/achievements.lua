@@ -106,8 +106,21 @@ local function load_granted_data()
 	achievements.progress = data.progress or {}
 end
 
-local function export_data()
+local function export_data(force_minimize)
 	local data = achievements.gameData
+	-- This shouldn't actually be necessary unless the developer starts adding redundant optional fields.
+	-- I put it here temporarily and can't be bothered to remove it in case it ever becomes relevant.
+	-- (Forcing correct output regardless of user error at the cost of extra time spent, perhaps?)
+	if force_minimize then
+		data = table.deepcopy(data)
+		for _, ach in ipairs(data.achievements) do
+			if ach.grantedAt == false then ach.grantedAt = nil end
+			if ach.progress == 0 then ach.progress = nil end
+			if ach.isSecret == false then ach.isSecret = nil end
+			if ach.scoreValue == 1 then ach.scoreValue = nil end
+			if ach.progressIsPercentage == false then ach.progressIsPercentage = nil end
+		end
+	end
 	json.encodeToFile(achievements.paths.get_achievement_data_file_path(data.gameID), true, data)
 end
 
@@ -298,7 +311,7 @@ local function validate_achievement(ach)
 	end
 
 	if ach.isSecret == nil then
-		ach.isSecret = false
+		-- ach.isSecret = false
 	elseif type(ach.isSecret) ~= "boolean" then
 		error("expected 'isSecret' to be type boolean, got " .. type(ach.isSecret), 3)
 	end
@@ -308,19 +321,19 @@ local function validate_achievement(ach)
 			error("expected 'progressMax' to be type number, got ".. type(ach.progressMax), 3)
 		end
 		if ach.progress == nil then
-			ach.progress = 0
+			-- ach.progress = 0
 		elseif type(ach.progress) ~= 'number' then
 			error("expected 'progress' to be type number, got ".. type(ach.progress), 3)
 		end
 		if ach.progressIsPercentage == nil then
-			ach.progressIsPercentage = false
+			-- ach.progressIsPercentage = false
 		elseif type(ach.progressIsPercentage) ~= 'boolean' then
 			error("expected 'progressIsPercentage' to be type boolean, got " .. type(ach.progressIsPercentage), 3)
 		end
 	end
 
 	if ach.scoreValue == nil then
-		ach.scoreValue = 1
+		-- ach.scoreValue = 1
 	elseif type(ach.scoreValue) ~= "number" then
 		error("expected 'scoreValue' to be type number, got ".. type(ach.scoreValue), 3)
 	elseif ach.scoreValue < 0 then
@@ -346,9 +359,9 @@ function achievements.initialize(gamedata, prevent_debug)
 			error("achievement id '" .. ach.id .. "' defined multiple times", 2)
 		end
 		achievements.keyedAchievements[ach.id] = ach
-		ach.grantedAt = achievements.granted[ach.id] or false
+		ach.grantedAt = achievements.granted[ach.id]
 		if ach.progressMax then
-			ach.progress = achievements.progress[ach.id] or 0
+			ach.progress = achievements.progress[ach.id]
 		end
 		validate_achievement(ach)
 	end
@@ -379,7 +392,7 @@ achievements.grant = function(achievement_id)
 		return false
 	end
 	local time, _ = playdate.getSecondsSinceEpoch()
-	if ach.grantedAt ~= false and ach.grantedAt <= ( time ) then
+	if ach.grantedAt and ach.grantedAt <= ( time ) then
 		return false
 	end
 	achievements.granted[achievement_id] = ( time )
@@ -397,7 +410,7 @@ achievements.revoke = function(achievement_id)
 		error("attempt to revoke unconfigured achievement '" .. achievement_id .. "'", 2)
 		return false
 	end
-	ach.grantedAt = false
+	ach.grantedAt = nil
 	achievements.granted[achievement_id] = nil
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
@@ -416,13 +429,14 @@ achievements.advanceTo = function(achievement_id, advance_to)
 		return false
 	end
 	local progress = math.max(0, math.min(advance_to, ach.progressMax))
-	achievements.progress[achievement_id] = progress
-	ach.progress = progress
 	if progress == ach.progressMax then
 		achievements.grant(achievement_id)
 	elseif (progress < ach.progressMax) and ach.grantedAt then
 		achievements.revoke(achievement_id)
 	end
+	if progress == 0 then progress = nil end
+	achievements.progress[achievement_id] = progress
+	ach.progress = progress
 	return true
 end
 
@@ -444,10 +458,10 @@ achievements.completionPercentage = function()
 	local completion_total = 0
 	local completion_obtained = 0
 	for _, ach in pairs(achievements.keyedAchievements) do
-		completion_total += ach.scoreValue
+		completion_total += ach.scoreValue or 1
 		-- granted achievements score their full weight
 		if ach.grantedAt then
-			completion_obtained += ach.scoreValue
+			completion_obtained += ach.scoreValue or 1
 		-- progressive achievements score partial progress
 		elseif ach.progressMax and ach.progress then
 			completion_obtained += ach.scoreValue * (ach.progress / ach.progressMax)

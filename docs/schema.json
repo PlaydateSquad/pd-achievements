@@ -55,36 +55,14 @@
 				"required": [
 					"name",
 					"description",
-					"id",
-					"grantedAt",
-					"isSecret",
-					"scoreValue"
+					"id"
 				],
 				"dependentRequired": {
-					"progressMax": [
-						"progress",
-						"progressIsPercentage"
-					],
-					"progress": [
-						"progressMax",
-						"progressIsPercentage"
-					],
-					"progressIsPercentage": [
-						"progress",
-						"progressMax"
-					],
-					"iconLocked": [
-						"icon"
-					]
+					"progress": ["progressMax"] ,
+					"progressIsPercentage": ["progressMax"],
+					"iconLocked": ["icon"]
 				},
 				"properties": {
-					"id": {
-						"type": "string",
-						"description": "Uniquely identifies the achievement.",
-						"examples": [
-							"achievement_1"
-						]
-					},
 					"name": {
 						"type": "string",
 						"description": "Nicely formatted name for the achievement. Shown to the player.",
@@ -106,9 +84,19 @@
 							"Do the thing."
 						]
 					},
-					"isSecret": {
-						"type": "boolean",
-						"description": "Determines if the achievement should be hidden until granted."
+					"id": {
+						"type": "string",
+						"description": "Uniquely identifies the achievement.",
+						"examples": [
+							"achievement_1"
+						]
+					},
+					"grantedAt": {
+						"type": "integer",
+						"description": "If this is not present, the achievement has not yet been granted. If it is an integer, that integer is the number of seconds elapsed since midnight (hour 0), January 1 2000 UTC at which the achievement was granted.",
+						"examples": [
+							788058272
+						]
 					},
 					"icon": {
 						"type": "boolean",
@@ -118,16 +106,10 @@
 						"type": "boolean",
 						"description": "Path to a 32x32 .pdi image to use as this achievement's icon when locked, relative to the AchievementImages directory at the same level as this file. Supports transparency."
 					},
-					"grantedAt": {
-						"type": [
-							"boolean",
-							"integer"
-						],
-						"description": "If this is false, the achievement has not yet been granted. If it is an integer, that integer is the number of seconds elapsed since midnight (hour 0), January 1 2000 UTC at which the achievement was granted.",
-						"examples": [
-							false,
-							788058272
-						]
+					"isSecret": {
+						"type": "boolean",
+						"description": "Determines if the achievement should be hidden until granted.",
+						"default": false
 					},
 					"progressMax": {
 						"type": "integer",
@@ -137,27 +119,30 @@
 					"progress": {
 						"type": "integer",
 						"description": "How much progress has been made towards 'progressMax'.",
-						"minimum": 0
+						"minimum": 0,
+						"default": 0
 					},
 					"progressIsPercentage": {
 						"type": "boolean",
-						"description": "Indicates if this achievement's progress should be shown to the player as a percentage."
+						"description": "Indicates if this achievement's progress should be shown to the player as a percentage.",
+						"default": false
 					},
 					"scoreValue": {
 						"type": "integer",
 						"description": "How much weight this achievement carries towards 100% game completion.",
-						"minimum:": 0
+						"minimum": 0,
+						"default": 1
 					}
 				},
 				"examples": [
 					{
-						"description": "Auto-generated random achievement for achievement viewer testing.",
-						"grantedAt": false,
-						"id": "generated_achievement_1",
-						"isSecret": false,
 						"name": "Generated Achievement 1",
-						"progress": 3,
+						"description": "Auto-generated random achievement for achievement viewer testing.",
+						"id": "generated_achievement_1",
+						"grantedAt": 788058272,
+						"isSecret": true,
 						"progressMax": 19,
+						"progress": 3,
 						"scoreValue": 0
 					}
 				]

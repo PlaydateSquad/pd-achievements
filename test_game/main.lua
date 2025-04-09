@@ -14,7 +14,7 @@ local achievementData = {
             id = "test_achievement",
             name = "Achievement 1 Name",
             description = "Achievement 1 Description",
-            isSecret = false,
+            -- isSecret = false,
             icon = "test",
             iconLocked = "test_locked",
         },
@@ -22,7 +22,7 @@ local achievementData = {
             id = "test_achievement_2",
             name = "Achievement 2 Name",
             description = "Achievement 2 Description",
-            isSecret = false,
+            -- isSecret = false,
 	    scoreValue = 0,
             icon = "test",
             iconLocked = "test_locked",
@@ -31,7 +31,7 @@ local achievementData = {
             id = "test_achievement_3",
             name = "Achievement 3 Name",
             description = "Achievement 3 Description",
-            isSecret = false,
+            -- isSecret = false,
             icon = "test",
             iconLocked = nil,
             progressMax = 5,
@@ -102,7 +102,11 @@ local options = {
         CHANGE_SCENE("GENERATE_DATA")
     end},
     {"LAUNCH VIEWER", function()
-	achievements.viewer.launch()
+	achievements.viewer.launch{gameData = achievements.gameData}
+    end},
+    {"launch viewer test1" , function()
+        local gamedata = achievements.crossgame.getData("com.example.achievementtest_generated_1")
+        achievements.viewer.launch{gameData = gamedata}
     end},
     {"set to regular toasts", function()
 	achievements.toasts.initialize({ miniMode = false })

@@ -38,10 +38,11 @@ function generate_game_data(numgames, achievements_min, achievements_max)
                 id = "generated_achievement_" .. achievement_number,
                 name = "Generated Achievement " .. achievement_number,
                 description = "Auto-generated random achievement for achievement viewer testing.",
-                grantedAt = false,
-                isSecret = false,
+                -- grantedAt = false,
+                -- isSecret = false,
                 scoreValue = math.random(score_min, score_max),
             }
+            if ach.scoreValue == 1 then ach.scoreValue = nil end
             --[[
                 Testing, in order:
                 - normal ungranted
@@ -66,7 +67,7 @@ function generate_game_data(numgames, achievements_min, achievements_max)
             if achievement_type > 4 then
                 ach.progressMax = math.random(prog_min, prog_max)
                 ach.progress = math.random(0, ach.progressMax - 1)
-                ach.progressIsPercentage = false
+                -- ach.progressIsPercentage = false
                 -- Ensure continuity between completion and progress.
                 if ach.grantedAt then
                     ach.progress = ach.progressMax
