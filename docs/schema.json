@@ -35,7 +35,7 @@
 		},
 		"iconPath": {
 			"type": "string",
-			"description": "Path to the 32x32 .png icon to use as your game's icon."
+			"description": "Path to a 32x32 .pdi image to use as your game's icon, relative to this file. Supports transparency."
 		},
 		"cardPath": {
 			"type": "string",
