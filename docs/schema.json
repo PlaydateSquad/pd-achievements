@@ -39,7 +39,7 @@
 		},
 		"cardPath": {
 			"type": "string",
-			"description": "Path to the 380x90 .png art to use as your game's card art."
+			"description": "Path to a 380x90 .pdi image to use as your game's card art, relative to this file. Doesn't support transparency."
 		},
 		"specVersion": {
 			"type": "string",
