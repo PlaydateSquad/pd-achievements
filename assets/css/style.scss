@@ -135,8 +135,8 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(-$banner-tail-offset);
-        left: calc(-$banner-size - $banner-crease-gap);
+        top: calc(0 - $banner-tail-offset);
+        left: calc(0 - $banner-size - $banner-crease-gap);
         width: $banner-size;
         height: $banner-size;
         background-image: url("../images/banner-tail-left.png");
@@ -147,8 +147,8 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(-$banner-tail-offset);
-        right: calc(-$banner-size - $banner-crease-gap);
+        top: calc(0 - $banner-tail-offset);
+        right: calc(0 - $banner-size - $banner-crease-gap);
         width: $banner-size;
         height: $banner-size;
         background-image: url("../images/banner-tail-right.png");
@@ -160,11 +160,11 @@ body {
         margin: 1em $banner-size-tablet 3em $banner-size-tablet;
         &::after {
           width: $banner-size-tablet;
-          right: calc(-$banner-size-tablet - $banner-crease-gap);
+          right: calc(0 - $banner-size-tablet - $banner-crease-gap);
         }
         &::before {
           width: $banner-size-tablet;
-          left: calc(-$banner-size-tablet - $banner-crease-gap);
+          left: calc(0 - $banner-size-tablet - $banner-crease-gap);
         }
       }
     }
@@ -274,10 +274,10 @@ body {
         line-clamp: 1;
       }
 
-      &.badged .badge {
+      &.badged .banner {
         position: relative;
       }
-      &.badged .badge::after {
+      &.badged .banner::after {
         color: $transparent;
         font-size: 0.1em; // don't let the invisible text force the container size to grow
         display: block;
@@ -290,19 +290,19 @@ body {
         background-position: top right;
         border-top-right-radius: $badge-border-radius;
       }
-      &.badge-soon-released .badge::after {
+      &.badge-soon-released .banner::after {
         content: "SOON*"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-soon-released.png");
       }
-      &.badge-soon .badge::after {
+      &.badge-soon .banner::after {
         content: "SOON!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-soon.png");
       }
-      &.badge-new .badge::after {
+      &.badge-new .banner::after {
         content: "NEW!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-new.png");
       }
-      &.badge-more .badge::after {
+      &.badge-more .banner::after {
         content: "MORE!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-more.png");
       }
