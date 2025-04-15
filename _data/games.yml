@@ -14,7 +14,7 @@
   image: ./assets/images/games/bona-fido.png
   color: "#FFE7DE"
   achievementCount: 9
-  releaseDate: 01/28/2025
+  releaseDate: 2025-01-28
   description:
 
 - title: RowBot Rally
@@ -23,8 +23,8 @@
   image: ./assets/images/games/rowbot-rally.png
   color: "#5DC3E5"
   achievementCount: 16
-  releaseDate: 12/17/2024
-  lastAddedDate: 12/31/2025
+  releaseDate: 2024-12-17
+  lastAddedDate: 2025-12-31
   description:
 
 - title: Cranky Cove
@@ -33,7 +33,7 @@
   image: ./assets/images/games/cranky-cove.png
   color: "#6BC2E4"
   achievementCount: 29
-  releaseDate: 02/25/2025
+  releaseDate: 2025-02-25
   description:
 
 - title: First in… Line?
@@ -42,7 +42,7 @@
   image: ./assets/images/games/first-in-line.png
   color: "#FF005C"
   achievementCount: 10
-  releaseDate: 06/18/2024
+  releaseDate: 2024-06-18
   description:
 
 - title: HEXA
@@ -51,17 +51,17 @@
   image: ./assets/images/games/hexa.png
   color: "#8977FF"
   achievementCount: 17
-  releaseDate: 07/30/2024
-  lastAddedDate: 12/31/2025
+  releaseDate: 2024-07-30
+  lastAddedDate: 2025-12-31
   description:
 
-- title: Lunatrix
+- title: Mission Lunatrix
   author: Rae
   url: https://play.date/games/lunatrix/
   image: ./assets/images/games/mission-lunatrix.png
   color: "#B189C0"
   achievementCount: 21
-  releaseDate: 12/31/2025
+  releaseDate: 2025-12-31
   description:
 
 - title: Traffic Jam
@@ -69,7 +69,7 @@
   url: https://play.date/games/traffic-jam/
   image: ./assets/images/games/traffic-jam.png
   color: "#F8C300"
-  releaseDate: 04/08/2025
+  releaseDate: 2025-04-08
   achievementCount: 13
   description:
 
@@ -87,6 +87,6 @@
   image: ./assets/images/games/xtris.png
   color: "#008751"
   achievementCount: 20
-  releaseDate: 02/25/2025
-  lastAddedDate: 12/31/2025
+  releaseDate: 2025-02-25
+  lastAddedDate: 2025-12-31
   description:
