@@ -125,7 +125,7 @@ body {
       color: $bg-color;
       background-color: white;
       padding: 0.25em;
-      min-height: calc($banner-size - $banner-shadow-depth);
+      min-height: calc(#{$banner-size} - #{$banner-shadow-depth});
       display: flex;
       justify-content: center;
       align-items: center;
@@ -135,8 +135,8 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(0 - $banner-tail-offset);
-        left: calc(0 - $banner-size - $banner-crease-gap);
+        top: calc(0 - #{$banner-tail-offset});
+        left: calc(0 - #{$banner-size} - #{$banner-crease-gap});
         width: $banner-size;
         height: $banner-size;
         background-image: url("../images/banner-tail-left.png");
@@ -147,8 +147,8 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(0 - $banner-tail-offset);
-        right: calc(0 - $banner-size - $banner-crease-gap);
+        top: calc(0 - #{$banner-tail-offset});
+        right: calc(0 - #{$banner-size} - #{$banner-crease-gap});
         width: $banner-size;
         height: $banner-size;
         background-image: url("../images/banner-tail-right.png");
@@ -160,11 +160,11 @@ body {
         margin: 1em $banner-size-tablet 3em $banner-size-tablet;
         &::after {
           width: $banner-size-tablet;
-          right: calc(0 - $banner-size-tablet - $banner-crease-gap);
+          right: calc(0 - #{$banner-size-tablet} - #{$banner-crease-gap});
         }
         &::before {
           width: $banner-size-tablet;
-          left: calc(0 - $banner-size-tablet - $banner-crease-gap);
+          left: calc(0 - #{$banner-size-tablet} - #{$banner-crease-gap});
         }
       }
     }
