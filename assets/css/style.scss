@@ -13,6 +13,7 @@ $transparent: rgba(0, 0, 0, 0);
 $badge-border-default-color: #ffffff;
 $badge-border-radius: 12px;
 $badge-border-weight: 8px;
+$badge-offset: 3px;
 
 $banner-size: 90px;
 $banner-size-tablet: 24px;
@@ -282,8 +283,8 @@ body {
         font-size: 0.1em; // don't let the invisible text force the container size to grow
         display: block;
         position: absolute;
-        top: 0px;
-        right: 0px;
+        top: -$badge-offset;
+        right: -$badge-offset;
         height: 80%;
         aspect-ratio: 1;
         background-size: cover;
