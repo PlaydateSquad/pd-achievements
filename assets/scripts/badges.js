@@ -14,17 +14,15 @@ let badges = {
       const releaseDate = new Date(g.dataset.releaseDate);
       const lastAddedDate = new Date(g.dataset.lastAddedDate);
       const now = new Date();
-      console.log(now, releaseDate, lastAddedDate);
       if (releaseDate && now < releaseDate) {
-        g.classList.add("badge", "badge-soon");
+        g.classList.add("badged", "badge-soon");
       } else if (lastAddedDate && now < lastAddedDate) {
-        g.classList.add("badge", "badge-soon-released");
+        g.classList.add("badged", "badge-soon-released");
       } else if (releaseDate && now < releaseDate.addDays(newBadgeDays)) {
-        g.classList.add("badge", "badge-new");
+        g.classList.add("badged", "badge-new");
       } else if (lastAddedDate && now < lastAddedDate.addDays(moreBadgeDays)) {
-        g.classList.add("badge", "badge-more");
+        g.classList.add("badged", "badge-more");
       }
-      console.log(g.classList);
     });
   },
 };

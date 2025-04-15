@@ -10,9 +10,15 @@ $link-color: #ffc500;
 $footer-color: #212223;
 $transparent: rgba(0, 0, 0, 0);
 
-$banner-border-default-color: #ffffff;
-$banner-border-radius: 12px;
-$banner-border-weight: 8px;
+$badge-border-default-color: #ffffff;
+$badge-border-radius: 12px;
+$badge-border-weight: 8px;
+
+$banner-size: 90px;
+$banner-size-tablet: 24px;
+$banner-crease-gap: 4px;
+$banner-shadow-depth: 20px;
+$banner-tail-offset: 25%;
 
 $tablet: 720px;
 
@@ -119,20 +125,20 @@ body {
       color: $bg-color;
       background-color: white;
       padding: 0.25em;
-      min-height: 70px;
+      min-height: calc($banner-size - $banner-shadow-depth);
       display: flex;
       justify-content: center;
       align-items: center;
       box-shadow: 0 20px rgba(0, 0, 0, 0.25);
-      margin: 1em 90px 3em 90px;
+      margin: 1em $banner-size 3em $banner-size;
       &::before {
         content: "";
         display: block;
         position: absolute;
-        top: -25%;
-        left: -94px;
-        width: 90px;
-        height: 90px;
+        top: calc(-$banner-tail-offset);
+        left: calc(-$banner-size - $banner-crease-gap);
+        width: $banner-size;
+        height: $banner-size;
         background-image: url("../images/banner-tail-left.png");
         background-size: cover;
         background-position: left center;
@@ -141,24 +147,24 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: -25%;
-        right: -94px;
-        width: 90px;
-        height: 90px;
+        top: calc(-$banner-tail-offset);
+        right: calc(-$banner-size - $banner-crease-gap);
+        width: $banner-size;
+        height: $banner-size;
         background-image: url("../images/banner-tail-right.png");
         background-size: cover;
         background-position: right center;
       }
 
       @media screen and (max-width: $tablet) {
-        margin: 1em 24px 3em 24px;
+        margin: 1em $banner-size-tablet 3em $banner-size-tablet;
         &::after {
-          width: 24px;
-          right: -28px;
+          width: $banner-size-tablet;
+          right: calc(-$banner-size-tablet - $banner-crease-gap);
         }
         &::before {
-          width: 24px;
-          left: -28px;
+          width: $banner-size-tablet;
+          left: calc(-$banner-size-tablet - $banner-crease-gap);
         }
       }
     }
@@ -210,8 +216,8 @@ body {
       img {
         display: block;
         position: relative;
-        border: solid $banner-border-weight $banner-border-default-color;
-        border-radius: $banner-border-radius;
+        border: solid $badge-border-weight $badge-border-default-color;
+        border-radius: $badge-border-radius;
         box-sizing: border-box;
         margin-bottom: 0.5em;
       }
@@ -247,9 +253,6 @@ body {
           display: inline-block;
           background-image: url("../images/trophy-count-icon.png");
           background-position: bottom right;
-          // background-size: 42px 36px;
-          // width: 42px;
-          // height: 36px;
           background-size: 28px 24px;
           width: 28px;
           height: 24px;
@@ -271,10 +274,10 @@ body {
         line-clamp: 1;
       }
 
-      &.badge .banner {
+      &.badged .badge {
         position: relative;
       }
-      &.badge .banner::after {
+      &.badged .badge::after {
         color: $transparent;
         font-size: 0.1em; // don't let the invisible text force the container size to grow
         display: block;
@@ -285,21 +288,21 @@ body {
         aspect-ratio: 1;
         background-size: cover;
         background-position: top right;
-        border-top-right-radius: $banner-border-radius;
+        border-top-right-radius: $badge-border-radius;
       }
-      &.badge-soon-released .banner::after {
+      &.badge-soon-released .badge::after {
         content: "SOON*"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-soon-released.png");
       }
-      &.badge-soon .banner::after {
+      &.badge-soon .badge::after {
         content: "SOON!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-soon.png");
       }
-      &.badge-new .banner::after {
+      &.badge-new .badge::after {
         content: "NEW!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-new.png");
       }
-      &.badge-more .banner::after {
+      &.badge-more .badge::after {
         content: "MORE!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-more.png");
       }
