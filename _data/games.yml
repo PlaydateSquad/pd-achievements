@@ -79,6 +79,7 @@
   image: ./assets/images/games/vexbox.png
   color: "#4F7766"
   achievementCount: 30
+  releaseDate: 2025-04-22
   description:
 
 - title: XTRIS
