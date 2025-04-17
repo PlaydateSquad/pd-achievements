@@ -40,6 +40,7 @@ crossgame.getData = function(game_id)
 	local keys = {}
 	for _, ach in ipairs(data.achievements) do
 		keys[ach.id] = ach
+		if not ach.scoreValue then ach.scoreValue = 1 end
 		completion_total += ach.scoreValue
 		-- granted achievements score their full weight
 		if ach.grantedAt then

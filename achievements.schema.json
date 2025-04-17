@@ -1,0 +1,152 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"title": "Playdate Squad Achievements Schema",
+	"description": "The necessary structure for a game's achievements.json file.",
+	"required": [
+		"gameID",
+		"name",
+		"author",
+		"description",
+		"version",
+		"specVersion",
+		"achievements"
+	],
+	"properties": {
+		"gameID": {
+			"type": "string",
+			"description": "Bundle identifier for your game."
+		},
+		"name": {
+			"type": "string",
+			"description": "Nicely formatted name for your game."
+		},
+		"author": {
+			"type": "string",
+			"description": "Nicely formatted author for your game."
+		},
+		"description": {
+			"type": "string",
+			"description": "Short description about your game."
+		},
+		"version": {
+			"type": "string",
+			"description": "Nicely formatted version string for your game."
+		},
+		"iconPath": {
+			"type": "string",
+			"description": "Path to a 32x32 .pdi image to use as your game's icon, relative to this file. Supports transparency."
+		},
+		"cardPath": {
+			"type": "string",
+			"description": "Path to a 380x90 .pdi image to use as your game's card art, relative to this file. Doesn't support transparency."
+		},
+		"specVersion": {
+			"type": "string",
+			"description": "The specification version this data is based on in semver."
+		},
+		"achievements": {
+			"type": "array",
+			"description": "List of configured achievements for your game.",
+			"minItems": 1,
+			"uniqueItems": true,
+			"items": {
+				"type": "object",
+				"required": [
+					"name",
+					"description",
+					"id"
+				],
+				"dependentRequired": {
+					"progress": ["progressMax"] ,
+					"progressIsPercentage": ["progressMax"],
+					"iconLocked": ["icon"]
+				},
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Nicely formatted name for the achievement. Shown to the player.",
+						"examples": [
+							"Achievement 1"
+						]
+					},
+					"description": {
+						"type": "string",
+						"description": "Nicely formatted description for the achievement. Shown to the player.",
+						"examples": [
+							"Did the thing."
+						]
+					},
+					"descriptionLocked": {
+						"type": "string",
+						"description": "Nicely formatted description for the ungranted version of the achievement. Shown to the player.",
+						"examples": [
+							"Do the thing."
+						]
+					},
+					"id": {
+						"type": "string",
+						"description": "Uniquely identifies the achievement.",
+						"examples": [
+							"achievement_1"
+						]
+					},
+					"grantedAt": {
+						"type": "integer",
+						"description": "If this is not present, the achievement has not yet been granted. If it is an integer, that integer is the number of seconds elapsed since midnight (hour 0), January 1 2000 UTC at which the achievement was granted.",
+						"examples": [
+							788058272
+						]
+					},
+					"icon": {
+						"type": "boolean",
+						"description": "Path to a 32x32 .pdi image to use as this achievement's icon when unlocked, relative to the AchievementImages directory at the same level as this file. Supports transparency."
+					},
+					"iconLocked": {
+						"type": "boolean",
+						"description": "Path to a 32x32 .pdi image to use as this achievement's icon when locked, relative to the AchievementImages directory at the same level as this file. Supports transparency."
+					},
+					"isSecret": {
+						"type": "boolean",
+						"description": "Determines if the achievement should be hidden until granted.",
+						"default": false
+					},
+					"progressMax": {
+						"type": "integer",
+						"description": "If this achievement is progression based, this is the limit at which the achievement will be automatically granted.",
+						"exclusiveMinimum": 0
+					},
+					"progress": {
+						"type": "integer",
+						"description": "How much progress has been made towards 'progressMax'.",
+						"minimum": 0,
+						"default": 0
+					},
+					"progressIsPercentage": {
+						"type": "boolean",
+						"description": "Indicates if this achievement's progress should be shown to the player as a percentage.",
+						"default": false
+					},
+					"scoreValue": {
+						"type": "integer",
+						"description": "How much weight this achievement carries towards 100% game completion.",
+						"minimum": 0,
+						"default": 1
+					}
+				},
+				"examples": [
+					{
+						"name": "Generated Achievement 1",
+						"description": "Auto-generated random achievement for achievement viewer testing.",
+						"id": "generated_achievement_1",
+						"grantedAt": 788058272,
+						"isSecret": true,
+						"progressMax": 19,
+						"progress": 3,
+						"scoreValue": 0
+					}
+				]
+			}
+		}
+	}
+}
