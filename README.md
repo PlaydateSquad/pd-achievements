@@ -12,7 +12,7 @@ WARNING: This standard is still in development. Forward-compatibility is not yet
 - [Reading and using other games' achievements in your game](/docs/crossgame.md)
 - [Display popups when the player earns an achievement](/docs/toasts.md)
 - [Show an interactive in-game achievement browser](/docs/viewer.md)
-- [JSON Schema document for the output specification](/docs/schema.json)
+- [JSON Schema document for the output specification](achievements.schema.json)
 
 ## Achievement Viewers
 `pd-achievements` aims to create a standard data format to manage game achievements. While it provides some limited in-game achievement browsing functions, developers are encouraged to create their own achievement clients that read the data saved to `/Shared`.
