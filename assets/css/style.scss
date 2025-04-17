@@ -138,8 +138,8 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(-var(--banner-tail-offset));
-        left: calc(-var(--banner-size)} - var(--banner-crease-gap));
+        top: calc(0px - var(--banner-tail-offset));
+        left: calc(0px - var(--banner-size)} - var(--banner-crease-gap));
         width: var(--banner-size);
         height: var(--banner-size);
         background-image: url("../images/banner-tail-left.png");
@@ -150,8 +150,8 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(-var(--banner-tail-offset));
-        right: calc(-var(--banner-size) - var(--banner-crease-gap));
+        top: calc(0px - var(--banner-tail-offset));
+        right: calc(0px - var(--banner-size) - var(--banner-crease-gap));
         width: var(--banner-size);
         height: var(--banner-size);
         background-image: url("../images/banner-tail-right.png");
@@ -163,11 +163,15 @@ body {
         margin: 1em var(--banner-size-tablet) 3em var(--banner-size-tablet);
         &::after {
           width: var(--banner-size-tablet);
-          right: calc(-var(--banner-size-tablet) - var(--banner-crease-gap));
+          right: calc(
+            0px - var(--banner-size-tablet) - var(--banner-crease-gap)
+          );
         }
         &::before {
           width: var(--banner-size-tablet);
-          left: calc(-var(--banner-size-tablet) - var(--banner-crease-gap));
+          left: calc(
+            0px - var(--banner-size-tablet) - var(--banner-crease-gap)
+          );
         }
       }
     }
@@ -285,8 +289,8 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: -var(--badge-offset);
-        right: -var(--badge-offset);
+        top: calc(0px - var(--badge-offset));
+        right: calc(0px - var(--badge-offset));
         height: 80%;
         aspect-ratio: 1;
         background-size: cover;
