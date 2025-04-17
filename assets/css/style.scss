@@ -130,7 +130,9 @@ body {
       color: var(--bg-color);
       background-color: white;
       padding: 0.25em;
-      min-height: calc(var(--header-banner-size) - var(--header-banner-shadow-depth));
+      min-height: calc(
+        var(--header-banner-size) - var(--header-banner-shadow-depth)
+      );
       display: flex;
       justify-content: center;
       align-items: center;
@@ -141,7 +143,9 @@ body {
         display: block;
         position: absolute;
         top: calc(0px - var(--header-banner-tail-offset));
-        left: calc(0px - var(--header-banner-size) - var(--header-banner-crease-gap));
+        left: calc(
+          0px - var(--header-banner-size) - var(--header-banner-crease-gap)
+        );
         width: var(--header-banner-size);
         height: var(--header-banner-size);
         background-image: url("../images/banner-tail-left.png");
@@ -153,7 +157,9 @@ body {
         display: block;
         position: absolute;
         top: calc(0px - var(--header-banner-tail-offset));
-        right: calc(0px - var(--header-banner-size) - var(--header-banner-crease-gap));
+        right: calc(
+          0px - var(--header-banner-size) - var(--header-banner-crease-gap)
+        );
         width: var(--header-banner-size);
         height: var(--header-banner-size);
         background-image: url("../images/banner-tail-right.png");
@@ -162,17 +168,20 @@ body {
       }
 
       @media screen and (max-width: $tablet) {
-        margin: 1em var(--header-banner-size-tablet) 3em var(--header-banner-size-tablet);
+        margin: 1em var(--header-banner-size-tablet) 3em
+          var(--header-banner-size-tablet);
         &::after {
           width: var(--header-banner-size-tablet);
           right: calc(
-            0px - var(--header-banner-size-tablet) - var(--header-banner-crease-gap)
+            0px - var(--header-banner-size-tablet) -
+              var(--header-banner-crease-gap)
           );
         }
         &::before {
           width: var(--header-banner-size-tablet);
           left: calc(
-            0px - var(--header-banner-size-tablet) - var(--header-banner-crease-gap)
+            0px - var(--header-banner-size-tablet) -
+              var(--header-banner-crease-gap)
           );
         }
       }
@@ -231,7 +240,9 @@ body {
         border-radius: var(--game-banner-border-radius);
         box-sizing: content-box;
         margin-bottom: 0.5em;
-        width: calc(var(--game-banner-width) + var(--game-banner-border-weight) * 2)
+        width: calc(
+          var(--game-banner-width) + var(--game-banner-border-weight) * 2
+        );
         height: auto;
       }
       a,
