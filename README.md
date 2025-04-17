@@ -36,7 +36,7 @@ Playdate Achievements is a community project establishing an open standard for a
 
 [Trophy Case](https://gurtt.dev/trophy-case) is a dedicated viewer which displays the achievements you’ve earned across _all_ Playdate games in one place. Trophy Case was designed in parallel with the Playdate Achievements standard, providing first-class support for its features and showcasing any games which choose to integrate with it.
 
-<img src="./assets/images/viewers/trophy-case-pd.png" class="centered highDPI" alt="Trophy Case Screenshot"/>
+<img src="./assets/images/viewers/trophy-case-pd.png" class="centered highDPI" alt="Trophy Case"/>
 
 Of course, games may also present their earned achievements themselves. Additionally, the open standard makes it possible for others to create dedicated achievement viewer apps in the future.
 
