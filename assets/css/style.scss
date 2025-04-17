@@ -229,7 +229,7 @@ body {
         border: solid var(--game-banner-border-weight)
           var(--game-banner-border-default-color);
         border-radius: var(--game-banner-border-radius);
-        box-sizing: border-box;
+        box-sizing: content-box;
         margin-bottom: 0.5em;
         width: calc(var(--game-banner-width) + var(--game-banner-border-weight) * 2)
         height: auto;
