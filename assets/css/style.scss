@@ -21,9 +21,9 @@
   --banner-shadow-depth: 20px;
   --banner-tail-offset: 25%;
   --banner-crease-gap: 4px;
-
-  --tablet: 720px;
 }
+
+$tablet: 720px; // var not supported in media query declarations
 
 html,
 body {
@@ -41,7 +41,7 @@ body {
   font-family: "Poppins", "Helvetica", sans-serif;
   margin-bottom: 0 !important;
 
-  @media screen and (max-width: var(--tablet)) {
+  @media screen and (max-width: $tablet) {
     font-size: 18px;
   }
 
@@ -117,7 +117,7 @@ body {
       display: block;
       margin: auto;
       max-width: 45vmin;
-      @media screen and (max-width: var(--tablet)) {
+      @media screen and (max-width: $tablet) {
         max-width: 60vmin;
       }
     }
@@ -159,7 +159,7 @@ body {
         background-position: right center;
       }
 
-      @media screen and (max-width: var(--tablet)) {
+      @media screen and (max-width: $tablet) {
         margin: 1em var(--banner-size-tablet) 3em var(--banner-size-tablet);
         &::after {
           width: var(--banner-size-tablet);
@@ -209,7 +209,7 @@ body {
     gap: 48px;
     grid-template-columns: auto auto;
 
-    @media screen and (max-width: var(--tablet)) {
+    @media screen and (max-width: $tablet) {
       grid-template-columns: auto;
       .game {
         margin: auto;
