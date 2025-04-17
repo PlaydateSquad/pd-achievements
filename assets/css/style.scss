@@ -139,7 +139,7 @@ body {
         display: block;
         position: absolute;
         top: calc(0px - var(--banner-tail-offset));
-        left: calc(0px - var(--banner-size)} - var(--banner-crease-gap));
+        left: calc(0px - var(--banner-size) - var(--banner-crease-gap));
         width: var(--banner-size);
         height: var(--banner-size);
         background-image: url("../images/banner-tail-left.png");
