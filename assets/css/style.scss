@@ -3,48 +3,50 @@
 
 @import "{{ site.theme }}";
 
-$bg-color: #42008d;
-$font-color: #ffffff;
-$dimmed-font-color: rgba(255, 255, 255, 0.6);
-$link-color: #ffc500;
-$footer-color: #212223;
-$transparent: rgba(0, 0, 0, 0);
+:root {
+  --bg-color: #42008d;
+  --font-color: #ffffff;
+  --dimmed-font-color: rgba(255, 255, 255, 0.6);
+  --link-color: #ffc500;
+  --footer-color: #212223;
+  --transparent: rgba(0, 0, 0, 0);
 
-$badge-border-default-color: #ffffff;
-$badge-border-radius: 12px;
-$badge-border-weight: 8px;
-$badge-offset: 3px;
+  --badge-border-default-color: #ffffff;
+  --badge-border-radius: 12px;
+  --badge-border-weight: 8px;
+  --badge-offset: 3px;
 
-$banner-size: 90px;
-$banner-size-tablet: 24px;
-$banner-crease-gap: 4px;
-$banner-shadow-depth: 20px;
-$banner-tail-offset: 25%;
+  --banner-size: 90px;
+  --banner-size-tablet: 24px;
+  --banner-shadow-depth: 20px;
+  --banner-tail-offset: 25%;
+  --banner-crease-gap: 4px;
 
-$tablet: 720px;
+  --tablet: 720px;
+}
 
 html,
 body {
-  background-color: $bg-color;
+  background-color: var(--bg-color);
   width: 100%;
   margin: 0;
   overflow-x: clip;
 }
 
 .markdown-body {
-  color: $font-color;
+  color: var(--font-color);
   font-size: 24px;
   font-weight: normal;
   line-height: 1.8em;
   font-family: "Poppins", "Helvetica", sans-serif;
   margin-bottom: 0 !important;
 
-  @media screen and (max-width: $tablet) {
+  @media screen and (max-width: var(--tablet)) {
     font-size: 18px;
   }
 
   a {
-    color: $link-color;
+    color: var(--link-color);
     text-decoration: underline;
   }
 
@@ -115,7 +117,7 @@ body {
       display: block;
       margin: auto;
       max-width: 45vmin;
-      @media screen and (max-width: $tablet) {
+      @media screen and (max-width: var(--tablet)) {
         max-width: 60vmin;
       }
     }
@@ -123,23 +125,23 @@ body {
     // open standard banner
     h5 {
       text-align: center;
-      color: $bg-color;
+      color: var(--bg-color);
       background-color: white;
       padding: 0.25em;
-      min-height: calc(#{$banner-size} - #{$banner-shadow-depth});
+      min-height: calc(var(--banner-size) - var(--banner-shadow-depth));
       display: flex;
       justify-content: center;
       align-items: center;
       box-shadow: 0 20px rgba(0, 0, 0, 0.25);
-      margin: 1em $banner-size 3em $banner-size;
+      margin: 1em var(--banner-size) 3em var(--banner-size);
       &::before {
         content: "";
         display: block;
         position: absolute;
-        top: calc(-#{$banner-tail-offset});
-        left: calc(-#{$banner-size} - #{$banner-crease-gap});
-        width: $banner-size;
-        height: $banner-size;
+        top: calc(-var(--banner-tail-offset));
+        left: calc(-var(--banner-size)} - var(--banner-crease-gap));
+        width: var(--banner-size);
+        height: var(--banner-size);
         background-image: url("../images/banner-tail-left.png");
         background-size: cover;
         background-position: left center;
@@ -148,24 +150,24 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(-#{$banner-tail-offset});
-        right: calc(-#{$banner-size} - #{$banner-crease-gap});
-        width: $banner-size;
-        height: $banner-size;
+        top: calc(-var(--banner-tail-offset));
+        right: calc(-var(--banner-size) - var(--banner-crease-gap));
+        width: var(--banner-size);
+        height: var(--banner-size);
         background-image: url("../images/banner-tail-right.png");
         background-size: cover;
         background-position: right center;
       }
 
-      @media screen and (max-width: $tablet) {
-        margin: 1em $banner-size-tablet 3em $banner-size-tablet;
+      @media screen and (max-width: var(--tablet)) {
+        margin: 1em var(--banner-size-tablet) 3em var(--banner-size-tablet);
         &::after {
-          width: $banner-size-tablet;
-          right: calc(-#{$banner-size-tablet} - #{$banner-crease-gap});
+          width: var(--banner-size-tablet);
+          right: calc(-var(--banner-size-tablet) - var(--banner-crease-gap));
         }
         &::before {
-          width: $banner-size-tablet;
-          left: calc(-#{$banner-size-tablet} - #{$banner-crease-gap});
+          width: var(--banner-size-tablet);
+          left: calc(-var(--banner-size-tablet) - var(--banner-crease-gap));
         }
       }
     }
@@ -178,11 +180,11 @@ body {
         font-weight: bold;
         margin-bottom: 0.5em;
         em {
-          color: $link-color;
+          color: var(--link-color);
           font-style: normal;
         }
         &::marker {
-          color: $link-color;
+          color: var(--link-color);
         }
       }
     }
@@ -203,7 +205,7 @@ body {
     gap: 48px;
     grid-template-columns: auto auto;
 
-    @media screen and (max-width: $tablet) {
+    @media screen and (max-width: var(--tablet)) {
       grid-template-columns: auto;
       .game {
         margin: auto;
@@ -217,8 +219,9 @@ body {
       img {
         display: block;
         position: relative;
-        border: solid $badge-border-weight $badge-border-default-color;
-        border-radius: $badge-border-radius;
+        border: solid var(--badge-border-weight)
+          var(--badge-border-default-color);
+        border-radius: var(--badge-border-radius);
         box-sizing: border-box;
         margin-bottom: 0.5em;
       }
@@ -227,7 +230,7 @@ body {
       a:active,
       a:visited {
         display: inline-block;
-        color: $font-color;
+        color: var(--font-color);
         text-decoration: none;
         img {
           transition: all 0.1s ease-out;
@@ -248,7 +251,7 @@ body {
         font-weight: 800;
         font-size: 2.5em;
         line-height: 1.25em;
-        color: $dimmed-font-color;
+        color: var(--dimmed-font-color);
         &::before {
           content: "";
           display: inline-block;
@@ -261,7 +264,7 @@ body {
         }
       }
       .title {
-        color: $font-color;
+        color: var(--font-color);
         font-weight: bold;
         font-size: 1.5em;
         line-height: 1.25em;
@@ -269,7 +272,7 @@ body {
         line-clamp: 1;
       }
       .author {
-        color: $dimmed-font-color;
+        color: var(--dimmed-font-color);
         line-height: 1em;
         text-overflow: ellipsis;
         line-clamp: 1;
@@ -279,32 +282,27 @@ body {
         position: relative;
       }
       &.badged .banner::after {
-        color: $transparent;
-        font-size: 0.1em; // don't let the invisible text force the container size to grow
+        content: "";
         display: block;
         position: absolute;
-        top: -$badge-offset;
-        right: -$badge-offset;
+        top: -var(--badge-offset);
+        right: -var(--badge-offset);
         height: 80%;
         aspect-ratio: 1;
         background-size: cover;
         background-position: top right;
-        border-top-right-radius: $badge-border-radius;
+        border-top-right-radius: var(--badge-border-radius);
       }
       &.badge-soon-released .banner::after {
-        content: "SOON*"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-soon-released.png");
       }
       &.badge-soon .banner::after {
-        content: "SOON!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-soon.png");
       }
       &.badge-new .banner::after {
-        content: "NEW!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-new.png");
       }
       &.badge-more .banner::after {
-        content: "MORE!"; // for accessibility only; shown rotated in image instead
         background-image: url("../images/badge-more.png");
       }
     }
@@ -312,7 +310,7 @@ body {
     .stat {
       font-weight: bold;
       .number {
-        color: $link-color;
+        color: var(--link-color);
         font-size: 6em;
         line-height: 1em;
         font-family: "Poppins", "Helvetica", sans-serif;
@@ -331,7 +329,7 @@ body {
       bottom: 0px;
       left: -5000px;
       right: -5000px;
-      background-color: $footer-color;
+      background-color: var(--footer-color);
       z-index: -1;
     }
     position: relative;
@@ -348,7 +346,7 @@ body {
   .footer {
     font-size: 0.75em;
     line-height: 1.5em;
-    color: $dimmed-font-color;
+    color: var(--dimmed-font-color);
     grid-column-start: 1;
   }
 
@@ -358,7 +356,7 @@ body {
     a:hover,
     a:active,
     a:visited {
-      color: $font-color;
+      color: var(--font-color);
     }
   }
 }
