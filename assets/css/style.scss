@@ -305,8 +305,8 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(0px - var(--badge-offset));
-        right: calc(0px - var(--badge-offset));
+        top: calc(0px - var(--game-badge-offset));
+        right: calc(0px - var(--game-badge-offset));
         height: 80%;
         aspect-ratio: 1;
         background-size: cover;
