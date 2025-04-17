@@ -11,16 +11,18 @@
   --footer-color: #212223;
   --transparent: rgba(0, 0, 0, 0);
 
-  --badge-border-default-color: #ffffff;
-  --badge-border-radius: 12px;
-  --badge-border-weight: 8px;
-  --badge-offset: 3px;
+  --game-banner-width: 380px;
+  --game-banner-height: 90px;
+  --game-banner-border-weight: 8px;
+  --game-banner-border-radius: 12px;
+  --game-banner-border-default-color: #ffffff;
+  --game-badge-offset: 3px;
 
-  --banner-size: 90px;
-  --banner-size-tablet: 24px;
-  --banner-shadow-depth: 20px;
-  --banner-tail-offset: 25%;
-  --banner-crease-gap: 4px;
+  --header-banner-size: 90px;
+  --header-banner-size-tablet: 24px;
+  --header-banner-shadow-depth: 20px;
+  --header-banner-tail-offset: 25%;
+  --header-banner-crease-gap: 4px;
 }
 
 $tablet: 720px; // var not supported in media query declarations
@@ -128,20 +130,20 @@ body {
       color: var(--bg-color);
       background-color: white;
       padding: 0.25em;
-      min-height: calc(var(--banner-size) - var(--banner-shadow-depth));
+      min-height: calc(var(--header-banner-size) - var(--header-banner-shadow-depth));
       display: flex;
       justify-content: center;
       align-items: center;
       box-shadow: 0 20px rgba(0, 0, 0, 0.25);
-      margin: 1em var(--banner-size) 3em var(--banner-size);
+      margin: 1em var(--header-banner-size) 3em var(--header-banner-size);
       &::before {
         content: "";
         display: block;
         position: absolute;
-        top: calc(0px - var(--banner-tail-offset));
-        left: calc(0px - var(--banner-size) - var(--banner-crease-gap));
-        width: var(--banner-size);
-        height: var(--banner-size);
+        top: calc(0px - var(--header-banner-tail-offset));
+        left: calc(0px - var(--header-banner-size) - var(--header-banner-crease-gap));
+        width: var(--header-banner-size);
+        height: var(--header-banner-size);
         background-image: url("../images/banner-tail-left.png");
         background-size: cover;
         background-position: left center;
@@ -150,27 +152,27 @@ body {
         content: "";
         display: block;
         position: absolute;
-        top: calc(0px - var(--banner-tail-offset));
-        right: calc(0px - var(--banner-size) - var(--banner-crease-gap));
-        width: var(--banner-size);
-        height: var(--banner-size);
+        top: calc(0px - var(--header-banner-tail-offset));
+        right: calc(0px - var(--header-banner-size) - var(--header-banner-crease-gap));
+        width: var(--header-banner-size);
+        height: var(--header-banner-size);
         background-image: url("../images/banner-tail-right.png");
         background-size: cover;
         background-position: right center;
       }
 
       @media screen and (max-width: $tablet) {
-        margin: 1em var(--banner-size-tablet) 3em var(--banner-size-tablet);
+        margin: 1em var(--header-banner-size-tablet) 3em var(--header-banner-size-tablet);
         &::after {
-          width: var(--banner-size-tablet);
+          width: var(--header-banner-size-tablet);
           right: calc(
-            0px - var(--banner-size-tablet) - var(--banner-crease-gap)
+            0px - var(--header-banner-size-tablet) - var(--header-banner-crease-gap)
           );
         }
         &::before {
-          width: var(--banner-size-tablet);
+          width: var(--header-banner-size-tablet);
           left: calc(
-            0px - var(--banner-size-tablet) - var(--banner-crease-gap)
+            0px - var(--header-banner-size-tablet) - var(--header-banner-crease-gap)
           );
         }
       }
@@ -222,12 +224,14 @@ body {
 
       img {
         display: block;
+        image-rendering: pixelated; // keep it sharp!
         position: relative;
-        border: solid var(--badge-border-weight)
-          var(--badge-border-default-color);
-        border-radius: var(--badge-border-radius);
+        border: solid var(--game-banner-border-weight)
+          var(--game-banner-border-default-color);
+        border-radius: var(--game-banner-border-radius);
         box-sizing: border-box;
         margin-bottom: 0.5em;
+        width: calc(var(--game-banner-width) + var(--game-banner-border-weight) * 2)
         height: auto;
       }
       a,
@@ -296,7 +300,7 @@ body {
         aspect-ratio: 1;
         background-size: cover;
         background-position: top right;
-        border-top-right-radius: var(--badge-border-radius);
+        border-top-right-radius: var(--game-banner-border-radius);
       }
       &.badge-soon-released .banner::after {
         background-image: url("../images/badge-soon-released.png");
