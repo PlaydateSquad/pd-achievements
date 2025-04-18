@@ -1,49 +1,93 @@
-# - name: Your Game
-#   url: https://yourgame.com # The download page for your game on itch.io, catalog, or elsewhere
-#   image: ./assets/images/games/your-game.png # OR: a hosted URL (e.g. a catalog image)
-#   # The following fields are currently undisplayed, but give us flexibility in the future.
-#   description: A brief, one sentence description of your game.
+# - title: Your Game
 #   author: Your name or alias
+#   url: https://yourgame.com # The download page for your game on itch.io, catalog, or elsewhere
+#   image: ./assets/images/games/your-game.png # The path to 380x90px B/W banner image for your game
+#   color: "#FFFFFF" # A valid CSS color string to use as a highlight
 #   achievementCount: 0 # The number of Playdate Achievements in your game
+#   releaseDate: # The game release date in MM/DD/YYYY format. A future date may be provided for unreleased games.
+#   lastAddedDate: # The last time more achievements were added, in MM/DD/YYYY format. A future date may be provided for released games that haven't yet added achievements.
+#   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
-- name: Bona Fido
+- title: Bona Fido
+  author: Rae
   url: https://play.date/games/bona-fido/
-  image: https://media-cdn.play.date/media/games/374881/IMG_3666.gif
+  image: ./assets/images/games/bona-fido.png
+  color: "#FFE7DE"
+  achievementCount: 9
+  releaseDate: 2025-01-28
   description:
-  author: Rae
-  achievementCount: 0
 
-- name: RowBot Rally
+- title: RowBot Rally
+  author: Rae
   url: https://play.date/games/rowbot-rally/
-  image: https://media-cdn.play.date/media/games/243372/Web_Small.gif
+  image: ./assets/images/games/rowbot-rally.png
+  color: "#5DC3E5"
+  achievementCount: 16
+  releaseDate: 2024-12-17
+  lastAddedDate: 2025-12-31
   description:
-  author: Rae
-  achievementCount: 0
 
-- name: Cranky Cove
-  url: https://play.date/games/cranky-cove/
-  image: https://media-cdn.play.date/media/games/377192/cranky_cove_banner_small_noalpha_6YTos8R.png
-  description:
+- title: Cranky Cove
   author: Jon Simantov
-  achievementCount: 0
+  url: https://play.date/games/cranky-cove/
+  image: ./assets/images/games/cranky-cove.png
+  color: "#6BC2E4"
+  achievementCount: 29
+  releaseDate: 2025-02-25
+  description:
 
-- name: First in… Line?
+- title: First in… Line?
+  author: Rae
   url: https://play.date/games/first-in-line/
-  image: https://media-cdn.play.date/media/games/318634/web_small.gif
+  image: ./assets/images/games/first-in-line.png
+  color: "#FF005C"
+  achievementCount: 10
+  releaseDate: 2024-06-18
   description:
-  author: Rae
-  achievementCount: 0
 
-- name: HEXA
+- title: HEXA
+  author: Rae
   url: https://play.date/games/hexa/
-  image: https://media-cdn.play.date/media/games/345269/web_small.gif
+  image: ./assets/images/games/hexa.png
+  color: "#8977FF"
+  achievementCount: 17
+  releaseDate: 2024-07-30
+  lastAddedDate: 2025-12-31
   description:
-  author: Rae
-  achievementCount: 0
 
-- name: XTRIS
-  url: https://play.date/games/xtris/
-  image: https://media-cdn.play.date/media/games/375945/web-cover-small.png
+- title: Mission Lunatrix
+  author: Rae
+  url: https://play.date/games/lunatrix/
+  image: ./assets/images/games/mission-lunatrix.png
+  color: "#B189C0"
+  achievementCount: 21
+  releaseDate: 2025-12-31
   description:
+
+- title: Traffic Jam
+  author: Rae
+  url: https://play.date/games/traffic-jam/
+  image: ./assets/images/games/traffic-jam.png
+  color: "#F8C300"
+  releaseDate: 2025-04-08
+  achievementCount: 13
+  description:
+
+- title: Vexbox
+  author: ocean & Vex
+  url: https://play.date/games/vexbox/
+  image: ./assets/images/games/vexbox.png
+  color: "#4F7766"
+  achievementCount: 30
+  releaseDate: 2025-04-22
+  description:
+
+- title: XTRIS
   author: Fletch Makes Stuff
-  achievementCount: 0
+  url: https://play.date/games/xtris/
+  image: ./assets/images/games/xtris.png
+  color: "#008751"
+  achievementCount: 20
+  releaseDate: 2025-02-25
+  lastAddedDate: 2025-12-31
+  description:

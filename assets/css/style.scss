@@ -3,15 +3,380 @@
 
 @import "{{ site.theme }}";
 
-details {
-  margin-bottom: 1em;
-  summary {
-    margin-bottom: 0.5em;
-    font-size: 18px;
-    font-weight: bold;
-  }
+:root {
+  --bg-color: #42008d;
+  --font-color: #ffffff;
+  --dimmed-font-color: rgba(255, 255, 255, 0.6);
+  --link-color: #ffc500;
+  --footer-color: #212223;
+  --transparent: rgba(0, 0, 0, 0);
+
+  --game-banner-width: 380px;
+  --game-banner-height: 90px;
+  --game-banner-border-weight: 8px;
+  --game-banner-border-radius: 12px;
+  --game-banner-border-default-color: #ffffff;
+  --game-badge-offset: 3px;
+
+  --header-banner-size: 90px;
+  --header-banner-size-tablet: 24px;
+  --header-banner-shadow-depth: 20px;
+  --header-banner-tail-offset: 25%;
+  --header-banner-crease-gap: 4px;
 }
 
-.game {
-  display: inline-block;
+$tablet: 720px; // var not supported in media query declarations
+
+html,
+body {
+  background-color: var(--bg-color);
+  width: 100%;
+  margin: 0;
+  overflow-x: clip;
+}
+
+.markdown-body {
+  color: var(--font-color);
+  font-size: 24px;
+  font-weight: normal;
+  line-height: 1.8em;
+  font-family: "Poppins", "Helvetica", sans-serif;
+  margin-bottom: 0 !important;
+
+  @media screen and (max-width: $tablet) {
+    font-size: 18px;
+  }
+
+  a {
+    color: var(--link-color);
+    text-decoration: underline;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: bold;
+    border: none;
+    position: relative;
+  }
+
+  h1 {
+    font-size: 3em;
+  }
+
+  h2 {
+    font-size: 2.5em;
+  }
+
+  h3 {
+    font-size: 1.5em;
+  }
+
+  h4 {
+    font-size: 1.25em;
+  }
+
+  h5,
+  h6 {
+    font-size: 1em;
+  }
+
+  img {
+    background-color: transparent;
+  }
+  img.centered {
+    display: block;
+    margin: auto;
+  }
+  img.highDPI {
+    zoom: 0.5; // for high DPI (@2x) images
+  }
+
+  details {
+    margin-bottom: 1em;
+    summary {
+      margin-bottom: 0.5em;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+  }
+
+  .section {
+    padding: 1em;
+  }
+
+  .section#hero {
+    // hidden because it appears in the hero image
+    h1 {
+      display: none;
+    }
+
+    // logo image
+    img {
+      display: block;
+      margin: auto;
+      max-width: 45vmin;
+      @media screen and (max-width: $tablet) {
+        max-width: 60vmin;
+      }
+    }
+
+    // open standard banner
+    h5 {
+      text-align: center;
+      color: var(--bg-color);
+      background-color: white;
+      padding: 0.25em;
+      min-height: calc(
+        var(--header-banner-size) - var(--header-banner-shadow-depth)
+      );
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 20px rgba(0, 0, 0, 0.25);
+      margin: 1em var(--header-banner-size) 3em var(--header-banner-size);
+      &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: calc(0px - var(--header-banner-tail-offset));
+        left: calc(
+          0px - var(--header-banner-size) - var(--header-banner-crease-gap)
+        );
+        width: var(--header-banner-size);
+        height: var(--header-banner-size);
+        background-image: url("../images/banner-tail-left.png");
+        background-size: cover;
+        background-position: left center;
+      }
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: calc(0px - var(--header-banner-tail-offset));
+        right: calc(
+          0px - var(--header-banner-size) - var(--header-banner-crease-gap)
+        );
+        width: var(--header-banner-size);
+        height: var(--header-banner-size);
+        background-image: url("../images/banner-tail-right.png");
+        background-size: cover;
+        background-position: right center;
+      }
+
+      @media screen and (max-width: $tablet) {
+        margin: 1em var(--header-banner-size-tablet) 3em
+          var(--header-banner-size-tablet);
+        &::after {
+          width: var(--header-banner-size-tablet);
+          right: calc(
+            0px - var(--header-banner-size-tablet) -
+              var(--header-banner-crease-gap)
+          );
+        }
+        &::before {
+          width: var(--header-banner-size-tablet);
+          left: calc(
+            0px - var(--header-banner-size-tablet) -
+              var(--header-banner-crease-gap)
+          );
+        }
+      }
+    }
+
+    ol,
+    ul {
+      margin: 2em 0;
+      li {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 0.5em;
+        em {
+          color: var(--link-color);
+          font-style: normal;
+        }
+        &::marker {
+          color: var(--link-color);
+        }
+      }
+    }
+  }
+
+  .section#games {
+    ol {
+      em {
+        opacity: 0.6; // Used for "(optional)" callouts
+        font-style: normal;
+      }
+    }
+  }
+
+  .grid {
+    margin: 2em 0;
+    display: grid;
+    gap: 48px;
+    grid-template-columns: auto auto;
+
+    @media screen and (max-width: $tablet) {
+      grid-template-columns: auto;
+      .game {
+        margin: auto;
+      }
+    }
+
+    .game {
+      display: inline-block;
+      line-height: 1.5em;
+
+      img {
+        display: block;
+        image-rendering: pixelated; // keep it sharp!
+        position: relative;
+        border: solid var(--game-banner-border-weight)
+          var(--game-banner-border-default-color);
+        border-radius: var(--game-banner-border-radius);
+        box-sizing: border-box;
+        margin-bottom: 0.5em;
+        width: calc(
+          var(--game-banner-width) + var(--game-banner-border-weight) * 2
+        );
+        height: auto;
+      }
+      a,
+      a:hover,
+      a:active,
+      a:visited {
+        display: inline-block;
+        color: var(--font-color);
+        text-decoration: none;
+        img {
+          transition: all 0.1s ease-out;
+        }
+      }
+      // raised card with shadow on hover
+      a:hover {
+        img {
+          margin-top: -0.5em;
+          margin-bottom: 1em;
+          box-shadow: 0 0.5em rgba(0, 0, 0, 0.25);
+        }
+      }
+
+      .count {
+        float: right;
+        font-family: "Poppins", "Helvetica", sans-serif;
+        font-weight: 800;
+        font-size: 2.5em;
+        line-height: 1.25em;
+        color: var(--dimmed-font-color);
+        &::before {
+          content: "";
+          display: inline-block;
+          background-image: url("../images/trophy-count-icon.png");
+          background-position: bottom right;
+          background-size: 28px 24px;
+          width: 28px;
+          height: 24px;
+          margin: 0 0.1em;
+        }
+      }
+      .title {
+        color: var(--font-color);
+        font-weight: bold;
+        font-size: 1.25em;
+        line-height: 1.25em;
+        text-overflow: ellipsis;
+        line-clamp: 1;
+      }
+      .author {
+        color: var(--dimmed-font-color);
+        line-height: 1em;
+        text-overflow: ellipsis;
+        line-clamp: 1;
+      }
+
+      &.badged .banner {
+        position: relative;
+      }
+      &.badged .banner::after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: calc(0px - var(--game-badge-offset));
+        right: calc(0px - var(--game-badge-offset));
+        height: 80%;
+        aspect-ratio: 1;
+        background-size: cover;
+        background-position: top right;
+        border-top-right-radius: var(--game-banner-border-radius);
+      }
+      &.badge-soon-released .banner::after {
+        background-image: url("../images/badge-soon-released.png");
+      }
+      &.badge-soon .banner::after {
+        background-image: url("../images/badge-soon.png");
+      }
+      &.badge-new .banner::after {
+        background-image: url("../images/badge-new.png");
+      }
+      &.badge-more .banner::after {
+        background-image: url("../images/badge-more.png");
+      }
+    }
+
+    .stat {
+      font-weight: bold;
+      .number {
+        color: var(--link-color);
+        font-size: 6em;
+        line-height: 1em;
+        font-family: "Poppins", "Helvetica", sans-serif;
+        font-weight: 800;
+        font-style: normal;
+      }
+    }
+  }
+
+  .section#faq_ {
+    z-index: 1;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      left: -5000px;
+      right: -5000px;
+      background-color: var(--footer-color);
+      z-index: -1;
+    }
+    position: relative;
+  }
+
+  .markdown-body {
+    font-family: Helvetica, sans-serif;
+    font-size: 28px;
+    line-height: 1.4;
+    color: white;
+  }
+
+  .footnote,
+  .footer {
+    font-size: 0.75em;
+    line-height: 1.5em;
+    color: var(--dimmed-font-color);
+    grid-column-start: 1;
+  }
+
+  .footer {
+    opacity: 0.6;
+    a,
+    a:hover,
+    a:active,
+    a:visited {
+      color: var(--font-color);
+    }
+  }
 }
