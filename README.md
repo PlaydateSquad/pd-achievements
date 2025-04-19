@@ -28,7 +28,7 @@ Check out the [official website](https://playdatesquad.github.io/pd-achievements
 
 ## Achievement Viewers
 
-`pd-achievements` aims to create a standard data format for Playdate game achievements. While it provides limited in-game achievement browsing capabilities, developers are encouraged to create their own achievement clients that read the data saved to `/Shared`.
+`pd-achievements` aims to create a standard data format for Playdate game achievements. While it provides limited in-game achievement browsing capabilities, developers are encouraged to create their own achievement clients that read the data saved to `/Shared/Achievements/`.
 
 **Available achievement clients:**
 
