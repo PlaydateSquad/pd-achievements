@@ -17,7 +17,7 @@ The included Lua reference library provides three components:
 All of these components are optional—you can implement or omit any of these in the way that works best for your game.
 
 > [!NOTE]
-> If your game is not written in Lua you can still support Playdate Achievements. However, you'll need to reference the [schema](achievements.schema.json) and write your achievement data directly to the `/Shared` folder at the path `/Shared/Achievements/[gameID]/Achievements.json`, using a unique ID for your game (such as its bundle ID).
+> If your game is not written in Lua you can still support Playdate Achievements. However, you'll need to reference the [schema](achievements.schema.json) and write your achievement data directly to the `/Shared` folder at the path `/Shared/Achievements/[gameID]/Achievements.json`, where `gameID` is the same as the gameID you specify in achievements.json.
 
 ## Documentation
 
