@@ -392,7 +392,7 @@ body {
 select,
 input[type="text"] {
   appearance: none;
-  background: transparent;
+  background-color: var(--bg-color);
   color: var(--dimmed-font-color);
   border: solid 1px var(--dimmed-font-color);
   border-radius: 6px;
@@ -445,8 +445,14 @@ input:focus-visible {
       padding: 0 1.5em;
       margin-top: 0;
       margin-left: -1.5em;
+      background-image: url("../images/dropdown.png");
+      background-position: center right;
+      background-size: contain;
+      background-repeat: no-repeat;
+      padding-right: 40px;
       &:hover {
         color: white;
+        background-image: url("../images/dropdown-hover.png");
       }
     }
 
@@ -465,17 +471,6 @@ input:focus-visible {
       &:hover {
         color: white;
       }
-    }
-
-    &::after {
-      content: "▾";
-      position: absolute;
-      right: 0;
-      top: 0;
-      display: block;
-      width: 1em;
-      height: 1em;
-      z-index: -1;
     }
   }
 }
