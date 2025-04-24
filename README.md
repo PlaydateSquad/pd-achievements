@@ -54,7 +54,7 @@ It’s all about the games. Here’s a (non-comprehensive) list of games that aw
 {% for game in sortedGames %}
 
 <div class="game" data-release-date="{{ game.releaseDate }}" data-last-added-date="{{ game.lastAddedDate }}">
-	<a href="{{ game.url }}">
+	<a {% if game.url %} href="{{ game.url }}" {% endif %}>
 		<div class="banner"><img src="{{ game.image }}" width=380 height=90 alt="{{ game.title }}" style="border-color: {{ game.color }}"/></div>
 		{% if game.achievementCount %}<div class='count'>{{ game.achievementCount }}</div>{% endif %}
 		<div class='title'>{{ game.title }}</div>
