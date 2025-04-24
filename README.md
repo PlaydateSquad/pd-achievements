@@ -25,3 +25,7 @@ Join the [Playdate Squad Discord](https://discord.com/invite/zFKagQ2) and then n
 
 ## Contributing
 Add a new GitHub issue for feature requests or bug reports. Provide as much detail as possible. To contribute code to the repository, please fork this repository, make your changes, and create a new pull request back to the main repository for review.
+
+## SDK Fonts
+
+The included [Playdate SDK](https://play.date/dev/) fonts ("Nontendo Bold", "Nontendo Light", and "Bitmore") by [Panic](https://panic.com) are licensed under [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).
