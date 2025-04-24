@@ -57,11 +57,12 @@
 
 - title: Mission Lunatrix
   author: Rae
-  url: https://play.date/games/lunatrix/
+  # url: https://play.date/games/mission-lunatrix
+  url: https://discord.com/channels/675983554655551509/1349116446898389096
   image: ./assets/images/games/mission-lunatrix.png
   color: "#B189C0"
   achievementCount: 21
-  releaseDate: 2025-12-31
+  releaseDate: 2025-06-24
   description:
 
 - title: Traffic Jam
@@ -87,7 +88,7 @@
   url: https://play.date/games/xtris/
   image: ./assets/images/games/xtris.png
   color: "#008751"
-  achievementCount: 20
+  achievementCount: 31
   releaseDate: 2025-02-25
-  lastAddedDate: 2025-12-31
+  lastAddedDate: 2025-04-28
   description:
