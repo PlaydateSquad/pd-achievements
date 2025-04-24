@@ -9,7 +9,12 @@ This repository provides two things:
 1. **Achievements Schema:** A [schema](achievements.schema.json) describing the open Playdate Achievements data storage format which _any_ game may use to adopt the standard.
 2. **Lua Achievements Library:** A Lua library that games may use to implement the schema, along with UI niceties for displaying toast notifications and an in-game achievements viewer.
 
-The Lua library makes it easy to support playdate achievements in your games, providing APIs to configure and grant achievements, then save them in the appropriate format. It also comes with limited in-game achievement viewer and toast notification implementations. Developers are welcome to use it out-of-the-box, though we also encourage custom viewers both in-game and as 3rd party on-device viewer apps.
+The included Lua reference library provides three components:
+- An achievements management system for creating, unlocking, and saving achievements.
+- An in-game viewer to show achievements in your game.
+- A notification system for showing toasts when players unlock achievements in your game.
+
+All of these components are optional—you can implement or omit any of these in the way that works best for your game.
 
 > [!NOTE]
 > If your game is not written in Lua you can still support Playdate Achievements. However, you'll need to reference the [schema](achievements.schema.json) and write your achievement data directly to the `/Shared` folder at the path `/Shared/Achievements/[gameID]/Achievements.json`, using a unique ID for your game (such as its bundle ID).
