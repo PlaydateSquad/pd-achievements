@@ -10,6 +10,7 @@ This repository provides two things:
 2. **Lua Achievements Library:** A Lua library that games may use to implement the schema, along with UI niceties for displaying toast notifications and an in-game achievements viewer.
 
 The included Lua reference library provides three components:
+
 - An achievements management system for creating, unlocking, and saving achievements.
 - An in-game viewer to show achievements in your game.
 - A notification system for showing toasts when players unlock achievements in your game.
@@ -21,12 +22,40 @@ All of these components are optional—you can implement or omit any of these in
 
 ## Documentation
 
-- [Adding achievements to your game](/docs/achievements.md)
-- [Reading other games’ achievements](/docs/crossgame.md)
-- [Displaying popups for earned achievements](/docs/toasts.md)
-- [Showing an in-game achievements viewer](/docs/viewer.md)
-- [JSON Schema document for the output specification](achievements.schema.json)
-- [Best practices for adding achievements to your game](https://gurtt.dev/trophy-case/dev)
+The documentation below is for the Lua reference library, which implements the open standard described in the [JSON schema](achievements.schema.json) which all games can adopt. When implementing Playdate achievements, consider some [best practices for adding achievements to your game](https://gurtt.dev/trophy-case/dev).
+
+### Quickstart
+
+To get started, import the modules you wish to use and initialize with achievement data matching the [schema](achievements.schema.json).
+
+```lua
+-- setup
+import "./path/to/achievements" --always import this first; don't include ".lua"
+import "./path/to/toasts" -- an optional notification implementation
+achievements.initialize(myAchievementData) -- initialize your achievements with a table matching the schema
+```
+
+Grant achievements to players and optionally display toast notifications at any time. Easily save your achievement data to the `/Shared` folder so it can be seen in any Playdate Achievements viewer.
+
+```
+-- during gameplay
+if myAchievementCondition == true then
+	achievements.grant("my-achievement") -- grant an achievement
+	achievements.toasts.toast("my-achievement") -- display a pop-up for the earned achievement
+	achievements.save() -- write your achievements to the /Shared folder
+end
+```
+
+Refer to the library API reference below for additional information and details on the configuration options available for each module.
+
+### Lua Library API Reference
+
+The Lua reference library includes 4 separate modules. The `achievements` module is required to use any of the others, and _must be included first_. The others are optional and may be included in any order.
+
+- `achievements.lua`: [Add achievements to your game](/docs/achievements.md)
+- `crossgame.lua`: [Read other games’ achievements](/docs/crossgame.md)
+- `toasts.lua`: [Display popups for earned achievements](/docs/toasts.md)
+- `viewer.lua`: [Show an in-game achievements viewer](/docs/viewer.md)
 
 ## Games
 
