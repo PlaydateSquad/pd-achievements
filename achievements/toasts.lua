@@ -868,7 +868,7 @@ function at.toast(achievementId, config)
    config = m.config
    if not m.achievementData[achievementId] then
       print("ERROR: achievement_viewer: toast() called with invalid achievement " .. achievementId)
-      return
+      return false
    end
 
    -- queue up this toast
@@ -918,7 +918,10 @@ function at.toast(achievementId, config)
             end
          end
       end
+      return true
    end
+
+   return #m.toastQueue
 end
 
 function at.isToasting()
