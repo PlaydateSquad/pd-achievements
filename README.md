@@ -4,6 +4,8 @@ _An open achievement standard for the Playdate console_
 
 Playdate Achievements is a community project establishing an open standard for achievements in Playdate™ games. Having a standard ensures a consistent experience for players, and makes it possible to view achievements earned across games in one place.
 
+## Introduction
+
 This repository provides two things:
 
 1. **Achievements Schema:** A [schema](achievements.schema.json) describing the open Playdate Achievements data storage format which _any_ game may use to adopt the standard.
@@ -21,7 +23,7 @@ The documentation below is for the Lua reference library, which implements the o
 
 ### Quickstart
 
-To get started, import the modules you wish to use and initialize with achievement data matching the [schema](achievements.schema.json).
+To get started, import the modules you wish to use and initialize with [achievement data](docs/achievements.md#configuring-achievements) matching the schema.
 
 ```lua
 -- setup
