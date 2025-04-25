@@ -26,6 +26,7 @@ All of these components are optional—you can implement or omit any of these in
 - [Displaying popups for earned achievements](/docs/toasts.md)
 - [Showing an in-game achievements viewer](/docs/viewer.md)
 - [JSON Schema document for the output specification](achievements.schema.json)
+- [Best practices for adding achievements to your game](https://gurtt.dev/trophy-case/dev)
 
 ## Games
 
