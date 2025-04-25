@@ -45,6 +45,7 @@ local config = {
    toastOnGrant = true, -- automatically show toasts for granted achievements
    miniMode = true, -- use tiny toasts to avoid blocking gameplay
    invert = true, -- show black cards with white text, for added contrast
+   -- ...
 }
 
 -- initialize the toasts module with your custom config
