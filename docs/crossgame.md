@@ -25,21 +25,23 @@ end
 
 ## API Reference
 
-### achievements.crossgame.gamePlayed(`string`: _game_id_)
+### Functions
+
+#### achievements.crossgame.gamePlayed(`string`: _game_id_)
 
 Reports whether the specified game has been played on this Playdate, as indicated by the presence of a Playdate Achievements directory for the game in `/Shared`.
 
 Returns `true` if there is an achievement folder for the given `game_id`, otherwise `false`.
 
-### achievements.crossgame.listGames()
+#### achievements.crossgame.listGames()
 
 Returns a list of all games for which Playdate Achievement data exists in `/Shared` on this Playdate, as an array table containing their gameIDs.
 
-### achievements.crossgame.getData(`string`: _game_id_)
+#### achievements.crossgame.getData(`string`: _game_id_)
 
 Returns the exported `achievementData` for the specified `game_id`. See the type declarations in [`achievements.lua`](achievements.md) for more details on the format of the returned data.
 
-### achievements.crossgame.loadImage(`string`: _game_id_, `string`: _filepath_)
+#### achievements.crossgame.loadImage(`string`: _game_id_, `string`: _filepath_)
 
 Loads an image from the specified `filepath` relative to the shared image directory of the specified `game_id`. Can be used to load images specified in the game's `achievementData` blob, such as its game card or achievement icons.
 

@@ -75,34 +75,36 @@ achievements.grant("my_achievement") -- shows a toast!
 
 ## API Reference
 
-### achievements.toasts.initialize(`table?`: _config_)
+### Functions
+
+#### achievements.toasts.initialize(`table?`: _config_)
 
 Initializes the toasts module and preloads the image and sound assets it requires. The optional `config` table lets you override any of the default values according to the [configuration schema](#schema) above.
 
 Returns `true` when initialization succeeds, or `false` otherwise.
 
-### achievements.toasts.toast(`string`: _achievement_id_, `table?`: _config_)
+#### achievements.toasts.toast(`string`: _achievement_id_, `table?`: _config_)
 
 Displays a popup notification to the player containing the name, icon, and any other details about the earned achievement specified by `achievement_id`. This may be a granted achievement, or an progress achievement which hasn’t yet been granted but toward which progress has been made. Note that this does not grant or update the achievement itself, so call this immediately after granting/updating the achievement. Accepts an optional `config` table to override any configuration options previously set according to the [configuration schema](#schema) above.
 
 Returns `true` if the toast is successfully displayed, an `int` indicating its position in the queue if queued, or `false` if no such achievement exists.
 
-### achievements.toasts.isToasting()
+#### achievements.toasts.isToasting()
 
 Returns `true` if a toast is currently displayed to the user, or `false` otherwise.
 
-### achievements.toasts.abortToasts()
+#### achievements.toasts.abortToasts()
 
 Immediately hides any displayed toast and removes any pending toasts from the queue so they will not display.
 
-### achievements.toasts.manualUpdate()
+#### achievements.toasts.manualUpdate()
 
 This is only necessary when the `renderMode` configuration value is set to `"manual"`. Call this function at the _end_ of your `playdate.update` to cause any displayed toasts to render atop your game content.
 
-### achievements.toasts.setVolume(`float`: _level_)
+#### achievements.toasts.setVolume(`float`: _level_)
 
 Sets the volume of toast sound effects to the specified `level` in the range [0-1].
 
-### achievements.toasts.getCache()
+#### achievements.toasts.getCache()
 
 You shouldn’t need to call this function. It is provided to enable sharing of data between the `toasts` and `viewer` modules.

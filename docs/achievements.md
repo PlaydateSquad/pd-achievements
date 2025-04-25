@@ -113,52 +113,54 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 
 ## API Reference
 
-### achievements.forceSaveOnGrantOrRevoke(`bool`)
+### Properties
+
+#### achievements.forceSaveOnGrantOrRevoke — `bool`
 
 If this flag is set to `true` then achievements will be saved to disk every time an achievement is newly granted or revoked. Defaults to `false`.
 
-## Functions
+### Functions
 
-### achievements.initialize(`table`: _config_data_, `bool`: _silent_)
+#### achievements.initialize(`table`: _config_data_, `bool`: _silent_)
 
 Initializes pdachievements with data about your game’s achievements. This is required to run before calling other functions, such as `.grant()` or `.advance()`. See above for examples and full data schema. Set `silent` to `true` if you want to suppress the debug logs printed to the console.
 
-### achievements.grant(`string`: _achievement_id_)
+#### achievements.grant(`string`: _achievement_id_)
 
 Grants the achievement `achievement_id` to the player. Attempting to grant a previously earned achievement does nothing. If your achievement has a `progressMax` field, use `achievements.advance()` or `achievements.advanceTo()` instead.
 
 Returns `true` if the achievement was successfully granted, or `false` otherwise.
 
-### achievements.revoke(`string`: _achievement_id_)
+#### achievements.revoke(`string`: _achievement_id_)
 
 Revokes the achievement `achievement_id` from the player. Attempting to revoke an unearned achievement does nothing. If your achievement has a `progressMax` field, use `achievements.advance()` or `achievements.advanceTo()` instead.
 
 Returns `true` if the achievement was successfully revoked, or `false` otherwise.
 
-### achievements.advance(`string`: _achievement_id_, `int`: _advance_by_)
+#### achievements.advance(`string`: _achievement_id_, `int`: _advance_by_)
 
 Increases or decreases the achievement `achievement_id`’s completion score by `advance_by`. Attempting this on an achievement without `progressMax` set throws an error. If the achievement’s score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
 
 Returns `true` on success, otherwise throws an error.
 
-### achievements.advanceTo(`string`: _achievement_id_, `int`: _advance_to_)
+#### achievements.advanceTo(`string`: _achievement_id_, `int`: _advance_to_)
 
 Sets the achievement `achievement_id`’s completion score to `advance_to` Attempting this on an achievement without `progressMax` set throws an error. If the achievement’s score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
 
 Returns `true` on success, otherwise throws an error.
 
-### achievements.completionPercentage()
+#### achievements.completionPercentage()
 
 Returns the total weighted completion percentage in the range [0-1]. Granted achievements count for their full weight; progressive achievements count towards the total according to their weighted partial completion.
 
-### achievements.save()
+#### achievements.save()
 
 Saves the player’s earned achievements as "Achievements.json" in your game’s data, and exports the updated achievement information to `/Shared`.
 
-### achievements.isGranted(`string`: _achievement_id_)
+#### achievements.isGranted(`string`: _achievement_id_)
 
 Returns `true` if the achievement has been earned by the player, or `false` otherwise.
 
-### achievements.getInfo(`string`: _achievement_id_)
+#### achievements.getInfo(`string`: _achievement_id_)
 
 Returns a `table` containing metadata associated with the achievement in the format specified in the [`achievementData` schema](#achievementdata) above.
