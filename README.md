@@ -13,7 +13,7 @@ This repository provides two things:
    - A notification system for showing toasts when players unlock achievements in your game
 
 > [!NOTE]
-> If your game is not written in Lua you can still support Playdate Achievements. However, you'll need to reference the [schema](achievements.schema.json) and write your achievement data directly to the `/Shared` folder at the path `/Shared/Achievements/[gameID]/Achievements.json`, where `gameID` is the same as the gameID you specify in achievements.json.
+> If your game is not written in Lua you can still support Playdate Achievements. However, you’ll need to reference the [schema](achievements.schema.json) and write your achievement data directly to the `/Shared` folder at the path `/Shared/Achievements/[gameID]/Achievements.json`, where `gameID` is the same as the gameID you specify in achievements.json.
 
 ## Documentation
 
@@ -25,7 +25,7 @@ To get started, import the modules you wish to use and initialize with achieveme
 
 ```lua
 -- setup
-import "./path/to/achievements" --always import this first; don't include ".lua"
+import "./path/to/achievements" --always import this first; don’t include ".lua"
 import "./path/to/toasts" -- an optional notification implementation
 achievements.initialize(myAchievementData) -- initialize your achievements with a table matching the schema
 ```

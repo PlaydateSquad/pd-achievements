@@ -10,7 +10,7 @@ To import the main library, include `achievements.lua` in your project, and impo
 
 ```lua
 -- during setup
-import "./path/to/achievements" -- don't include ".lua" in your import statement
+import "./path/to/achievements" -- don’t include ".lua" in your import statement
 achievements.initialize(data) -- initialize your achievement data
 ```
 
@@ -19,10 +19,10 @@ You can then grant or update progress toward your achievements during gameplay.
 ```lua
 -- during gameplay
 achievements.grant("my_basic_achievement") -- grant or revoke achievements as you wish
-achievements.advance("my_progress_achievement", 4) -- add 4 to your achievement's progress, granting automagically if progress completes
+achievements.advance("my_progress_achievement", 4) -- add 4 to your achievement’s progress, granting automagically if progress completes
 ```
 
-Be sure to save your achievements to disk so the player's progress persists. You can do this whenever you save your game, or any time you grant, advance, or revoke an achievement.
+Be sure to save your achievements to disk so the player’s progress persists. You can do this whenever you save your game, or any time you grant, advance, or revoke an achievement.
 
 ```lua
 achievements.save() -- write your achievements to /Shared
@@ -32,14 +32,14 @@ If you prefer to autosave any time achievement data is updated, you can also set
 
 ## Configuring Achievements
 
-The most important part of configuring your achievements is properly constructing the achievement data blob and calling `achievements.initialize()` to properly set your game up. Calling `.initialize()` during your game's setup will ensure that the library is ready for use from within your game. It will not overwrite or reset previously saved achievement data.
+The most important part of configuring your achievements is properly constructing the achievement data blob and calling `achievements.initialize()` to properly set your game up. Calling `.initialize()` during your game’s setup will ensure that the library is ready for use from within your game. It will not overwrite or reset previously saved achievement data.
 
 ### Example
 
 ```lua
 local data = {
-    -- This example infers most of the game metadata from your game's pdxinfo.
-    iconPath = "images/achievements/game_icon", -- Update these paths to match your game's file structure. See below for more details.
+    -- This example infers most of the game metadata from your game’s pdxinfo.
+    iconPath = "images/achievements/game_icon", -- Update these paths to match your game’s file structure. See below for more details.
     cardPath = "images/achievements/game_card",
     achievements = {
         {
@@ -52,7 +52,7 @@ local data = {
             id = "my_achievement_2",
             name = "Achievement 2",
             description = "Achievement 2 Description",
-            icon = "assets/achievements/icons/my_achievement_2_icon", -- Update this path to match your game's file structure. See below for more details.
+            icon = "assets/achievements/icons/my_achievement_2_icon", -- Update this path to match your game’s file structure. See below for more details.
             iconLocked = "assets/achievements/icons/my_locked_icon_2"
         },
         {
@@ -67,7 +67,7 @@ local data = {
             name = "My Secret Achievement",
             description = "My Secret Achievement description",
             isSecret = true,
-            scoreValue = 0 -- don't count this achievement towards game completion
+            scoreValue = 0 -- don’t count this achievement towards game completion
         },
         {
             -- continue defining achievements as much as you need
@@ -77,7 +77,7 @@ local data = {
 
 -- very important that you initialize the data blob before your game is set up.
 achievements.initialize(data)
-achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if you'd like the achievement data to be exported every time an achievement is granted or revoked.
+achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if you’d like the achievement data to be exported every time an achievement is granted or revoked.
 ```
 
 ### Schema
@@ -92,8 +92,8 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 | `author`       | `string?`               | Nicely formatted author for your game. Defaults to `author` from your `pdxinfo`.                                                                    |
 | `description`  | `string?`               | Short description about your game. Defaults to `description` from your `pdxinfo`.                                                                   |
 | `version`      | `string?`               | Nicely formatted version string for your game. Defaults to `version` from your `pdxinfo`.                                                           |
-| `iconPath`     | `string?`               | Path to the 32x32 `.png` icon to use as your game's icon. Recommended to use your `icon.png` from your game metadata. Defaults to `nil`.            |
-| `cardPath`     | `string?`               | Path to the 380x90 `.png` art to use as your game's card art. Recommended to use your wide Catalog image asset (if you have it). Defaults to `nil`. |
+| `iconPath`     | `string?`               | Path to the 32x32 `.png` icon to use as your game’s icon. Recommended to use your `icon.png` from your game metadata. Defaults to `nil`.            |
+| `cardPath`     | `string?`               | Path to the 380x90 `.png` art to use as your game’s card art. Recommended to use your wide Catalog image asset (if you have it). Defaults to `nil`. |
 
 #### AchievementData
 
@@ -104,8 +104,8 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 | `description`          | `string`  | Nicely formatted description for the achievement. Shown to the player. **Required.**                                                              |
 | `descriptionLocked`    | `string?` | Nicely formatted description for the ungranted version of the achievement. Shown the the player. Defaults to `nil`.                               |
 | `isSecret`             | `bool?`   | Determines if the achievement should be hidden until granted. Defaults to `false`.                                                                |
-| `icon`                 | `string?` | Path to the achievement's 32x32 `.png` icon. The root folder is where "main.lua" is. Defaults to `nil`.                                           |
-| `iconLocked`           | `string?` | Path to the achievement's 32x32 `.png` locked icon (shown when achievement is not yet granted). Defaults to `nil`.                                |
+| `icon`                 | `string?` | Path to the achievement’s 32x32 `.png` icon. The root folder is where "main.lua" is. Defaults to `nil`.                                           |
+| `iconLocked`           | `string?` | Path to the achievement’s 32x32 `.png` locked icon (shown when achievement is not yet granted). Defaults to `nil`.                                |
 | `progressMax`          | `number?` | If this achievement is progression based, this is the limit at which the achievement will be automatically granted. Defaults to `nil`.            |
 | `progress`             | `number?` | How much progress has been made towards `progressMax`. Not necessary to set this by hand; instead, use `advance` or `advanceTo`. Defaults to `0`. |
 | `progressIsPercentage` | `bool?`   | Indicates if this progress achievement represents a percentage. Defaults to `false`.                                                              |
@@ -121,7 +121,7 @@ If this flag is set to `true` then achievements will be saved to disk every time
 
 ### achievements.initialize(`table`: _config_data_, `bool`: _silent_)
 
-Initializes pdachievements with data about your game's achievements. This is required to run before calling other functions, such as `.grant()` or `.advance()`. See above for examples and full data schema. Set `silent` to `true` if you want to suppress the debug logs printed to the console.
+Initializes pdachievements with data about your game’s achievements. This is required to run before calling other functions, such as `.grant()` or `.advance()`. See above for examples and full data schema. Set `silent` to `true` if you want to suppress the debug logs printed to the console.
 
 ### achievements.grant(`string`: _achievement_id_)
 
@@ -137,13 +137,13 @@ Returns `true` if the achievement was successfully revoked, or `false` otherwise
 
 ### achievements.advance(`string`: _achievement_id_, `int`: _advance_by_)
 
-Increases or decreases the achievement `achievement_id`'s completion score by `advance_by`. Attempting this on an achievement without `progressMax` set throws an error. If the achievement's score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
+Increases or decreases the achievement `achievement_id`’s completion score by `advance_by`. Attempting this on an achievement without `progressMax` set throws an error. If the achievement’s score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
 
 Returns `true` on success, otherwise throws an error.
 
 ### achievements.advanceTo(`string`: _achievement_id_, `int`: _advance_to_)
 
-Sets the achievement `achievement_id`'s completion score to `advance_to` Attempting this on an achievement without `progressMax` set throws an error. If the achievement's score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
+Sets the achievement `achievement_id`’s completion score to `advance_to` Attempting this on an achievement without `progressMax` set throws an error. If the achievement’s score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
 
 Returns `true` on success, otherwise throws an error.
 
@@ -153,7 +153,7 @@ Returns the total weighted completion percentage in the range [0-1]. Granted ach
 
 ### achievements.save()
 
-Saves the player's earned achievements as "Achievements.json" in your game's data, and exports the updated achievement information to `/Shared`.
+Saves the player’s earned achievements as "Achievements.json" in your game’s data, and exports the updated achievement information to `/Shared`.
 
 ### achievements.isGranted(`string`: _achievement_id_)
 
