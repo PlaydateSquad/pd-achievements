@@ -1,6 +1,6 @@
 # Adding Achievements to Your Game
 
-# The `achievements.lua` Module
+## The `achievements.lua` Module
 
 This module is responsible for tracking and saving achievement progress for your game. Can be used as a standalone library, or in congruence with [toasts.lua](./toasts.md) or [viewer.lua](./viewer.md)
 
