@@ -313,7 +313,7 @@ function av.initialize(config)
    if not gameData then
       print("ERROR: achievements.viewer.initialize() invalid gameData")
       m = nil
-      return
+      return false
    end
    m.gameData = gameData
    if achievements.crossgame then
@@ -393,6 +393,8 @@ function av.initialize(config)
          m.icons[id].granted = av.loadFile(gfx.image.new, m.imagePath .. data.icon)
       end
    end
+
+   return true
 end
 
 function av.reinitialize(config)
@@ -1194,14 +1196,14 @@ function av.mainUpdate()
          local scrollAmount = SCROLL_EASING(m.scrollSpeed, 0, scrollMax, scrollMax)
          m.scroll = m.scroll - scrollAmount
       end
-   
+
       local crankChanged, accelChanged = 0,0
       if m.aboutScreenAnim == nil then
          crankChanged, accelChanged = playdate.getCrankChange()
       end
       m.scroll = m.scroll + (CRANK_MULT*accelChanged)
       if m.scroll < 3 and m.scrollSpeed == 0 then m.scroll = m.scroll - 1 end
-   
+
       if m.scroll < 0 then
          m.scroll = 0
          m.scrollSpeed = 0
@@ -1209,7 +1211,7 @@ function av.mainUpdate()
          m.scroll = m.maxScroll
          m.scrollSpeed = 0
       end
-   
+
       if m.scroll // 32 ~= oldScroll // 32 then
          if m.config.soundVolume > 0 then
             m.scrollSound:setVolume(m.config.soundVolume)
@@ -1297,12 +1299,14 @@ end
 function av.launch(config)
    config = av.setupDefaults(config)
    if not m then
-      av.initialize(config)
+      if not av.initialize(config) then
+         return false
+      end
    end
    av.reinitialize(config)
    if m.launched then
       print("ERROR: achievement_viewer: can't run launch() more than once at a time")
-      return
+      return false
    end
    m.userUpdate = config.updateFunction or function() end
    m.returnToGame = config.returnToGameFunction or function() end
@@ -1335,6 +1339,8 @@ function av.launch(config)
       m.launchSound:setVolume(m.config.soundVolume)
       m.launchSound:play()
    end
+
+   return true
 end
 
 function av.forceExit()

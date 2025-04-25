@@ -75,9 +75,11 @@ achievements.grant("my_achievement") -- shows a toast!
 
 ## API Reference
 
-### achievements.toasts.initialize(`table`: _config_)
+### achievements.toasts.initialize(`table?`: _config_)
 
-Initializes the toasts module with the provided config options according to the [configuration schema](#schema) above. Only values you wish to override defaults for need be provided. This will also preload the image and sound assets used by the module.
+Initializes the toasts module and preloads the image and sound assets it requires. The optional `config` table lets you override any of the default values according to the [configuration schema](#schema) above.
+
+Returns `true` when initialization succeeds, or `false` otherwise.
 
 ### achievements.toasts.toast(`string`: _achievement_id_, `table?`: _config_)
 
