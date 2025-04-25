@@ -7,15 +7,10 @@ Playdate Achievements is a community project establishing an open standard for a
 This repository provides two things:
 
 1. **Achievements Schema:** A [schema](achievements.schema.json) describing the open Playdate Achievements data storage format which _any_ game may use to adopt the standard.
-2. **Lua Achievements Library:** A Lua library that games may use to implement the schema, along with UI niceties for displaying toast notifications and an in-game achievements viewer.
-
-The included Lua reference library provides three components:
-
-- An achievements management system for creating, unlocking, and saving achievements.
-- An in-game viewer to show achievements in your game.
-- A notification system for showing toasts when players unlock achievements in your game.
-
-All of these components are optional—you can implement or omit any of these in the way that works best for your game.
+2. **Lua Achievements Reference Library:** A Lua library that games may use to implement the schema, which includes the following (optional) components:
+   - An achievements management system for creating, unlocking, and saving achievements
+   - An in-game viewer to show achievements in your game
+   - A notification system for showing toasts when players unlock achievements in your game
 
 > [!NOTE]
 > If your game is not written in Lua you can still support Playdate Achievements. However, you'll need to reference the [schema](achievements.schema.json) and write your achievement data directly to the `/Shared` folder at the path `/Shared/Achievements/[gameID]/Achievements.json`, where `gameID` is the same as the gameID you specify in achievements.json.
@@ -37,7 +32,7 @@ achievements.initialize(myAchievementData) -- initialize your achievements with 
 
 Grant achievements to players and optionally display toast notifications at any time. Easily save your achievement data to the `/Shared` folder so it can be seen in any Playdate Achievements viewer.
 
-```
+```lua
 -- during gameplay
 if myAchievementCondition == true then
 	achievements.grant("my-achievement") -- grant an achievement
@@ -50,7 +45,7 @@ Refer to the library API reference below for additional information and details 
 
 ### Lua Library API Reference
 
-The Lua reference library includes 4 separate modules. The `achievements` module is required to use any of the others, and _must be included first_. The others are optional and may be included in any order.
+The Lua reference library includes 4 separate modules, all of which are optional—implement or omit any of these in the way that works best for your game. The `achievements` module is required to use any of the others, and _must be included first_; the others may be included in any order.
 
 - `achievements.lua`: [Add achievements to your game](/docs/achievements.md)
 - `crossgame.lua`: [Read other games’ achievements](/docs/crossgame.md)
