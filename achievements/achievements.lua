@@ -68,6 +68,13 @@ achievements = {
 }
 
 achievements.paths.shared_data_root = shared_achievement_folder
+
+--- Returns the path to the root folder for the game with the supplied `gameID`.
+--- 
+--- This function doesn't check if the folder at the resulting path exists.
+--- 
+--- @param gameID string The ID of the game for which to get the path.
+--- @return string # The path to the root folder of the game.
 function achievements.paths.get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
