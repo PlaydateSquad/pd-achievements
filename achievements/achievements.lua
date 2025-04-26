@@ -427,6 +427,10 @@ end
 
 --[[ Achievement Management Functions ]]--
 
+--- Returns the achievement with the supplied `achievement_id`.
+--- 
+--- @param achievement_id string The ID of the achievement to retrieve.
+--- @return achievement|boolean # The achievement, or false if it doesn't exist.
 achievements.getInfo = function(achievement_id)
 	return achievements.keyedAchievements[achievement_id] or false
 end
