@@ -467,6 +467,11 @@ achievements.grant = function(achievement_id)
 	return true
 end
 
+--- Revokes the achievement with the supplied `achievement_id`.
+--- 
+--- @param achievement_id string The ID of the achievement to revoke.
+--- @return boolean # Whether the achievement was successfully revoked.
+--- @throws If the achievement doesn't exist.
 achievements.revoke = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
