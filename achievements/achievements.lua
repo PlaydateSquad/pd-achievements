@@ -229,6 +229,13 @@ local function copy_file(src_path, dest_path)
 	in_file:close()
 end
 
+--- Copies the images from the game's data folder to the shared images folder.
+--- 
+--- This function skips copying if the shared folder already contains the images for the current build.
+--- 
+--- @param gameID string The ID of the game for which to copy the images.
+--- @param current_build_nr number The current build number of the game.
+--- @throws If the the version file in the shared folder can't be read or written to, or if there's an error copying the images.
 local function export_images(gameID, current_build_nr)
 	local shared_images_path = achievements.paths.get_shared_images_path(gameID)
 	playdate.file.mkdir(shared_images_path)
