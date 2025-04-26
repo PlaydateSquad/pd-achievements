@@ -435,6 +435,10 @@ achievements.getInfo = function(achievement_id)
 	return achievements.keyedAchievements[achievement_id] or false
 end
 
+--- Returns whether the achievement with the supplied `achievement_id` has been granted.
+--- 
+--- @param achievement_id string The ID of the achievement to check.
+--- @return boolean # Whether the achievement has been granted.
 achievements.isGranted = function(achievement_id)
 	return achievements.granted[achievement_id] ~= nil
 end
