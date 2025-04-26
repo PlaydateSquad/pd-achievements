@@ -279,6 +279,7 @@ local function export_images(gameID, current_build_nr)
 	ver_file:close()
 end
 
+--- Does nothing and returns immediately.
 local function donothing(...) end
 
 ---@param ach_root  achievement_root The game data being validated.
