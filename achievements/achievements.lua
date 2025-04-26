@@ -134,6 +134,9 @@ local function load_granted_data()
 	achievements.progress = data.progress or {}
 end
 
+--- Serializes the current game data to JSON and writes it to the shared data folder.
+---
+--- @param force_minimize boolean Whether to minimize the output by excluding fields with default values. Defaults to false.
 local function export_data(force_minimize)
 	local data = achievements.gameData
 	-- This shouldn't actually be necessary unless the developer starts adding redundant optional fields.
