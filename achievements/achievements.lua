@@ -386,8 +386,13 @@ local function validate_achievement(ach)
 	end
 end
 
----@param gamedata achievement_root
----@param prevent_debug boolean
+--- Initializes the achievement system for the game.
+--- 
+--- Call this function once, before using other functions in the library.
+--- 
+--- @param gamedata # The game data and achievement definitions to manage.
+--- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
+--- @throws If the supplied data is invalid.
 function achievements.initialize(gamedata, prevent_debug)
 	local print = (prevent_debug and donothing) or print
 	print("------")
