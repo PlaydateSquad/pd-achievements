@@ -328,8 +328,10 @@ local function validate_gamedata(ach_root, prevent_debug)
 	end
 end
 
----@param ach achievement The achievement being validated.
--- Takes in an achievement table, validates correct data, and sets defaults.
+--- Validates the values of the supplied achievement.
+--- 
+--- @param ach achievement The achievement to validate.
+--- @throws If any fields are invalid or if any non-optional fields are missing.
 local function validate_achievement(ach)
 	-- Required Strings
 	for _, key in ipairs{"name", "description", "id",} do
