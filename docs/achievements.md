@@ -4,14 +4,16 @@
 
 This module is responsible for tracking and saving achievement progress for your game. Can be used as a standalone library, or in congruence with [toasts.lua](./toasts.md) or [viewer.lua](./viewer.md)
 
+> NOTE: This is a reference implementation. You may use it as-is, or you may implement achievements in whatever manner you prefer as long as you save your data in `/Shared/Achievements/` according to the [schema](../achievements.schema.json).
+
 ## Getting Started
 
-To import the main library, include `achievements.lua` in your project, and import it from `main.lua`. This will create a global variable named `achievements` containing the module. Initialize the module with your achievement data (see [Configuring Achievements](#configuring-achievements)) before calling any of its other methods.
+To import the main library, include `achievements.lua` in your project and import it in `main.lua`. This will create a global variable named `achievements` containing the module. Initialize the module with your achievement data (see [Configuring Achievements](#configuring-achievements)) before calling any of its other methods.
 
 ```lua
 -- during setup
 import "./path/to/achievements" -- don’t include ".lua" in your import statement
-achievements.initialize(data) -- initialize your achievement data
+achievements.initialize(data) -- define your available achievements
 ```
 
 You can then grant or update progress toward your achievements during gameplay.
@@ -102,28 +104,28 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 | `id`                   | `string`  | Uniquely identifies the achievement. **Required.**                                                                                                |
 | `name`                 | `string`  | Nicely formatted name for the achievement. Shown to the player. **Required.**                                                                     |
 | `description`          | `string`  | Nicely formatted description for the achievement. Shown to the player. **Required.**                                                              |
-| `descriptionLocked`    | `string?` | Nicely formatted description for the ungranted version of the achievement. Shown the the player. Defaults to `nil`.                               |
+| `descriptionLocked`    | `string?` | Nicely formatted description for the achievement shown until it is granted. Shown the the player. Defaults to `nil`.                              |
 | `isSecret`             | `bool?`   | Determines if the achievement should be hidden until granted. Defaults to `false`.                                                                |
 | `icon`                 | `string?` | Path to the achievement’s 32x32 `.png` icon. The root folder is where "main.lua" is. Defaults to `nil`.                                           |
-| `iconLocked`           | `string?` | Path to the achievement’s 32x32 `.png` locked icon (shown when achievement is not yet granted). Defaults to `nil`.                                |
-| `progressMax`          | `number?` | If this achievement is progression based, this is the limit at which the achievement will be automatically granted. Defaults to `nil`.            |
+| `iconLocked`           | `string?` | Path to the achievement’s 32x32 `.png` icon that’s shown until the achievement is granted. Defaults to `nil`.                                     |
+| `progressMax`          | `number?` | If this achievement is progression based, this defines the limit at which the achievement will be automatically granted. Defaults to `nil`.       |
 | `progress`             | `number?` | How much progress has been made towards `progressMax`. Not necessary to set this by hand; instead, use `advance` or `advanceTo`. Defaults to `0`. |
-| `progressIsPercentage` | `bool?`   | Indicates if this progress achievement represents a percentage. Defaults to `false`.                                                              |
+| `progressIsPercentage` | `bool?`   | Indicates whether this progress achievement represents a percentage. Defaults to `false`.                                                         |
 | `scoreValue`           | `number?` | How much weight this achievement carries towards 100% game completion. Defaults to `1`. Can be set to `0` to make the achievement optional.       |
 
 ## API Reference
 
 ### Properties
 
-#### achievements.forceSaveOnGrantOrRevoke — `bool`
+#### `bool` achievements.forceSaveOnGrantOrRevoke
 
 If this flag is set to `true` then achievements will be saved to disk every time an achievement is newly granted or revoked. Defaults to `false`.
 
 ### Functions
 
-#### achievements.initialize(`table`: _config_data_, `bool`: _silent_)
+#### achievements.initialize(`table`: _achievement_data_, `bool?`: _silent_)
 
-Initializes pdachievements with data about your game’s achievements. This is required to run before calling other functions, such as `.grant()` or `.advance()`. See above for examples and full data schema. Set `silent` to `true` if you want to suppress the debug logs printed to the console.
+Initializes the module with data about your game’s achievements in the [`achievementData`](#achievementdata) format specified above. This is required before calling other functions, such as `.grant()` or `.advance()`. Set `silent` to `true` to suppress the debug logs printed to the console.
 
 #### achievements.grant(`string`: _achievement_id_)
 
@@ -139,7 +141,7 @@ Returns `true` if the achievement was successfully revoked, or `false` otherwise
 
 #### achievements.advance(`string`: _achievement_id_, `int`: _advance_by_)
 
-Increases or decreases the achievement `achievement_id`’s completion score by `advance_by`. Attempting this on an achievement without `progressMax` set throws an error. If the achievement’s score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
+Increases or decreases the completion score for achievement `achievement_id` by `advance_by`. Attempting this on an achievement without `progressMax` set throws an error. If the achievement’s score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
 
 Returns `true` on success, otherwise throws an error.
 

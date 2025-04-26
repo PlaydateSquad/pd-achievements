@@ -1,8 +1,10 @@
-# Reading Other Games' Achievements
+# Reading Achievements From Other Games
 
 ## The `crossgame.lua` Module
 
 This module enables games to inspect the achievements that _other_ games have written to `/Shared` on the same Playdate. This makes it possible to create cross-game experiences and achievements. For example, you might unlock a custom character skin in your game if the player has played another game to which that character belongs.
+
+> NOTE: This is a reference implementation provided for convenience. You may use it as-is, or read achievement data matching the [schema](../achievements.schema.json) directly from `/Shared/Achievements/`.
 
 ## Sample Usage
 
@@ -35,11 +37,11 @@ Returns `true` if there is an achievement folder for the given `game_id`, otherw
 
 #### achievements.crossgame.listGames()
 
-Returns a list of all games for which Playdate Achievement data exists in `/Shared` on this Playdate, as an array table containing their gameIDs.
+Returns a list of all games for which Playdate Achievement data exists in `/Shared` on this Playdate, as an array table containing their game IDs.
 
 #### achievements.crossgame.getData(`string`: _game_id_)
 
-Returns the exported `achievementData` for the specified `game_id`. See the type declarations in [`achievements.lua`](achievements.md) for more details on the format of the returned data.
+Returns the exported `achievementData` for the specified `game_id`. See the [achievement type declarations](achievements.md) for more details on the format of the returned data.
 
 #### achievements.crossgame.loadImage(`string`: _game_id_, `string`: _filepath_)
 
