@@ -171,7 +171,12 @@ local function force_extension(str, new_ext)
 	return str:gsub("%.%w+$", "") .. new_ext
 end
 
--- Give this the names of the fields to copy as extra arguments and it'll return all the values as a set.
+--- Returns a set of the unique image paths for the supplied fields in configured achievements.
+--- 
+--- This function automatically adds the ".pdi" extension to the paths.
+--- 
+--- @param ... string The names of the fields to copy.
+--- @return table # A set of the unique image paths for the supplied fields.
 local function crawlImagePaths(...)
 	local filepaths = {}
 	local desired_fields = {...}
