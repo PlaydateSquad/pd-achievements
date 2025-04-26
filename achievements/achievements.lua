@@ -125,6 +125,7 @@ function achievements.paths.get_shared_images_updated_file_path(gameID)
 	return folder .. shared_images_updated_file
 end
 
+--- Loads progression data.
 local function load_granted_data()
 	local data = json.decodeFile(achievement_file_name)
 	if not data then
