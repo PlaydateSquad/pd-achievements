@@ -158,6 +158,12 @@ end
 local function dirname(str)
 	return (string.gsub(str, "[^/\\]*$", ""))
 end
+
+--- Changes the file extension of a string path to the supplied extension.
+--- 
+--- @param str string The string path of which to change the extension.
+--- @param new_ext string The new extension to use.
+--- @return string # The modified string path.
 local function force_extension(str, new_ext)
 	return str:gsub("%.%w+$", "") .. new_ext
 end
