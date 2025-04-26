@@ -96,6 +96,13 @@ function achievements.paths.get_achievement_data_file_path(gameID)
 	local root = achievements.paths.get_achievement_folder_root_path(gameID)
 	return root .. achievement_file_name
 end
+
+--- Returns the path to the folder containing shared images for the game with the supplied `gameID`.
+--- 
+--- This function doesn't check if the folder at the resulting path exists.
+--- 
+--- @param gameID string The ID of the game for which to get the path.
+--- @return string # The path to the folder containing shared images for the game.
 function achievements.paths.get_shared_images_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
