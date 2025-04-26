@@ -534,6 +534,9 @@ achievements.advance = function(achievement_id, advance_by)
 	return achievements.advanceTo(achievement_id, progress + advance_by)
 end
 
+--- Returns the fractional completion of all configured achievements, taking into account the `scoreValue` of any achievements if configured.
+--- 
+--- @return number # The completion percentage as a float between 0 and 1.
 achievements.completionPercentage = function()
 	local completion_total = 0
 	local completion_obtained = 0
