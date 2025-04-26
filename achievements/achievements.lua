@@ -289,9 +289,11 @@ end
 --- Does nothing and returns immediately.
 local function donothing(...) end
 
----@param ach_root  achievement_root The game data being validated.
----@param prevent_debug boolean If false, does not print debug info to the console.
--- Takes in achievement game data, validates correct data, and sets defaults.
+--- Validates the values of the supplied game data.
+--- 
+--- @param ach_root achievement_root The game data to validate.
+--- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
+--- @throws If any fields are invalid or if any non-optional fields are missing.
 local function validate_gamedata(ach_root, prevent_debug)
 	local print = (prevent_debug and donothing) or print
 
