@@ -514,6 +514,12 @@ achievements.advanceTo = function(achievement_id, advance_to)
 	return true
 end
 
+--- Advances the achievement with the supplied `achievement_id` by the specified amount.
+--- 
+--- @param achievement_id string The ID of the achievement to advance.
+--- @param advance_by number The amount to advance the achievement by.
+--- @return boolean # Whether the achievement was successfully advanced.
+--- @throws If the achievement doesn't exist or doesn't support incremental progress.
 achievements.advance = function(achievement_id, advance_by)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
