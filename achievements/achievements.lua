@@ -178,6 +178,11 @@ local function crawlImagePaths(...)
 	return filepaths
 end
 
+--- Copies the file at `src_path` to the supplied `dest_path`, creating any intermediate directories.
+--- 
+--- @param src_path string The path to the source file to copy.
+--- @param dest_path string The path to the destination file to copy to.
+--- @throws If the source file does not exist or if the destination path is invalid.
 local function copy_file(src_path, dest_path)
 	-- make sure the source-file exists
 	if not (playdate.file.exists(src_path) or playdate.file.isdir(src_path)) then
