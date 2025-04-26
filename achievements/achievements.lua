@@ -443,6 +443,11 @@ achievements.isGranted = function(achievement_id)
 	return achievements.granted[achievement_id] ~= nil
 end
 
+--- Grants the achievement with the supplied `achievement_id`.
+--- 
+--- @param achievement_id string The ID of the achievement to grant.
+--- @return boolean # Whether the achievement was successfully granted.
+--- @throws If the achievement doesn't exist.
 achievements.grant = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
