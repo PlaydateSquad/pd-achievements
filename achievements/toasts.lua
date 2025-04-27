@@ -35,7 +35,7 @@ local gfx <const> = playdate.graphics
 
    - If you call toast() on an achievement that hasn't yet been completed, a
      progress toast will be displayed. You can trigger these to appear
-     automatically when an achievement is advanced via advanceBy() or
+     automatically when an achievement is advanced via advance() or
      advanceTo() by setting toastOnAdvance to true (or to a number; see below).
 
    By default, toasts will render by temporarily overriding your game's
@@ -68,8 +68,8 @@ local defaultConfig = {
    toastOnGrant = false,
 
    -- Set this to true when calling initialize() to automatically show a toast
-   -- whenever an achievement's progress is advanced via advanceTo() or
-   -- advanceBy(). Or, set this to a number between 0 and 1 to show a toast
+   -- whenever an achievement's progress is advanced via advance() or
+   -- advanceTo(). Or, set this to a number between 0 and 1 to show a toast
    -- whenever an achievement's progress is advanced past that fraction of its
    -- maximum (but has not yet been granted).
    --
@@ -956,7 +956,7 @@ end
 
 local toastOnAdvanceFraction = nil
 local originalAdvanceToFunction = nil
-local originalAdvanceByFunction = nil
+local originalAdvanceFunction = nil
 local function advanceWithToast(achievementId, advanceFunc, advanceAmount)
    local wasGrantedBefore = achievements.isGranted(achievementId)
    local prevProgress = achievements.progress[achievementId] or 0
@@ -986,8 +986,8 @@ end
 local function advanceToWithToast(achievementId, advanceTo)
    advanceWithToast(achievementId, originalAdvanceToFunction, advanceTo)
 end
-local function advanceByWithToast(achievementId, advanceBy)
-   advanceWithToast(achievementId, originalAdvanceByFunction, advanceBy)
+local function advanceWithToast(achievementId, advanceBy)
+   advanceWithToast(achievementId, originalAdvanceFunction, advanceBy)
 end
 
 
@@ -995,12 +995,12 @@ function at.setToastOnAdvance(autoToast)
    if not originalAdvanceToFunction then
       originalAdvanceToFunction = achievements.advanceTo
    end
-   if not originalAdvanceByFunction then
-      originalAdvanceByFunction = achievements.advanceBy
+   if not originalAdvanceFunction then
+      originalAdvanceFunction = achievements.advance
    end
 
    achievements.advanceTo = autoToast and advanceToWithToast or originalAdvanceToFunction
-   achievements.advanceBy = autoToast and advanceByWithToast or originalAdvanceByFunction
+   achievements.advance = autoToast and advanceWithToast or originalAdvanceFunction
    if type(autoToast) == "number" then
       toastOnAdvanceFraction = autoToast
    else
