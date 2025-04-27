@@ -563,6 +563,7 @@ achievements.completionPercentage = function()
 	return completion_total > 0 and completion_obtained / completion_total or 1
 end
 
+--- Serializes the current game data to JSON and writes it to the data folder.
 function achievements.save()
 	export_data()
 	local save_table = {
