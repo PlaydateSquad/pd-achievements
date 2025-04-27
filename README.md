@@ -48,12 +48,14 @@ Of course, games may also present their earned achievements themselves. Addition
 
 It’s all about the games. Here’s a (non-comprehensive) list of games that award Playdate Achievements. Made your own? [Add it to the list!](#made-a-game-for-playdate)
 
+<div id="filter-bar"><!-- anchor for sort.js --></div>
+
 <div class="game-grid grid">
 
 {% assign sortedGames = site.data.games | sort: 'title' %}
 {% for game in sortedGames %}
 
-<div class="game" data-release-date="{{ game.releaseDate }}" data-last-added-date="{{ game.lastAddedDate }}">
+<div class="game" data-release-date="{{ game.releaseDate }}" data-last-added-date="{{ game.lastAddedDate | default: game.releaseDate }}" data-title="{{ game.title }}" data-author="{{ game.author }}" data-achievement-count="{{ game.achievementCount | default: 0 }}">
 	<a {% if game.url %} href="{{ game.url }}" {% endif %}>
 		<div class="banner"><img src="{{ game.image }}" width=380 height=90 alt="{{ game.title }}" style="border-color: {{ game.color }}"/></div>
 		{% if game.achievementCount %}<div class='count'>{{ game.achievementCount }}</div>{% endif %}
@@ -64,9 +66,11 @@ It’s all about the games. Here’s a (non-comprehensive) list of games that aw
 
 {% endfor %}
 
-<p class="footnote">* These games are available to play now and will support Playdate Achievements in a future update.</p>
-
 </div> <!-- game grid -->
+
+<div class="grid">
+	<p class="footnote">* These games are available to play now and will support Playdate Achievements in a future update.</p>
+</div>
 
 ### Made a Game for Playdate?
 
