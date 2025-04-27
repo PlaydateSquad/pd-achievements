@@ -14,9 +14,6 @@ Add `toasts.lua` to your project and import it _after_ `achievements.lua`. All i
 -- setup
 import "/path/to/achievements"
 import "/path/to/toasts"
-
--- optionally configure toasts to be displayed automatically anytime an achievement is granted
-achievements.toasts.toastOnGranted = true
 ```
 
 When a player earns an achievement, display a notification to let them know:
@@ -24,7 +21,7 @@ When a player earns an achievement, display a notification to let them know:
 ```lua
 if myAchievementCondition == true then
 	achievements.grant("my-achievement") -- grant the achievement
-	achievements.toasts.toast("my-achievement") -- display a pop-up for the earned achievement (skip this if toastOnGranted is true)
+	achievements.toasts.toast("my-achievement") -- display a pop-up for the earned achievement
 end
 ```
 

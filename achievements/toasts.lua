@@ -29,8 +29,8 @@ local gfx <const> = playdate.graphics
 
    - You can trigger a toast in two different ways: automatically or
      manually. If you want to show a toast automatically when an achievement is
-     granted, set toastOnGranted to true in the configuration when you call
-     initialize(). If toastOnGranted is false, then you'll need to call
+     granted, set toastOnGrant to true in the configuration when you call
+     initialize(). If toastOnGrant is false, then you'll need to call
      achievements.toasts.toast(achievementId) to trigger a toast.
 
    - If you call toast() on an achievement that hasn't yet been completed, a
