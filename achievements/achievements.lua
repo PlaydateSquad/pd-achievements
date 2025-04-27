@@ -400,7 +400,7 @@ end
 --- 
 --- Call this function once, before using other functions in the library.
 --- 
---- @param gamedata # The game data and achievement definitions to manage.
+--- @param gamedata achievement_root The game data and achievement definitions to manage.
 --- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
 --- @throws If the supplied data is invalid.
 function achievements.initialize(gamedata, prevent_debug)
