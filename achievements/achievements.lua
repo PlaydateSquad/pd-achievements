@@ -158,6 +158,10 @@ local function export_data(force_minimize)
 	json.encodeToFile(achievements.paths.get_achievement_data_file_path(data.gameID), true, data)
 end
 
+--- Returns the parent directory of the supplied string path.
+--- 
+--- @param str string The string path of which to get the parent directory.
+--- @return string # The parent directory of the supplied string path.
 local function dirname(str)
 	return (string.gsub(str, "[^/\\]*$", ""))
 end
