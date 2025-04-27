@@ -24,7 +24,7 @@ crossgame.listGames = function()
 end
 
 ---@param game_id string
----@return achievement_root
+---@return game_data
 -- Returns the achievement data for the requested game if it exists. Otherwise returns false and a reason.
 crossgame.getData = function(game_id)
 	if not crossgame.gamePlayed then

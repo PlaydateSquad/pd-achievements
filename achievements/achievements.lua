@@ -9,18 +9,18 @@
 	This software is released to the public domain using the Unlicense license agreement <https://unlicense.org>.
 --]]
 
----@class achievement_root
----@field author string The author of the game, as in pdxinfo.
----@field name string The name of the game, as in pdxinfo.
----@field description string The description of the game, as in pdxinfo.
----@field gameID string A unique ID to identify the game. Analogous to BundleID in pdxinfo.
----@field version string The version string of the game, as in pdxinfo.
----@field specVersion string The version string of the specification used.
----@field iconPath string | nil The filepath for the game's 32x32 list icon to be used in viewers.
----@field cardPath string | nil The filepath for the game's 380x90 card art to be used in viewers.
----@field achievements achievement[] An array of valid achievements for the game.
----@field completionPercentage float The current 100%-completion percentage of a game as a float 0..1. Only calculated when loading a game's data through the crossgame module.
----@field keyedAchievements { [string]: achievement} All configured achievements for the game, indexed by string keys. Automatically assembled by achievements.initialize and crossgame.loadData.
+---@class game_data
+---@field author string The author of the game.
+---@field name string The name of the game.
+---@field description string A description for the game.
+---@field gameID string A unique identifier for the game, in reverse DNS notation.
+---@field version string A game version number that is displayed to players.
+---@field specVersion string The version string of the specification that achievements follow.
+---@field iconPath string? The filepath to the game's 32x32 list icon.
+---@field cardPath string? The filepath to the game's 380x90 card art.
+---@field achievements achievement[] An array of achievements for the game.
+---@field completionPercentage number The the fractional completion of all configured achievements as a unit interval [0..1], taking into account the `scoreValue` of any achievements if configured. Only calculated when loading a game's data through the crossgame module.
+---@field keyedAchievements { [string]: achievement} All configured achievements for the game, indexed by their ID as string keys. Automatically assembled by achievements.initialize and crossgame.loadData.
 
 ---@class achievement
 ---@field name string The name of the achievement.
@@ -285,7 +285,7 @@ local function donothing(...) end
 
 --- Validates the values of the supplied game data.
 --- 
---- @param ach_root achievement_root The game data to validate.
+--- @param ach_root game_data The game data to validate.
 --- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
 --- @throws If any fields are invalid or if any non-optional fields are missing.
 local function validate_gamedata(ach_root, prevent_debug)
@@ -387,7 +387,7 @@ end
 --- 
 --- Call this function once, before using other functions in the library.
 --- 
---- @param gamedata achievement_root The game data and achievement definitions to manage.
+--- @param gamedata game_data The game data and achievement definitions to manage.
 --- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
 --- @throws If the supplied data is invalid.
 function achievements.initialize(gamedata, prevent_debug)
