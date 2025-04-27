@@ -2,7 +2,7 @@
 
 ## The `achievements.lua` Module
 
-This module is responsible for tracking and saving achievement progress for your game. Can be used as a standalone library, or in congruence with [toasts.lua](./toasts.md) or [viewer.lua](./viewer.md)
+This module is responsible for tracking and saving achievement progress for your game. It can be used as a standalone library, or in congruence with [toasts.lua](./toasts.md) or [viewer.lua](./viewer.md)
 
 > NOTE: This is a reference implementation. You may use it as-is, or you may implement achievements in whatever manner you prefer as long as you save your data in `/Shared/Achievements/` according to the [schema](../achievements.schema.json).
 
