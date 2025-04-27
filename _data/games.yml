@@ -57,8 +57,7 @@
 
 - title: Mission Lunatrix
   author: Rae
-  # url: https://play.date/games/mission-lunatrix
-  url: https://discord.com/channels/675983554655551509/1349116446898389096
+  url: #https://play.date/games/mission-lunatrix
   image: ./assets/images/games/mission-lunatrix.png
   color: "#B189C0"
   achievementCount: 21
