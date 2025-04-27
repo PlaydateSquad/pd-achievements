@@ -91,7 +91,7 @@ Returns `true` if the toast is successfully displayed, an `int` indicating its p
 
 #### achievements.toasts.isToasting()
 
-Returns `true` if a toast is currently displayed to the user, or `false` otherwise.
+Returns `true` if a toast is currently displayed to the player, or `false` otherwise.
 
 #### achievements.toasts.abortToasts()
 
