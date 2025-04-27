@@ -1,4 +1,3 @@
-
 --[[
 	PlaydateSquad Achievements Library
 	https://github.com/PlaydateSquad/pd-achievements
