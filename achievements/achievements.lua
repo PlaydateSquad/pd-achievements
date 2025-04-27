@@ -1,27 +1,12 @@
 
 --[[
-	==PlaydateSquad Achievements Library - Alpha==
-	This was originally a prototype implementation, but is now being built for
-	  full use in real games.
-	Basic error checking is provided. Functionality is implemented as a series
-	  of single-file modules. Only Lua or Lua/C games are supported at the moment.
+	PlaydateSquad Achievements Library
+	https://github.com/PlaydateSquad/pd-achievements
 
-	== API Style Guide ==
-	Behavior is stacked similar to corelibs. Areas of functionality are held in individual files.
-	Public API functions are added to a relevant global table as pascalCase.
-	Private API functions/variables are added to a .internal sub-table as snake_case.
+	This library provides an implementation of a shared format for achievements on Playdate.
+	See the README.md file for more information.
 
-	 == Module Overview ==
-	- achievements.lua      | A single-file library which establishes the basics of the achievement
-		system and allows a single game to enable achievements.
-	- crossgame.lua         | A single-file library which depends on achievements.lua and provides
-		helpers for reading achievement data and related assets from other games.
-    - graphics.lua          | A single-file library which depends on achievements.lua and provides
-        graphics-related functionality, primarily notifications and default icons.
---]]
-
---[[
-	== Technical Specifications ==
+	This software is released to the public domain using the Unlicense license agreement <https://unlicense.org>.
 --]]
 
 ---@class achievement_root
@@ -50,8 +35,6 @@
 ---@field progressMax number | nil Maxiumum progress possible towards the achievement before it is to be unlocked.
 ---@field progressIsPercentage boolean | false If false, an achievement list should display current progress as a tally "$(progress)/$(progressMax)". If true, it should be displayed as a percentage number (progress/progressMax)*100. Default false.
 ---@field scoreValue number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants scoreValue/(total scores)% completion. Default 1.
-
--- [[ == Implementation == ]]
 
 local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"
@@ -438,8 +421,6 @@ function achievements.initialize(gamedata, prevent_debug)
 	print("Achievements have been initialized!")
 	print("------")
 end
-
---[[ Achievement Management Functions ]]--
 
 --- Returns the achievement with the supplied `achievement_id`.
 --- 
