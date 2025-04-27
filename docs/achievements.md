@@ -2,7 +2,7 @@
 
 ## The `achievements.lua` Module
 
-This module is responsible for tracking and saving achievement progress for your game. It can be used as a standalone library, or in congruence with [toasts.lua](./toasts.md) or [viewer.lua](./viewer.md)
+This module is responsible for tracking and saving achievement progress for your game. It can be used as a standalone library, or in congruence with [toasts.lua](./toasts.md) and/or [viewer.lua](./viewer.md)
 
 > NOTE: This is a reference implementation. You may use it as-is, or you may implement achievements in whatever manner you prefer as long as you save your data in `/Shared/Achievements/` according to the [schema](../achievements.schema.json).
 
@@ -151,7 +151,7 @@ Returns `true` on success, otherwise throws an error.
 
 #### achievements.advanceTo(`string`: _achievement_id_, `int`: _advance_to_)
 
-Sets the achievement `achievement_id`’s completion score to `advance_to` Attempting this on an achievement without `progressMax` set throws an error. If the achievement’s score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
+Sets the completion score for achievement `achievement_id` to the value `advance_to`. Attempting this on an achievement without `progressMax` set throws an error. If the achievement’s score reaches the max, the achievement will be granted. If it falls below the max, the achievement will be revoked.
 
 Returns `true` on success, otherwise throws an error.
 
