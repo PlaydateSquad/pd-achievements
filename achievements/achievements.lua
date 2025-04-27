@@ -25,16 +25,16 @@
 ---@class achievement
 ---@field name string The name of the achievement.
 ---@field description string The description of the achievement.
----@field descriptionLocked string? The description of the achievement, if it has not yet been earned.
----@field id string A unique ID by which to identify the achievement. Used in various API functions.
----@field grantedAt boolean | number False if the achievement has not been earned, otherwise the Playdate epoch second the achievement was earned at as returned by playdate.getSecondsSinceEpoch().
----@field isSecret boolean | nil If true, this achievement should not appear in any player-facing lists while the .grantedAt field is false. Defaut false.
----@field icon string | nil The filepath of the achievement's unlocked icon image, relative to the value of achievements.imagePath.
----@field iconLocked string | nil The filepath of the achievement's locked icon image, relative to the value of achievements.imagePath.
----@field progress number | nil Current progress towards unlocking the achievement, as x/.progressMax. Should not be set manually under most circumstances.
----@field progressMax number | nil Maxiumum progress possible towards the achievement before it is to be unlocked.
----@field progressIsPercentage boolean | false If false, an achievement list should display current progress as a tally "$(progress)/$(progressMax)". If true, it should be displayed as a percentage number (progress/progressMax)*100. Default false.
----@field scoreValue number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants scoreValue/(total scores)% completion. Default 1.
+---@field descriptionLocked string? The description of the achievement to use when it hasn't beeen granted.
+---@field id string A unique identifier for the achievement. This must be unique among achievements in the same bundle, but doesn't need to be unique across different bundles.
+---@field grantedAt boolean | number The the number of seconds elapsed since midnight (hour 0), January 1 2000 UTC at which the achievement was granted, or `false` if it hasn't been granted.
+---@field isSecret boolean? A reader hint indicating whether the achievement should be displayed while it has not been granted. Defaults to false.
+---@field icon string? The filepath to the achievement's icon image.
+---@field iconLocked string? The filepath of the achievement's icon image to use when it hasn't been granted.
+---@field progress number? The progress towards granting the achievement for incremental achievements.
+---@field progressMax number? The number  that `progress` must reach for the achievement to be granted for incremental achievements.
+---@field progressIsPercentage boolean? A reader hint indicating whether the achievement's progress should be displayed as a percentage instead of a fraction. Defaults to false.
+---@field scoreValue number? A reader hint indicating the relative importance of the achievement. This also influences the value returned by `achievements.completionPercentage`, where each achievement grants scoreValue/(total scores)% completion. Defaults to 1.
 
 local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"
