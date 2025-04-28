@@ -52,7 +52,7 @@ It’s all about the games. Here’s a (non-comprehensive) list of games that aw
 
 <div class="game-grid grid">
 
-{% assign sortedGames = site.data.games | sort: 'title' %}
+{% assign sortedGames = site.data.games | sort: 'releaseDate', 'first' | reverse %}
 {% for game in sortedGames %}
 
 <div class="game" data-release-date="{{ game.releaseDate }}" data-last-added-date="{{ game.lastAddedDate | default: game.releaseDate }}" data-title="{{ game.title }}" data-author="{{ game.author }}" data-achievement-count="{{ game.achievementCount | default: 0 }}">
