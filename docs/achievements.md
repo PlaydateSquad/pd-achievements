@@ -99,19 +99,19 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 
 #### AchievementData
 
-| key                    | type      | description                                                                                                                                       |
-| ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                   | `string`  | Uniquely identifies the achievement. **Required.**                                                                                                |
-| `name`                 | `string`  | Nicely formatted name for the achievement. Shown to the player. **Required.**                                                                     |
-| `description`          | `string`  | Nicely formatted description for the achievement. Shown to the player. **Required.**                                                              |
-| `descriptionLocked`    | `string?` | Nicely formatted description for the achievement shown until it is granted. Shown to the player. Defaults to the value of `description`.          |
-| `isSecret`             | `bool?`   | Determines if the achievement should be hidden until granted. Defaults to `false`.                                                                |
-| `icon`                 | `string?` | Path to the achievement’s 32x32 `.png` icon. The root folder is where "main.lua" is. Defaults to `nil`.                                           |
-| `iconLocked`           | `string?` | Path to the achievement’s 32x32 `.png` icon that’s shown until the achievement is granted. Defaults to `nil`.                                     |
-| `progressMax`          | `number?` | If this achievement is progression based, this defines the limit at which the achievement will be automatically granted. Defaults to `nil`.       |
-| `progress`             | `number?` | How much progress has been made towards `progressMax`. Not necessary to set this by hand; instead, use `advance` or `advanceTo`. Defaults to `0`. |
-| `progressIsPercentage` | `bool?`   | Indicates whether this progress achievement represents a percentage. Defaults to `false`.                                                         |
-| `scoreValue`           | `number?` | How much weight this achievement carries towards 100% game completion. Defaults to `1`. Can be set to `0` to make the achievement optional.       |
+| key                    | type      | description                                                                                                                                                                                                                 |
+| ---------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                   | `string`  | Uniquely identifies the achievement. **Required.**                                                                                                                                                                          |
+| `name`                 | `string`  | Nicely formatted name for the achievement. Shown to the player. **Required.**                                                                                                                                               |
+| `description`          | `string`  | Nicely formatted description for the achievement. Shown to the player. **Required.**                                                                                                                                        |
+| `descriptionLocked`    | `string?` | Nicely formatted description for the achievement shown until it is granted. Shown to the player. Defaults to `nil`. When left `nil`, the value provided for `description` will be shown in both locked and unlocked states. |
+| `isSecret`             | `bool?`   | Determines if the achievement should be hidden until granted. Defaults to `false`.                                                                                                                                          |
+| `icon`                 | `string?` | Path to the achievement’s 32x32 `.png` icon. The root folder is where "main.lua" is. Defaults to `nil`.                                                                                                                     |
+| `iconLocked`           | `string?` | Path to the achievement’s 32x32 `.png` icon that’s shown until the achievement is granted. Defaults to `nil`.                                                                                                               |
+| `progressMax`          | `number?` | If this achievement is progression based, this defines the limit at which the achievement will be automatically granted. Defaults to `nil`.                                                                                 |
+| `progress`             | `number?` | How much progress has been made towards `progressMax`. Not necessary to set this by hand; instead, use `advance` or `advanceTo`. Defaults to `0`.                                                                           |
+| `progressIsPercentage` | `bool?`   | Indicates whether this progress achievement represents a percentage. Defaults to `false`.                                                                                                                                   |
+| `scoreValue`           | `number?` | How much weight this achievement carries towards 100% game completion. Defaults to `1`. Can be set to `0` to make the achievement optional.                                                                                 |
 
 ## API Reference
 
