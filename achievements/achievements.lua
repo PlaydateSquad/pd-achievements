@@ -67,7 +67,7 @@ function achievements.paths.get_achievement_folder_root_path(gameID)
 	return root
 end
 
---- Returns the path to the fille containing the achievement data for the game with the supplied `gameID`.
+--- Returns the path to the file containing the achievement data for the game with the supplied `gameID`.
 --- 
 --- This function doesn't check if the file at the resulting path exists.
 --- 
