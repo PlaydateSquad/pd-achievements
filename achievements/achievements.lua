@@ -1,57 +1,39 @@
-
 --[[
-	==PlaydateSquad Achievements Library - Alpha==
-	This was originally a prototype implementation, but is now being built for
-	  full use in real games.
-	Basic error checking is provided. Functionality is implemented as a series
-	  of single-file modules. Only Lua or Lua/C games are supported at the moment.
+	PlaydateSquad Achievements Library
+	https://github.com/PlaydateSquad/pd-achievements
 
-	== API Style Guide ==
-	Behavior is stacked similar to corelibs. Areas of functionality are held in individual files.
-	Public API functions are added to a relevant global table as pascalCase.
-	Private API functions/variables are added to a .internal sub-table as snake_case.
+	This library provides an implementation of a shared format for achievements on Playdate.
+	See the README.md file for more information.
 
-	 == Module Overview ==
-	- achievements.lua      | A single-file library which establishes the basics of the achievement
-		system and allows a single game to enable achievements.
-	- crossgame.lua         | A single-file library which depends on achievements.lua and provides
-		helpers for reading achievement data and related assets from other games.
-    - graphics.lua          | A single-file library which depends on achievements.lua and provides
-        graphics-related functionality, primarily notifications and default icons.
+	This software is released to the public domain using the Unlicense license agreement <https://unlicense.org>.
 --]]
 
---[[
-	== Technical Specifications ==
---]]
-
----@class achievement_root
----@field author string The author of the game, as in pdxinfo.
----@field name string The name of the game, as in pdxinfo.
----@field description string The description of the game, as in pdxinfo.
----@field gameID string A unique ID to identify the game. Analogous to BundleID in pdxinfo.
----@field version string The version string of the game, as in pdxinfo.
----@field specVersion string The version string of the specification used.
----@field iconPath string | nil The filepath for the game's 32x32 list icon to be used in viewers.
----@field cardPath string | nil The filepath for the game's 380x90 card art to be used in viewers.
----@field achievements achievement[] An array of valid achievements for the game.
----@field completionPercentage float The current 100%-completion percentage of a game as a float 0..1. Only calculated when loading a game's data through the crossgame module.
----@field keyedAchievements { [string]: achievement} All configured achievements for the game, indexed by string keys. Automatically assembled by achievements.initialize and crossgame.loadData.
+---@class game_data
+---@field author string The author of the game.
+---@field name string The name of the game.
+---@field description string A description for the game.
+---@field gameID string A unique identifier for the game, in reverse DNS notation.
+---@field version string A game version number that is displayed to players.
+---@field specVersion string The version string of the specification that achievements follow.
+---@field iconPath string? The filepath to the game's 32x32 list icon.
+---@field cardPath string? The filepath to the game's 380x90 card art.
+---@field achievements achievement[] An array of achievements for the game.
+---@field completionPercentage number The the fractional completion of all configured achievements as a unit interval [0..1], taking into account the `scoreValue` of any achievements if configured. Only calculated when loading a game's data through the crossgame module.
+---@field keyedAchievements { [string]: achievement} All configured achievements for the game, indexed by their ID as string keys. Automatically assembled by achievements.initialize and crossgame.loadData.
 
 ---@class achievement
 ---@field name string The name of the achievement.
 ---@field description string The description of the achievement.
----@field descriptionLocked string? The description of the achievement, if it has not yet been earned.
----@field id string A unique ID by which to identify the achievement. Used in various API functions.
----@field grantedAt boolean | number False if the achievement has not been earned, otherwise the Playdate epoch second the achievement was earned at as returned by playdate.getSecondsSinceEpoch().
----@field isSecret boolean | nil If true, this achievement should not appear in any player-facing lists while the .grantedAt field is false. Defaut false.
----@field icon string | nil The filepath of the achievement's unlocked icon image, relative to the value of achievements.imagePath.
----@field iconLocked string | nil The filepath of the achievement's locked icon image, relative to the value of achievements.imagePath.
----@field progress number | nil Current progress towards unlocking the achievement, as x/.progressMax. Should not be set manually under most circumstances.
----@field progressMax number | nil Maxiumum progress possible towards the achievement before it is to be unlocked.
----@field progressIsPercentage boolean | false If false, an achievement list should display current progress as a tally "$(progress)/$(progressMax)". If true, it should be displayed as a percentage number (progress/progressMax)*100. Default false.
----@field scoreValue number | nil The weight of the achievement towards 100%-ing a game. Each achievement grants scoreValue/(total scores)% completion. Default 1.
-
--- [[ == Implementation == ]]
+---@field descriptionLocked string? The description of the achievement to use when it hasn't beeen granted.
+---@field id string A unique identifier for the achievement. This must be unique among achievements in the same bundle, but doesn't need to be unique across different bundles.
+---@field grantedAt boolean | number The the number of seconds elapsed since midnight (hour 0), January 1 2000 UTC at which the achievement was granted, or `false` if it hasn't been granted.
+---@field isSecret boolean? A reader hint indicating whether the achievement should be displayed while it has not been granted. Defaults to false.
+---@field icon string? The filepath to the achievement's icon image.
+---@field iconLocked string? The filepath of the achievement's icon image to use when it hasn't been granted.
+---@field progress number? The progress towards granting the achievement for incremental achievements.
+---@field progressMax number? The number  that `progress` must reach for the achievement to be granted for incremental achievements.
+---@field progressIsPercentage boolean? A reader hint indicating whether the achievement's progress should be displayed as a percentage instead of a fraction. Defaults to false.
+---@field scoreValue number? A reader hint indicating the relative importance of the achievement. This also influences the value returned by `achievements.completionPercentage`, where each achievement grants scoreValue/(total scores)% completion. Defaults to 1.
 
 local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"
@@ -60,14 +42,23 @@ local shared_images_updated_file <const> = "_last_seen_version.txt"
 
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
+	--- The version of the specification this library follows.
 	specVersion = "1.0",
 	flag_is_playdatesquad_api = true,
 
+	--- Whether to save game data immediately when granting or revoking an achievement.
 	forceSaveOnGrantOrRevoke = false,
 	paths = {},
 }
 
 achievements.paths.shared_data_root = shared_achievement_folder
+
+--- Returns the path to the root folder for the game with the supplied `gameID`.
+--- 
+--- This function doesn't check if the folder at the resulting path exists.
+--- 
+--- @param gameID string The ID of the game for which to get the path.
+--- @return string # The path to the root folder of the game.
 function achievements.paths.get_achievement_folder_root_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
@@ -75,6 +66,13 @@ function achievements.paths.get_achievement_folder_root_path(gameID)
 	local root = string.format(shared_achievement_folder .. "%s/", gameID)
 	return root
 end
+
+--- Returns the path to the file containing the achievement data for the game with the supplied `gameID`.
+--- 
+--- This function doesn't check if the file at the resulting path exists.
+--- 
+--- @param gameID string The ID of the game for which to get the path.
+--- @return string # The path to the file containing the achievement data for the game.
 function achievements.paths.get_achievement_data_file_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
@@ -82,6 +80,13 @@ function achievements.paths.get_achievement_data_file_path(gameID)
 	local root = achievements.paths.get_achievement_folder_root_path(gameID)
 	return root .. achievement_file_name
 end
+
+--- Returns the path to the folder containing shared images for the game with the supplied `gameID`.
+--- 
+--- This function doesn't check if the folder at the resulting path exists.
+--- 
+--- @param gameID string The ID of the game for which to get the path.
+--- @return string # The path to the folder containing shared images for the game.
 function achievements.paths.get_shared_images_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
@@ -89,6 +94,13 @@ function achievements.paths.get_shared_images_path(gameID)
 	local root = achievements.paths.get_achievement_folder_root_path(gameID)
 	return root .. shared_images_subfolder
 end
+
+--- Returns the path to the file containing the last seen version of the shared images for the game with the supplied `gameID`.
+--- 
+--- This function doesn't check if the file at the resulting path exists.
+--- 
+--- @param gameID string The ID of the game for which to get the path.
+--- @return string # The path to the file containing the last seen version of the shared images for the game.
 function achievements.paths.get_shared_images_updated_file_path(gameID)
 	if type(gameID) ~= "string" then
 		error("bad argument #1: expected string, got " .. type(gameID), 2)
@@ -97,6 +109,7 @@ function achievements.paths.get_shared_images_updated_file_path(gameID)
 	return folder .. shared_images_updated_file
 end
 
+--- Loads progression data.
 local function load_granted_data()
 	local data = json.decodeFile(achievement_file_name)
 	if not data then
@@ -106,6 +119,9 @@ local function load_granted_data()
 	achievements.progress = data.progress or {}
 end
 
+--- Serializes the current game data to JSON and writes it to the shared data folder.
+---
+--- @param force_minimize boolean Whether to minimize the output by excluding fields with default values. Defaults to false.
 local function export_data(force_minimize)
 	local data = achievements.gameData
 	-- This shouldn't actually be necessary unless the developer starts adding redundant optional fields.
@@ -124,14 +140,29 @@ local function export_data(force_minimize)
 	json.encodeToFile(achievements.paths.get_achievement_data_file_path(data.gameID), true, data)
 end
 
+--- Returns the parent directory of the supplied string path.
+--- 
+--- @param str string The string path of which to get the parent directory.
+--- @return string # The parent directory of the supplied string path.
 local function dirname(str)
 	return (string.gsub(str, "[^/\\]*$", ""))
 end
+
+--- Changes the file extension of a string path to the supplied extension.
+--- 
+--- @param str string The string path of which to change the extension.
+--- @param new_ext string The new extension to use.
+--- @return string # The modified string path.
 local function force_extension(str, new_ext)
 	return str:gsub("%.%w+$", "") .. new_ext
 end
 
--- Give this the names of the fields to copy as extra arguments and it'll return all the values as a set.
+--- Returns a set of the unique image paths for the supplied fields in configured achievements.
+--- 
+--- This function automatically adds the ".pdi" extension to the paths.
+--- 
+--- @param ... string The names of the fields to copy.
+--- @return table # A set of the unique image paths for the supplied fields.
 local function crawlImagePaths(...)
 	local filepaths = {}
 	local desired_fields = {...}
@@ -147,6 +178,11 @@ local function crawlImagePaths(...)
 	return filepaths
 end
 
+--- Copies the file at `src_path` to the supplied `dest_path`, creating any intermediate directories.
+--- 
+--- @param src_path string The path to the source file to copy.
+--- @param dest_path string The path to the destination file to copy to.
+--- @throws If the source file does not exist or if the destination path is invalid.
 local function copy_file(src_path, dest_path)
 	-- make sure the source-file exists
 	if not (playdate.file.exists(src_path) or playdate.file.isdir(src_path)) then
@@ -193,6 +229,13 @@ local function copy_file(src_path, dest_path)
 	in_file:close()
 end
 
+--- Copies the images from the game's data folder to the shared images folder.
+--- 
+--- This function skips copying if the shared folder already contains the images for the current build.
+--- 
+--- @param gameID string The ID of the game for which to copy the images.
+--- @param current_build_nr number The current build number of the game.
+--- @throws If the the version file in the shared folder can't be read or written to, or if there's an error copying the images.
 local function export_images(gameID, current_build_nr)
 	local shared_images_path = achievements.paths.get_shared_images_path(gameID)
 	playdate.file.mkdir(shared_images_path)
@@ -236,11 +279,14 @@ local function export_images(gameID, current_build_nr)
 	ver_file:close()
 end
 
+--- Does nothing and returns immediately.
 local function donothing(...) end
 
----@param ach_root  achievement_root The game data being validated.
----@param prevent_debug boolean If false, does not print debug info to the console.
--- Takes in achievement game data, validates correct data, and sets defaults.
+--- Validates the values of the supplied game data.
+--- 
+--- @param ach_root game_data The game data to validate.
+--- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
+--- @throws If any fields are invalid or if any non-optional fields are missing.
 local function validate_gamedata(ach_root, prevent_debug)
 	local print = (prevent_debug and donothing) or print
 
@@ -284,8 +330,10 @@ local function validate_gamedata(ach_root, prevent_debug)
 	end
 end
 
----@param ach achievement The achievement being validated.
--- Takes in an achievement table, validates correct data, and sets defaults.
+--- Validates the values of the supplied achievement.
+--- 
+--- @param ach achievement The achievement to validate.
+--- @throws If any fields are invalid or if any non-optional fields are missing.
 local function validate_achievement(ach)
 	-- Required Strings
 	for _, key in ipairs{"name", "description", "id",} do
@@ -334,8 +382,13 @@ local function validate_achievement(ach)
 	end
 end
 
----@param gamedata achievement_root
----@param prevent_debug boolean
+--- Initializes the achievement system for the game.
+--- 
+--- Call this function once, before using other functions in the library.
+--- 
+--- @param gamedata game_data The game data and achievement definitions to manage.
+--- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
+--- @throws If the supplied data is invalid.
 function achievements.initialize(gamedata, prevent_debug)
 	local print = (prevent_debug and donothing) or print
 	print("------")
@@ -368,16 +421,27 @@ function achievements.initialize(gamedata, prevent_debug)
 	print("------")
 end
 
---[[ Achievement Management Functions ]]--
-
+--- Returns the achievement with the supplied `achievement_id`.
+--- 
+--- @param achievement_id string The ID of the achievement to retrieve.
+--- @return achievement|boolean # The achievement, or false if it doesn't exist.
 achievements.getInfo = function(achievement_id)
 	return achievements.keyedAchievements[achievement_id] or false
 end
 
+--- Returns whether the achievement with the supplied `achievement_id` has been granted.
+--- 
+--- @param achievement_id string The ID of the achievement to check.
+--- @return boolean # Whether the achievement has been granted.
 achievements.isGranted = function(achievement_id)
 	return achievements.granted[achievement_id] ~= nil
 end
 
+--- Grants the achievement with the supplied `achievement_id`.
+--- 
+--- @param achievement_id string The ID of the achievement to grant.
+--- @return boolean # Whether the achievement was successfully granted.
+--- @throws If the achievement doesn't exist.
 achievements.grant = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
@@ -397,6 +461,11 @@ achievements.grant = function(achievement_id)
 	return true
 end
 
+--- Revokes the achievement with the supplied `achievement_id`.
+--- 
+--- @param achievement_id string The ID of the achievement to revoke.
+--- @return boolean # Whether the achievement was successfully revoked.
+--- @throws If the achievement doesn't exist.
 achievements.revoke = function(achievement_id)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
@@ -411,6 +480,12 @@ achievements.revoke = function(achievement_id)
 	return true
 end
 
+--- Advances the achievement with the supplied `achievement_id` to the specified progress.
+--- 
+--- @param achievement_id string The ID of the achievement to advance.
+--- @param advance_to number The progress to advance to.
+--- @return boolean # Whether the achievement was successfully advanced.
+--- @throws If the achievement doesn't exist or doesn't support incremental progress.
 achievements.advanceTo = function(achievement_id, advance_to)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
@@ -433,6 +508,12 @@ achievements.advanceTo = function(achievement_id, advance_to)
 	return true
 end
 
+--- Advances the achievement with the supplied `achievement_id` by the specified amount.
+--- 
+--- @param achievement_id string The ID of the achievement to advance.
+--- @param advance_by number The amount to advance the achievement by.
+--- @return boolean # Whether the achievement was successfully advanced.
+--- @throws If the achievement doesn't exist or doesn't support incremental progress.
 achievements.advance = function(achievement_id, advance_by)
 	local ach = achievements.keyedAchievements[achievement_id]
 	if not ach then
@@ -447,6 +528,9 @@ achievements.advance = function(achievement_id, advance_by)
 	return achievements.advanceTo(achievement_id, progress + advance_by)
 end
 
+--- Returns the fractional completion of all configured achievements, taking into account the `scoreValue` of any achievements if configured.
+--- 
+--- @return number # The completion percentage as a float between 0 and 1.
 achievements.completionPercentage = function()
 	local completion_total = 0
 	local completion_obtained = 0
@@ -463,6 +547,7 @@ achievements.completionPercentage = function()
 	return completion_total > 0 and completion_obtained / completion_total or 1
 end
 
+--- Serializes the current game data to JSON and writes it to the data folder.
 function achievements.save()
 	export_data()
 	local save_table = {

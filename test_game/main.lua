@@ -3,7 +3,7 @@ local gfx = playdate.graphics
 import "achievements/all"
 
 -- Copied from the comments in the other file...
----@type achievement_root
+---@type game_data
 local achievementData = {
     gameID = "com.example.achievementtest",
     name = "My Awesome Game",
