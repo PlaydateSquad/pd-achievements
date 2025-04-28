@@ -104,7 +104,7 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 | `id`                   | `string`  | Uniquely identifies the achievement. **Required.**                                                                                                |
 | `name`                 | `string`  | Nicely formatted name for the achievement. Shown to the player. **Required.**                                                                     |
 | `description`          | `string`  | Nicely formatted description for the achievement. Shown to the player. **Required.**                                                              |
-| `descriptionLocked`    | `string?` | Nicely formatted description for the achievement shown until it is granted. Shown the the player. Defaults to `nil`.                              |
+| `descriptionLocked`    | `string?` | Nicely formatted description for the achievement shown until it is granted. Shown to the player. Defaults to the value of `description`.          |
 | `isSecret`             | `bool?`   | Determines if the achievement should be hidden until granted. Defaults to `false`.                                                                |
 | `icon`                 | `string?` | Path to the achievement’s 32x32 `.png` icon. The root folder is where "main.lua" is. Defaults to `nil`.                                           |
 | `iconLocked`           | `string?` | Path to the achievement’s 32x32 `.png` icon that’s shown until the achievement is granted. Defaults to `nil`.                                     |
