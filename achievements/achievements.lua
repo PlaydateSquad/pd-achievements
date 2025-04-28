@@ -43,7 +43,7 @@ local shared_images_updated_file <const> = "_last_seen_version.txt"
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
 	--- The version of the specification this library follows.
-	specVersion = "1.0",
+	specVersion = "1.0.0",
 	flag_is_playdatesquad_api = true,
 
 	--- Whether to save game data immediately when granting or revoking an achievement.

@@ -1,5 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/playdatesquad/pd-achievements/blob/v1.0.0/achievements.schema.json",
 	"type": "object",
 	"title": "Playdate Squad Achievements Schema",
 	"description": "The necessary structure for a game's achievements.json file.",
@@ -13,6 +14,10 @@
 		"achievements"
 	],
 	"properties": {
+		"specVersion": {
+			"const": "1.0.0",
+			"description": "The specification version this data is based on. This field defines this data file as following schema ID `https://github.com/playdatesquad/pd-achievements/blob/v<specVersion>/achievements.schema.json`"
+		},
 		"gameID": {
 			"type": "string",
 			"description": "Bundle identifier for your game."
@@ -40,10 +45,6 @@
 		"cardPath": {
 			"type": "string",
 			"description": "Path to a 380x90 .pdi image to use as your game's card art, relative to this file. Doesn't support transparency."
-		},
-		"specVersion": {
-			"type": "string",
-			"description": "The specification version this data is based on in semver."
 		},
 		"achievements": {
 			"type": "array",
