@@ -54,6 +54,14 @@ The Lua reference library includes 4 separate modules, all of which are optional
 - `viewer.lua`: [Show an in-game achievements viewer](/docs/viewer.md)
 - `crossgame.lua`: [Read achievements from other games](/docs/crossgame.md)
 
+### Attribution
+
+For Catalog developers, we encourage you to add this to the Credits section of your game's Catalog web page:
+
+```<blockquote>🏆 This game supports <a href="https://playdatesquad.github.io/pd-achievements"><b>Playdate Achievements</b></a>!</blockquote>```
+
+![This game supports Playdate Achievements!](docs/catalog_box.png)
+
 ## Games
 
 Check out the [official website](https://playdatesquad.github.io/pd-achievements/) for a list of known games which award Playdate Achievements and integrate with viewers that support the schema. If you add Playdate Achievements to your game, open a pull request to add your game to the page.
