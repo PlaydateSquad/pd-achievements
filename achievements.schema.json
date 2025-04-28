@@ -15,8 +15,8 @@
 	],
 	"properties": {
 		"specVersion": {
-			"const": "v1.0.0",
-			"description": "The specification version this data is based on. This field defines this data file as following schema ID `https://github.com/playdatesquad/pd-achievements/blob/<specVersion>/achievements.schema.json`"
+			"const": "1.0.0",
+			"description": "The specification version this data is based on. This field defines this data file as following schema ID `https://github.com/playdatesquad/pd-achievements/blob/v<specVersion>/achievements.schema.json`"
 		},
 		"gameID": {
 			"type": "string",
