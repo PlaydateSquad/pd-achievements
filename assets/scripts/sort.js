@@ -1,10 +1,11 @@
 const sortContainerSelector = ".game-grid"; // Selector for the container of items to sort
 const filterBarSelector = "#filter-bar"; // Selector for target element of the sort and filter controls
 const toggleButtonClass = "toggle"; // Class name applied to the sort direction toggle element
+const defaultSort = "sortByDate"; // The default sort option
 
 let sort = {
-  direction: 1, // ascending
-  sortFn: "sortByTitle", // default implemented via liquid in README.md
+  direction: -1, // descending
+  sortFn: defaultSort,
 
   init: function () {
     const searchInput = document.createElement("input");
@@ -32,10 +33,10 @@ let sort = {
     const select = document.createElement("select");
 
     const options = [
+      { value: "sortByDate", label: "Date" }, // default comes first
       { value: "sortByTitle", label: "Title" },
       { value: "sortByAuthor", label: "Author" },
       { value: "sortByCount", label: "Achievements" },
-      { value: "sortByDate", label: "Date" },
     ];
 
     options.forEach((option) => {
@@ -51,7 +52,7 @@ let sort = {
     });
 
     const arrow = document.createElement("a");
-    arrow.textContent = "↑";
+    arrow.textContent = "↓"; // descending
     arrow.classList.add(toggleButtonClass);
 
     arrow.addEventListener("click", (event) => {
@@ -68,6 +69,9 @@ let sort = {
     const filterBar = document.querySelector(filterBarSelector);
     filterBar.appendChild(searchInput);
     filterBar.appendChild(sortSelect);
+
+    // apply the intended default to the items on the page
+    sort[sort.sortFn]();
   },
 
   sortByTitle: function () {
