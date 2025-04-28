@@ -1,23 +1,53 @@
-# crossgame.lua
+# Reading Achievements From Other Games
 
-TODO: refine documentation
+## The `crossgame.lua` Module
 
-## Crossgame Module
+This module enables games to inspect the achievements that _other_ games have written to `/Shared` on the same Playdate. This makes it possible to create cross-game experiences and achievements. For example, you might unlock a custom character skin in your game if the player has played another game to which that character belongs.
 
-Adds helper functions for dealing with data written by other games. To use it, add `crossgame.lua` to your project and import it after `achievements.lua`.
+> NOTE: This is a reference implementation provided for convenience. You may use it as-is, or read achievement data matching the [schema](../achievements.schema.json) directly from `/Shared/Achievements/`.
 
-Needs to be filled out through the development of a full reader.
+## Sample Usage
 
-### `achievements.crossgame.gamePlayed(game_id)`
+Add `crossgame.lua` to your project and import it after `achievements.lua`:
 
-Returns `true` if there is an achievement folder for the given gameID, returns `false` otherwise.
+```lua
+-- setup
+import "/path/to/achievements"
+import "/path/to/crossgame"
+```
 
-### `achievements.crossgame.listGames()`
+Perform an action based on whether the player has played a particular game:
 
-Returns an array table containing the gameID's of all existing achievement folders.
+```lua
+-- during gameplay
+if achievements.crossgame.gamePlayed("wtf.rae.rowbotrally") then
+	print("Hello, fellow Fish Bowl friend!")
+end
+```
 
-### `achievements.crossgame.getData(game_id)`
+## API Reference
 
-Returns the exported achievementData of the requested game. See the type declarations in `achievements.lua` for more information.
+### Functions
 
-TODO: Better document exactly what's in the standard and what parts need to be filled in by the user versus being automatically added on export.
+#### achievements.crossgame.gamePlayed(`string`: _game_id_)
+
+Reports whether the specified game has been played on this Playdate, as indicated by the presence of a Playdate Achievements directory for the game in `/Shared`.
+
+Returns `true` if there is an achievement folder for the given `game_id`, otherwise `false`.
+
+#### achievements.crossgame.listGames()
+
+Returns a list of all games for which Playdate Achievement data exists in `/Shared` on this Playdate, as an array table containing their game IDs.
+
+#### achievements.crossgame.getData(`string`: _game_id_)
+
+Returns the exported `achievementData` for the specified `game_id`. See the [achievement type declarations](achievements.md) for more details on the format of the returned data. In addition to the information included in the schema, the data returned from this function also includes:
+
+- `.keyedAchievements` (`{ string: achievement }`): A table which includes all defined achievements indexed by their game ID string.
+- `.completionPercentage` (`float`): The total weighted completion percentage in the range [0-1], as would be returned by `achievements.completionPercentage()`.
+
+#### achievements.crossgame.loadImage(`string`: _game_id_, `string`: _filepath_)
+
+Loads an image from the specified `filepath` relative to the shared image directory of the specified `game_id`. Can be used to load images specified in the game's `achievementData` blob, such as its game card or achievement icons.
+
+Returns a `playdate.graphics.image`, or `nil` if none is found.
