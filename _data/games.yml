@@ -101,3 +101,13 @@
   releaseDate: 2024-09-24
   lastAddedDate: 2025-12-31
   description:
+
+- title: Dolphin Splash!
+  author: Spelbaar®
+  url: https://play.date/games/dolphin-splash/
+  image: ./assets/images/games/dolphin-splash.png
+  color: "#3388FF"
+  achievementCount: 9
+  releaseDate: 2024-07-08
+  lastAddedDate: 2024-07-08
+  description: Crank to swim! Play as a dolphin in this collection of time-trials and treasure hunts.
