@@ -35,7 +35,7 @@ local gfx <const> = playdate.graphics
 
    - If you call toast() on an achievement that hasn't yet been completed, a
      progress toast will be displayed. You can trigger these to appear
-     automatically when an achievement is advanced via advanceBy() or
+     automatically when an achievement is advanced via advance() or
      advanceTo() by setting toastOnAdvance to true (or to a number; see below).
 
    By default, toasts will render by temporarily overriding your game's
@@ -69,7 +69,7 @@ local defaultConfig = {
 
    -- Set this to true when calling initialize() to automatically show a toast
    -- whenever an achievement's progress is advanced via advanceTo() or
-   -- advanceBy(). Or, set this to a number between 0 and 1 to show a toast
+   -- advance(). Or, set this to a number between 0 and 1 to show a toast
    -- whenever an achievement's progress is advanced past that fraction of its
    -- maximum (but has not yet been granted).
    --
@@ -996,11 +996,11 @@ function at.setToastOnAdvance(autoToast)
       originalAdvanceToFunction = achievements.advanceTo
    end
    if not originalAdvanceByFunction then
-      originalAdvanceByFunction = achievements.advanceBy
+      originalAdvanceByFunction = achievements.advance
    end
 
    achievements.advanceTo = autoToast and advanceToWithToast or originalAdvanceToFunction
-   achievements.advanceBy = autoToast and advanceByWithToast or originalAdvanceByFunction
+   achievements.advance = autoToast and advanceByWithToast or originalAdvanceByFunction
    if type(autoToast) == "number" then
       toastOnAdvanceFraction = autoToast
    else
