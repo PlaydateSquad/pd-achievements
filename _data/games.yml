@@ -4,8 +4,8 @@
 #   image: ./assets/images/games/your-game.png # The path to 380x90px B/W banner image for your game
 #   color: "#FFFFFF" # A valid CSS color string to use as a highlight
 #   achievementCount: 0 # The number of Playdate Achievements in your game
-#   releaseDate: # The game release date in MM/DD/YYYY format. A future date may be provided for unreleased games.
-#   lastAddedDate: # The last time more achievements were added, in MM/DD/YYYY format. A future date may be provided for released games that haven't yet added achievements.
+#   releaseDate: # The game release date in YYYY-MM-DD format. A future date may be provided for unreleased games.
+#   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
 - title: Bona Fido
