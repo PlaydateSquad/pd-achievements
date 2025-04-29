@@ -111,3 +111,13 @@
   releaseDate: 2024-07-08
   lastAddedDate: 2024-07-08
   description: Crank to swim! Play as a dolphin in this collection of time-trials and treasure hunts.
+
+- title: AAoyue I
+  author: Desmu
+  url: https://play.date/games/aaoyue-i/
+  image: ./assets/images/games/aaoyue-i.png
+  color: "#0077C7"
+  achievementCount: 7
+  releaseDate: 2022-09-13
+  lastAddedDate: 2025-04-29
+  description: It's like Wordle but only with vowels.
