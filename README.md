@@ -60,7 +60,7 @@ For Catalog developers, we encourage you to add this _optional_ link to the Cred
 ```
 <blockquote>🏆 This game supports <a href="https://playdatesquad.github.io/pd-achievements">Playdate Achievements</a>!</blockquote>
 ```
-![This game supports Playdate Achievements!](docs/images/catalog_box.png)
+![This game supports Playdate Achievements!](docs/images/catalog_attribution_preview.png)
 
 ## Games
 
