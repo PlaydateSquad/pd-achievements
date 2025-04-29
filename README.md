@@ -58,9 +58,9 @@ The Lua reference library includes 4 separate modules, all of which are optional
 
 For Catalog developers, we encourage you to add this _optional_ link to the Credits section of your game's Catalog web page:
 ```
-<blockquote>🏆 This game supports <a href="https://playdatesquad.github.io/pd-achievements"><b>Playdate Achievements</b></a>!</blockquote>
+<blockquote>🏆 This game supports <a href="https://playdatesquad.github.io/pd-achievements">Playdate Achievements</a>!</blockquote>
 ```
-![This game supports Playdate Achievements!](docs/catalog_box.png)
+![This game supports Playdate Achievements!](docs/images/catalog_box.png)
 
 ## Games
 
