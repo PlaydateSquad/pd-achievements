@@ -46,7 +46,7 @@ Of course, games may also present their earned achievements themselves. Addition
 
 ## Show Me the Games!
 
-It’s all about the games. Here’s a (non-comprehensive) list of games that award Playdate Achievements. Made your own? [Add it to the list!](#made-a-game-for-playdate)
+It’s all about the games. Here’s a (non-comprehensive) list of games that award Playdate Achievements. Made your own? [Add it to the list!](https://github.com/PlaydateSquad/pd-achievements/blob/gh-pages/README.md)
 
 <div id="filter-bar"><!-- anchor for sort.js --></div>
 
@@ -80,7 +80,7 @@ The Playdate Achievements framework makes it quick and easy to add achievements 
 2. Notify players when they earn achievements. _(optional)_
 3. Display an in-game achievements viewer. _(optional)_
 
-Don’t forget to [add it to this page](https://github.com/PlaydateSquad/pd-achievements#contributing) when you’re finished!
+Don’t forget to [add it to this page](https://github.com/PlaydateSquad/pd-achievements/blob/gh-pages/README.md) when you’re finished!
 
 </div> <!-- games section -->
 

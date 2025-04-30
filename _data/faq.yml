@@ -20,7 +20,7 @@
 
 - question: Can I add my game to this page?
   answer: |
-    Yes! All games that integrate Playdate Achievements are welcome! [Open a pull request](https://github.com/PlaydateSquad/pd-achievements/compare) to add your game to the list and a member of the community will review and merge the changes.
+    Yes! All games that integrate Playdate Achievements are welcome! [Follow our game submission guidelines](https://github.com/PlaydateSquad/pd-achievements/blob/gh-pages/README.md) to open a pull request and a member of the community will review and merge the changes.
 
 - question: How do I report a bug?
   answer: |
