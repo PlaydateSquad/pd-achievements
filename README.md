@@ -27,7 +27,7 @@ We impose a few hard requirements which games must meet in order to be listed:
 
 1. **Achievements:** If you’ll allow us to state the obvious, your game must implement the Playdate Achievements standard and include one or more achievements for the player to unlock.
 2. **Release Window:** Your game must be released or have a scheduled release date within the next 60 days. Games get abandoned all the time. We want to give proper attention to the games players can play _now_, and avoid cluttering the page with games that may never release.
-3. **Game URL:** Your game must have a dedicated URL to which your listing can link. This provides a place for players to go to learn more about your game, and serves as an additional signal that the project will release as planned. Any page dedicated exclusively to your game will do, whether its a Catalog listing, itch.io page, or personal website.
+3. **Game URL:** Your game must have a dedicated URL to which your listing can link. This provides a place for players to go to learn more about your game, and serves as an additional signal that the project will release as planned. Any page dedicated exclusively to your game will do, whether it’s a Catalog listing, itch.io page, or personal website.
 4. **Listing Content**. Regardless of the age appropriateness of your game, please keep the image, title, and description of your game listing family friendly.
 5. **Respectful:** Games that discriminate or disrespect any individuals or groups based on race, color, religion, sex, gender, age, origin, or disability will not be tolerated.
 
