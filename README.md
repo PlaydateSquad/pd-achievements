@@ -1,108 +1,67 @@
-<div class="section" id="hero">
+# 🏆 Add _Your Game_ to the Playdate Achievements Page!
 
-# 🏆 Playdate Achievements
+> [!NOTE]
+> This branch is reserved exclusively for the [Playdate Achievements website](https://playdatesquad.github.io/pd-achievements/), which is hosted with [GitHub Pages](https://pages.github.com). If you haven’t yet added Playdate Achievements to your game, [start here](https://github.com/PlaydateSquad/pd-achievements) to learn about the Playdate Achievements standard and Lua reference library.
 
-<img src="./assets/images/trophy-hero.png" class="centered" alt="Playdate Achievements Logo"/>
+## Introduction
 
-##### An open achievement standard for the Playdate console.
+The Playdate Achivements standard is only as good as the games that support it. We aim to show off all games that award Playdate Achievements so the community can easily find and enjoy them. If you’ve already integrated Playdate Achievements in your game, you’ve come to the right place. Review the submission criteria and follow the steps below to add your game to the page.
 
-1. _Play_ Playdate games!
-2. _Earn_ achievements!
-3. _View_ them in your Trophy Case!
+## Submission Guidelines
 
-Playdate Achievements is a community project establishing an open standard for achievements in [Playdate](https://play.date)™ games. Playdate is fun! Games on Playdate are fun! Achievements in games on Playdate are fun! Having a standard ensures a consistent experience for players, and makes it possible to view achievements earned across games in one place.
+We want to feature as many games that include Playdate Achievements as possible. We also want to ensure a great experience for players and other developers. These guidelines help ensure that games promoted on the page can be properly enjoyed by the entire community.
 
-{% assign achievementCount = 0 %}
-{% for game in site.data.games %}
-{% assign achievementCount = achievementCount | plus: game.achievementCount %}
-{% endfor %}
+### Inclusive by Default
 
-<div class="stat-grid grid">
-	<div class="stat">
-	<div class="number">{{ site.data.games | size }}</div>
-		Games to Play
-	</div>
-	<div class="stat">
-		<div class="number">{{ achievementCount }}</div>
-		Achievements to Earn
-	</div>
-</div>
+Playdate Achievements is an open standard. As such, we take an open and inclusive approach by default, and there are _no restrictions_ with regard to any of the following:
 
-</div> <!-- hero section -->
+- **Distribution Channel:** Games available from Catalog, [itch.io](itch.io), your own website, or anywhere else you choose to host them are welcome.
+- **Language/Platform:** Games written in any language—Lua, C, Swift, or even converted from Pulp via [Pulp Mill](https://github.com/nstbayless/pulp-to-lua)—are welcome.
+- **Implementation Approach:** Games are welcome regardless of whether they make use of the [Lua Reference Library](https://github.com/PlaydateSquad/pd-achievements/blob/main/README.md#documentation), or implement the open [schema](https://github.com/PlaydateSquad/pd-achievements/blob/main/achievements.schema.json) on their own.
+- **Game Content:** We are not a ratings board. Games of all kinds, including those with mature themes, are welcome as long as the listing itself remains family friendly.
+- **Author(s):** And, of course, your game is welcome regardless of your background, race, color, religion, sex, gender, age, origin, or disability. This is an open platform for _everyone_.
 
-<div class="section">
+### Submission Requirements
 
-## _Everything_ On Display
+We impose a few hard requirements which games must meet in order to be listed:
 
-[Trophy Case](https://gurtt.dev/trophy-case) is a dedicated viewer which displays the achievements you’ve earned across _all_ Playdate games in one place. Trophy Case was designed in parallel with the Playdate Achievements standard, providing first-class support for its features and showcasing any games which choose to integrate with it.
+1. **Achievements:** If you’ll allow us to state the obvious, your game must implement the Playdate Achievements standard and include one or more achievements for the player to unlock.
+2. **Release Window:** Your game must be released or have a scheduled release date within the next 60 days. Games get abandoned all the time. We want to give proper attention to the games players can play _now_, and avoid cluttering the page with games that may never release.
+3. **Game URL:** Your game must have a dedicated URL to which your listing can link. This provides a place for players to go to learn more about your game, and serves as an additional signal that the project will release as planned. Any page dedicated exclusively to your game will do, whether its a Catalog listing, itch.io page, or personal website.
+4. **Listing Content**. Regardless of the age appropriateness of your game, please keep the image, title, and description of your game listing family friendly.
+5. **Respectful:** Games that discriminate or disrespect any individuals or groups based on race, color, religion, sex, gender, age, origin, or disability will not be tolerated.
 
-<img src="./assets/images/viewers/trophy-case-pd.png" class="centered highDPI" alt="Trophy Case"/>
+_In the event that any of these items are in question, it is the sole discretion of the Playdate Achievements community to decide how to proceed._
 
-Of course, games may also present their earned achievements themselves. Additionally, the open standard makes it possible for others to create dedicated achievement viewer apps in the future.
+We also kindly ask that you abide by [best practices](https://gurtt.dev/trophy-case/dev) for creating Playdate Achievements. While there is no review process, we hope you’ll help us create a collection of games that provide truly fun, interesting, and attainable achievements that keep players engaged rather than pad out playtimes. Let’s show the world that achievements, done right, amplify the fun!
 
-</div> <!-- trophy case section -->
+## Submitting Your Game
 
-<div class="section" id="games">
+Follow the instructions below to submit your game for display on the [Playdate Achievements page](https://playdatesquad.github.io/pd-achievements/).
 
-## Show Me the Games!
+> [!NOTE]
+> You can open a pull request directly _in this repo_ by [editing `_data/games.yml` with the GitHub file editor](https://github.com/PlaydateSquad/pd-achievements/edit/gh-pages/_data/games.yml), allowing you to skip step 1. However, with this approach you won’t have the chance to preview the resulting page before creating your pull request.
 
-It’s all about the games. Here’s a (non-comprehensive) list of games that award Playdate Achievements. Made your own? [Add it to the list!](#made-a-game-for-playdate)
+1. [Fork this repository](https://github.com/PlaydateSquad/pd-achievements/fork) and _uncheck_ the **Copy the `main` branch only** checkbox—you’ll need the `gh-pages` branch to make your change. Optionally create a new branch from the `gh-pages` branch with the name of your game to work on.
 
-<div id="filter-bar"><!-- anchor for sort.js --></div>
+2. Edit `_data/games.yml`, copying the commented template and supplying the requisite information for your game. You’ll need to supply the following (**fields are required unless otherwise indicated**):
 
-<div class="game-grid grid">
+   | Key                | Type        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+   | ------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | `title`            | `string`    | The title of your game                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+   | `author`           | `string`    | Your name, alias, or studio—however you’d like attribution is fine.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+   | `url`              | `URL`       | A link to a download page for your game. This could be a link to your game page in [Catalog](https://play.date/games), on [itch.io](itch.io), or a personal site.                                                                                                                                                                                                                                                                                                                                                                                         |
+   | `image`            | `URL`       | A 380x90 black and white PNG image featuring your game’s cover art to display on the page. Use the same image you provided for `cardPath` in your game’s achievement data. Place the image in the `assets/images/games/` directory and reference it by relative path.                                                                                                                                                                                                                                                                                     |
+   | `color`            | `CSS color` | A highlight color used as a bold border on your game listing. This can be any valid CSS color string, such as a hex value, e.g. `#FFFF00`.                                                                                                                                                                                                                                                                                                                                                                                                                |
+   | `achievementCount` | `int`       | The number of Playdate Achievements available in your game. Include any hidden achievements.                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+   | `releaseDate`      | `date`      | The date your game released, in `YYYY-MM-DD` format. If your game hasn’t released yet, you may provide a release date up to 60 days in the future. <br><br> A "New" badge will appear on games that released within the past 30 days. A "Soon" badge will appear on games that have a future release date.                                                                                                                                                                                                                                                |
+   | `lastAddedDate`    | `date?`     | (_optional_) The date new achievements were last added to your game, in `YYYY-MM-DD` format. If your game has already released but doesn’t yet support achievements, provide a date up to 60 days in the future on which you expect an update with achievements to release. Defaults to the release date if none is provided. <br><br> A "More" badge will appear on games that have added achievements within the past 30 days. A "Soon" badge will appear on games that have a last-added date in the future (even if the release date is in the past). |
+   | `description`      | `string?`   | (_optional_) A brief, one sentence description of your game. _This is not currently displayed_, but providing it now gives us flexibility to expose more detail about games in the future. Defaults to `nil`.                                                                                                                                                                                                                                                                                                                                             |
 
-{% assign sortedGames = site.data.games | sort: 'title' %}
-{% for game in sortedGames %}
+3. Commit your changes and push them to your fork. Include the name of your game in your commit message.
 
-<div class="game" data-release-date="{{ game.releaseDate }}" data-last-added-date="{{ game.lastAddedDate | default: game.releaseDate }}" data-title="{{ game.title }}" data-author="{{ game.author }}" data-achievement-count="{{ game.achievementCount | default: 0 }}">
-	<a {% if game.url %} href="{{ game.url }}" {% endif %}>
-		<div class="banner"><img src="{{ game.image }}" width=380 height=90 alt="{{ game.title }}" style="border-color: {{ game.color }}"/></div>
-		{% if game.achievementCount %}<div class='count'>{{ game.achievementCount }}</div>{% endif %}
-		<div class='title'>{{ game.title }}</div>
-		<div class='author'>By {{ game.author }}</div>
-    </a>
-</div>
+4. Navigate to the **Settings** tab and select **Pages** in the left sidebar. Ensure your **Build and Deployment** settings are set to deploy from the root of the branch you just pushed your changes to, then click **Save**. The link in the callout at the top contains the URL of your live site where you can preview your changes. It will build automatically after saving the deployment branch setting—check the **Actions** tab to observe progress or view any errors.
 
-{% endfor %}
+5. When ready, [open a pull request](https://github.com/PlaydateSquad/pd-achievements/compare/gh-pages...gh-pages) from your fork to this repo and a member of the community will review and merge your change. Be sure to select the `gh-pages` branch as your target in the base repository.
 
-</div> <!-- game grid -->
-
-<div class="grid">
-	<p class="footnote">* These games are available to play now and will support Playdate Achievements in a future update.</p>
-</div>
-
-### Made a Game for Playdate?
-
-The Playdate Achievements framework makes it quick and easy to add achievements to your game! [Check out the Getting Started Guide](https://github.com/PlaydateSquad/pd-achievements/blob/main/README.md) in the [`pd-achievements` repo](https://github.com/PlaydateSquad/pd-achievements), which provides simple instructions along with everything you need to:
-
-1. Grant achievements that integrate with Trophy Case.
-2. Notify players when they earn achievements. _(optional)_
-3. Display an in-game achievements viewer. _(optional)_
-
-Don’t forget to [add it to this page](https://github.com/PlaydateSquad/pd-achievements#contributing) when you’re finished!
-
-</div> <!-- games section -->
-
-<div class="section" id="faq_">
-
-## FAQ
-
-{% for faq in site.data.faq %}
-
-<details><summary>{{ faq.question }}</summary>{{ faq.answer | markdownify }}</details>
-
-{% endfor %}
-
-<div class="footer mt-5 pt-3">
-
-Playdate is a registered trademark of [Panic](https://panic.com/). Playdate Achievements is a community project, and is not affiliated with, endorsed by, or sponsored by Panic (but we’re confident they think it’s cool).
-
-{% if site.github.private != true and site.github.license %}
-
-This site is open source. {% github_edit_link "Improve this page" %}.
-
-{% endif %}
-
-</div> <!-- footer -->
-</div> <!-- faq section -->
+We look forward to featuring your game!
