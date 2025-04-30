@@ -56,7 +56,7 @@ The Lua reference library includes 4 separate modules, all of which are optional
 
 ## Games
 
-Check out the [official website](https://playdatesquad.github.io/pd-achievements/) for a list of known games which award Playdate Achievements and integrate with viewers that support the schema. If you add Playdate Achievements to your game, open a pull request to add your game to the page.
+Check out the [official website](https://playdatesquad.github.io/pd-achievements/) for a list of known games which award Playdate Achievements and integrate with viewers that support the schema. If you add Playdate Achievements to your game, [follow our submission guidelines](https://github.com/PlaydateSquad/pd-achievements/blob/gh-pages/README.md) to add your game to the page.
 
 ## Achievement Viewers
 
