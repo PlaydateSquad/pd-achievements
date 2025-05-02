@@ -121,3 +121,13 @@
   releaseDate: 2022-09-13
   lastAddedDate: 2025-04-29
   description: It's like Wordle but only with vowels.
+
+- title: Ribbit Rogue
+  author: Justin Searcy
+  url: https://play.date/games/ribbit-rogue/
+  image: ./assets/images/games/ribbit-rogue.png
+  color: "#08917d"
+  achievementCount: 26
+  releaseDate: 2025-04-22
+  lastAddedDate: 2025-05-02
+  description: A dice deckbuilding roguelike.
