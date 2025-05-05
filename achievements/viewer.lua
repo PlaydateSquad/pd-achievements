@@ -573,6 +573,9 @@ function av.backupUserSettings()
    if m.backupDisplayScale == nil then
       m.backupDisplayScale = playdate.display.getScale()
    end
+   if m.backupDrawMode == nil then
+      m.backupDrawMode = gfx.getImageDrawMode()
+   end
 end
 
 function av.restoreUserSettings()
@@ -591,6 +594,9 @@ function av.restoreUserSettings()
    if m.handlingInput then
       playdate.inputHandlers.pop()
       m.handlingInput = false
+   end
+   if m.backupDrawMode then
+      gfx.setImageDrawMode(m.backupDrawMode)
    end
 end
 
