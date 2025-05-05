@@ -64,6 +64,12 @@ achievements.viewer.launch()
 
 ## API Reference
 
+### Properties
+
+#### `string` achievements.viewer.versionNumber
+
+Version number of this module.
+
 ### Functions
 
 #### achievements.viewer.initialize(`table?`: _config_)

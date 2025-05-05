@@ -1365,6 +1365,7 @@ achievements.viewer = {
    forceExit = av.forceExit,
    hasLaunched = av.hasLaunched,
    setVolume = av.setVolume,
-
+   --version number of this module
+   versionNumber = "1.0.0",
    getCache = function() return persistentCache end,
 }

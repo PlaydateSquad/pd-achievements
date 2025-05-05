@@ -48,6 +48,10 @@ achievements = {
 
 	--- Whether to save game data immediately when granting or revoking an achievement.
 	forceSaveOnGrantOrRevoke = false,
+
+	--version number of this module
+	versionNumber = "1.0.0",
+
 	paths = {},
 }
 
