@@ -121,9 +121,9 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 
 If this flag is set to `true` then achievements will be saved to disk every time an achievement is newly granted or revoked. Defaults to `false`.
 
-#### `{ game_id: achievement }`: achievements.keyedAchievements
+#### `{ id: achievement }`: achievements.keyedAchievements
 
-A table containing all defined achievements indexed by their game ID string.
+A table containing all defined achievements indexed by their achievement ID string.
 
 ### Functions
 
