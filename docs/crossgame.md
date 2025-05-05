@@ -43,7 +43,7 @@ Returns a list of all games for which Playdate Achievement data exists in `/Shar
 
 Returns the exported `achievementData` for the specified `game_id`. See the [achievement type declarations](achievements.md) for more details on the format of the returned data. In addition to the information included in the schema, the data returned from this function also includes:
 
-- `.keyedAchievements` (`{ string: achievement }`): A table which includes all defined achievements indexed by their game ID string.
+- `.keyedAchievements` (`{ string: achievement }`): A table which includes all defined achievements indexed by their achievement ID string.
 - `.completionPercentage` (`float`): The total weighted completion percentage in the range [0-1], as would be returned by `achievements.completionPercentage()`.
 
 #### achievements.crossgame.loadImage(`string`: _game_id_, `string`: _filepath_)
