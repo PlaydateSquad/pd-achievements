@@ -1,10 +1,11 @@
 const sortContainerSelector = ".game-grid"; // Selector for the container of items to sort
 const filterBarSelector = "#filter-bar"; // Selector for target element of the sort and filter controls
 const toggleButtonClass = "toggle"; // Class name applied to the sort direction toggle element
-const defaultSort = "sortByDate"; // The default sort option
+const defaultSort = "sortByBadge"; // The default sort option
+const defaultSortDirection = 1; // ascending
 
 let sort = {
-  direction: -1, // descending
+  direction: defaultSortDirection,
   sortFn: defaultSort,
 
   init: function () {
@@ -33,7 +34,8 @@ let sort = {
     const select = document.createElement("select");
 
     const options = [
-      { value: "sortByDate", label: "Date" }, // default comes first
+      { value: "sortByBadge", label: "Default" }, // default comes first
+      { value: "sortByDate", label: "Date" },
       { value: "sortByTitle", label: "Title" },
       { value: "sortByAuthor", label: "Author" },
       { value: "sortByCount", label: "Achievements" },
@@ -52,7 +54,7 @@ let sort = {
     });
 
     const arrow = document.createElement("a");
-    arrow.textContent = "↓"; // descending
+    arrow.textContent = sort.direction > 0 ? "↑" : "↓";
     arrow.classList.add(toggleButtonClass);
 
     arrow.addEventListener("click", (event) => {
@@ -127,6 +129,38 @@ let sort = {
           ? sort.direction
           : -sort.direction
       )
+      .forEach((node) => list.appendChild(node));
+  },
+
+  sortByBadge: function () {
+    const list = document.querySelector(sortContainerSelector);
+
+    [...list.children]
+      .sort((a, b) => {
+        const aBadgeGroup = a.dataset.badgeGroup || 0;
+        const bBadgeGroup = b.dataset.badgeGroup || 0;
+
+        if (aBadgeGroup == bBadgeGroup) {
+          const now = new Date();
+          const aReleaseDate = new Date(a.dataset.releaseDate);
+          const aLastAddedDate = new Date(a.dataset.lastAddedDate);
+          const bReleaseDate = new Date(b.dataset.releaseDate);
+          const bLastAddedDate = new Date(b.dataset.lastAddedDate);
+          const aCompareDate =
+            aLastAddedDate > aReleaseDate ? aLastAddedDate : aReleaseDate;
+          const bCompareDate =
+            bLastAddedDate > bReleaseDate ? bLastAddedDate : bReleaseDate;
+          const dateComparisonResult =
+            aCompareDate > bCompareDate ? -sort.direction : sort.direction;
+
+          // invert sort direction for unreleased games, so soonest to release appear first
+          return aCompareDate > now
+            ? -dateComparisonResult // sort "soon" badges ascending
+            : dateComparisonResult; // sort all others descending
+        } else {
+          return aBadgeGroup > bBadgeGroup ? sort.direction : -sort.direction;
+        }
+      })
       .forEach((node) => list.appendChild(node));
   },
 };
