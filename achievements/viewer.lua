@@ -1172,50 +1172,54 @@ function av.mainUpdate()
          m.scrollToTop = true
       end
    end
-   local oldScroll = m.scroll
-   if m.scrollToTop then
-      m.scroll = m.scroll * .7
-      if m.scroll < SCROLL_ACCEL then
-         m.scroll = 0
-      end
-      m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL_DOWN, 0)
-      m.scrollToTop = m.scroll ~= 0
-   else
-      if playdate.buttonIsPressed(playdate.kButtonUp) and m.aboutScreenAnim == nil then
-         m.scrollSpeed = math.min(m.scrollSpeed + SCROLL_ACCEL, SCROLL_SPEED)
-      elseif playdate.buttonIsPressed(playdate.kButtonDown) and m.aboutScreenAnim == nil then
-         m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL, -SCROLL_SPEED)
-      elseif m.scrollSpeed > 0 then
+
+   --less than 2 achievements nothing to scroll
+   if(#m.gameData.achievements > 1) then
+      local oldScroll = m.scroll
+      if m.scrollToTop then
+         m.scroll = m.scroll * .7
+         if m.scroll < SCROLL_ACCEL then
+            m.scroll = 0
+         end
          m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL_DOWN, 0)
-      elseif m.scrollSpeed < 0 then
-         m.scrollSpeed = math.min(m.scrollSpeed + SCROLL_ACCEL_DOWN, 0)
-      end
+         m.scrollToTop = m.scroll ~= 0
+      else
+         if playdate.buttonIsPressed(playdate.kButtonUp) and m.aboutScreenAnim == nil then
+            m.scrollSpeed = math.min(m.scrollSpeed + SCROLL_ACCEL, SCROLL_SPEED)
+         elseif playdate.buttonIsPressed(playdate.kButtonDown) and m.aboutScreenAnim == nil then
+            m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL, -SCROLL_SPEED)
+         elseif m.scrollSpeed > 0 then
+            m.scrollSpeed = math.max(m.scrollSpeed - SCROLL_ACCEL_DOWN, 0)
+         elseif m.scrollSpeed < 0 then
+            m.scrollSpeed = math.min(m.scrollSpeed + SCROLL_ACCEL_DOWN, 0)
+         end
 
-      if m.scrollSpeed ~= 0 then
-         local scrollMax = SCROLL_SPEED *  m.scrollSpeed / math.abs(m.scrollSpeed)
-         local scrollAmount = SCROLL_EASING(m.scrollSpeed, 0, scrollMax, scrollMax)
-         m.scroll = m.scroll - scrollAmount
-      end
+         if m.scrollSpeed ~= 0 then
+            local scrollMax = SCROLL_SPEED *  m.scrollSpeed / math.abs(m.scrollSpeed)
+            local scrollAmount = SCROLL_EASING(m.scrollSpeed, 0, scrollMax, scrollMax)
+            m.scroll = m.scroll - scrollAmount
+         end
 
-      local crankChanged, accelChanged = 0,0
-      if m.aboutScreenAnim == nil then
-         crankChanged, accelChanged = playdate.getCrankChange()
-      end
-      m.scroll = m.scroll + (CRANK_MULT*accelChanged)
-      if m.scroll < 3 and m.scrollSpeed == 0 then m.scroll = m.scroll - 1 end
+         local crankChanged, accelChanged = 0,0
+         if m.aboutScreenAnim == nil then
+            crankChanged, accelChanged = playdate.getCrankChange()
+         end
+         m.scroll = m.scroll + (CRANK_MULT*accelChanged)
+         if m.scroll < 3 and m.scrollSpeed == 0 then m.scroll = m.scroll - 1 end
 
-      if m.scroll < 0 then
-         m.scroll = 0
-         m.scrollSpeed = 0
-      elseif m.scroll > m.maxScroll then
-         m.scroll = m.maxScroll
-         m.scrollSpeed = 0
-      end
+         if m.scroll < 0 then
+            m.scroll = 0
+            m.scrollSpeed = 0
+         elseif m.scroll > m.maxScroll then
+            m.scroll = m.maxScroll
+            m.scrollSpeed = 0
+         end
 
-      if m.scroll // 32 ~= oldScroll // 32 then
-         if m.config.soundVolume > 0 then
-            m.scrollSound:setVolume(m.config.soundVolume)
-            m.scrollSound:play()
+         if m.scroll // 32 ~= oldScroll // 32 then
+            if m.config.soundVolume > 0 then
+               m.scrollSound:setVolume(m.config.soundVolume)
+               m.scrollSound:play()
+            end
          end
       end
    end
