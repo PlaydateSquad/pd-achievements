@@ -27,6 +27,12 @@ end
 
 ## API Reference
 
+### Properties
+
+#### `string` achievements.crossgame.versionNumber
+
+Version number of this module.
+
 ### Functions
 
 #### achievements.crossgame.gamePlayed(`string`: _game_id_)

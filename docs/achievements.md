@@ -117,6 +117,14 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 
 ### Properties
 
+#### `string` achievements.specVersion
+
+Same as achievements.schema.json→specVersion.
+
+#### `string` achievements.versionNumber
+
+Version number of this module, different from specVersion as it tracks achievements.schema.json→specVersion.
+
 #### `bool` achievements.forceSaveOnGrantOrRevoke
 
 If this flag is set to `true` then achievements will be saved to disk every time an achievement is newly granted or revoked. Defaults to `false`.

@@ -12,7 +12,10 @@ if not (achievements and achievements.flag_is_playdatesquad_api) then
 	error("Achievements 'crossgame' module must be loaded after the base PlaydateSquad achievement library.")
 end
 
-local crossgame = {}
+local crossgame = {
+	--version number of this module
+	versionNumber = "1.0.0"
+}
 local gfx <const> = playdate.graphics
 achievements.crossgame = crossgame
 

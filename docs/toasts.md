@@ -72,6 +72,12 @@ achievements.grant("my_achievement") -- shows a toast!
 
 ## API Reference
 
+### Properties
+
+#### `string` achievements.toasts.versionNumber
+
+Version number of this module.
+
 ### Functions
 
 #### achievements.toasts.initialize(`table?`: _config_)
