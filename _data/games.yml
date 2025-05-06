@@ -131,3 +131,13 @@
   releaseDate: 2025-04-22
   lastAddedDate: 2025-05-02
   description: A dice deckbuilding roguelike.
+
+- title: Skwish
+  author: Pawprints
+  url: https://play.date/games/skwish/
+  image: ./assets/images/games/skwish.png
+  color: "#009732"
+  achievementCount: 4
+  releaseDate: 2023-07-23
+  lastAddedDate: 2025-05-09
+  description: A puzzle game about blobs.
