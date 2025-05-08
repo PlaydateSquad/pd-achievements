@@ -141,3 +141,13 @@
   releaseDate: 2023-07-23
   lastAddedDate: 2025-05-09
   description: A puzzle game about blobs.
+
+- title: FBIC
+  author: Tim Preskenis
+  url: https://play.date/games/fbic/
+  image: ./assets/images/games/fbic.png
+  color: "#f5ebc9"
+  achievementCount: 72
+  releaseDate: 2025-05-06
+  lastAddedDate: 2025-12-31
+  description: Play as an Agent delivering ice cream.
