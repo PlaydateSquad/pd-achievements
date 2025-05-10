@@ -900,6 +900,7 @@ function at.toast(achievementId, config)
             m.toastSprite = gfx.sprite.new()
             m.toastSprite.update = at.updateToast
             m.toastSprite:setUpdatesEnabled(true)
+            m.toastSprite:setIgnoresDrawOffset(true)
             m.toastSprite:add()
 
             if originalSpriteRemoveAllFunction == nil then
