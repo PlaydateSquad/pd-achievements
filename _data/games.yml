@@ -141,3 +141,12 @@
   releaseDate: 2023-07-23
   lastAddedDate: 2025-05-07
   description: A puzzle game about blobs.
+
+- title: The Moon is our Friend
+  author: Paige Ruten
+  url: https://paigeruten.itch.io/moon-is-friend
+  image: ./assets/images/games/the-moon-is-our-friend.png
+  color: "#ffcefa"
+  achievementCount: 35
+  releaseDate: 2025-05-18
+  description: Use the Moon's gravitational pull to divert meteors away from the Earth.
