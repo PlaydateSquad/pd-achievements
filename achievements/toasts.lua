@@ -455,6 +455,7 @@ function at.drawCard(achievementId, x, y, width, height, toastOptions)
          toastOptions.updateMinimally = false
       end
       gfx.pushContext(image)
+      gfx.setImageDrawMode(gfx.kDrawModeCopy)
       local margin = 1
 
       local info = m.achievementData[achievementId]
