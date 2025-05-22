@@ -1120,7 +1120,7 @@ function av.animateOutUpdate()
       end
       av.restoreUserSettings()
       playdate.getCrankTicks(1)
-      local returnFunction = m.returnToGameFunction
+      local returnFunction = m.returnToGame
       av.destroy()
       if returnFunction then returnFunction() end
    end
