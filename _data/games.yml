@@ -160,3 +160,12 @@
   achievementCount: 35
   releaseDate: 2025-05-18
   description: Use the Moon's gravitational pull to divert meteors away from the Earth.
+
+- title: Rotata
+  author: Trigonated
+  url: https://trigonated.itch.io/rotata
+  image: ./assets/images/games/rotata.png
+  color: "#8977FF"
+  achievementCount: 5
+  releaseDate: 2025-06-10
+  description: Rotate your way to victory!
