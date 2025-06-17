@@ -177,6 +177,7 @@
   color: "#7fb76f"
   achievementCount: 50
   releaseDate: 2023-05-23
+  lastAddedDate: 2025-06-17
   description: Too many kids in this family!
   
 - title: You're Gonna Miss the Bus!
@@ -186,4 +187,5 @@
   color: "#f6ab19"
   achievementCount: 30
   releaseDate: 2023-10-10
+  lastAddedDate: 2025-06-17
   description: Henry is running late for school. Again.
