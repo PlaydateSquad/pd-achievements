@@ -100,11 +100,11 @@
 						]
 					},
 					"icon": {
-						"type": "boolean",
+						"type": "string",
 						"description": "Path to a 32x32 .pdi image to use as this achievement's icon when unlocked, relative to the AchievementImages directory at the same level as this file. Supports transparency."
 					},
 					"iconLocked": {
-						"type": "boolean",
+						"type": "string",
 						"description": "Path to a 32x32 .pdi image to use as this achievement's icon when locked, relative to the AchievementImages directory at the same level as this file. Supports transparency."
 					},
 					"isSecret": {
