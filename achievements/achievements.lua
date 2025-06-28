@@ -35,6 +35,11 @@
 ---@field progressIsPercentage boolean? A reader hint indicating whether the achievement's progress should be displayed as a percentage instead of a fraction. Defaults to false.
 ---@field scoreValue number? A reader hint indicating the relative importance of the achievement. This also influences the value returned by `achievements.completionPercentage`, where each achievement grants scoreValue/(total scores)% completion. Defaults to 1.
 
+---@class initialize_options
+---@field forceSaveOnGrantOrRevoke boolean? Whether to save game data immediately when granting or revoking an achievement. Defaults to false.
+---@field generateGrantedFromShared boolean? Optionally generate the 'granted' data from shared data to avoid the need to save to the game's data folder. Defaults to false.
+---@field preventDebug boolean? Whether to suppress debug output. Defaults to false.
+
 local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
@@ -48,8 +53,22 @@ achievements = {
 
 	--- Whether to save game data immediately when granting or revoking an achievement.
 	forceSaveOnGrantOrRevoke = false,
+
+	--- Optionally generate the 'granted' data from shared data to avoid the need to save to the game's data folder
+	generateGrantedFromShared = false,
+
 	paths = {},
 }
+
+--- Returns a game ID (aka. the bundle ID with user ID stripped out)
+---
+--- @return string # The formatted game ID.
+local function get_game_id()
+	return playdate.metadata.bundleID:gsub(
+		'^user%.%d+%.',
+		''
+	)
+end
 
 achievements.paths.shared_data_root = shared_achievement_folder
 
@@ -107,6 +126,38 @@ function achievements.paths.get_shared_images_updated_file_path(gameID)
 	end
 	local folder = achievements.paths.get_shared_images_path(gameID)
 	return folder .. shared_images_updated_file
+end
+
+--- Generate progression data from existing shared data.
+local function generate_granted_data(gameID)
+	if type(gameID) ~= "string" then
+		error("bad argument #1: expected string, got " .. type(gameID), 2)
+	end
+
+	local sharedData = json.decodeFile(achievements.paths.get_achievement_data_file_path(gameID))
+
+	achievements.granted = {}
+	achievements.progress = {}
+
+	if not sharedData then
+		return
+	end
+
+	local sharedAchievements = sharedData.achievements or {}
+
+	for i = 1, #sharedAchievements do
+		if sharedAchievements[i].id ~= nil then
+			local id = sharedAchievements[i].id
+
+			if sharedAchievements[i].grantedAt ~= nil then
+				achievements.granted[id] = sharedAchievements[i].grantedAt
+			end
+
+			if sharedAchievements[i].progress ~= nil then
+				achievements.progress[id] = sharedAchievements[i].progress
+			end
+		end
+	end
 end
 
 --- Loads progression data.
@@ -304,7 +355,7 @@ local function validate_gamedata(ach_root, prevent_debug)
 	end
 
 	if ach_root.gameID == nil then
-		ach_root.gameID = string.gsub(playdate.metadata.bundleID, "^user%.%d+%.", "")
+		ach_root.gameID = get_game_id()
 		print('gameID not configured: defaulting to "' .. ach_root.gameID .. '"')
 	elseif type(ach_root.gameID) ~= "string" then
 		error("expected 'gameID' to be type string, got ".. type(ach_root.gameID), 3)
@@ -387,17 +438,26 @@ end
 --- Call this function once, before using other functions in the library.
 --- 
 --- @param gamedata game_data The game data and achievement definitions to manage.
---- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
+--- @param options initialize_options Any option to set when initializing.
 --- @throws If the supplied data is invalid.
-function achievements.initialize(gamedata, prevent_debug)
+function achievements.initialize(gamedata, options)
+	local prevent_debug = options.preventDebug or false
 	local print = (prevent_debug and donothing) or print
+
 	print("------")
 	print("Initializing achievements...")
+
+	achievements.forceSaveOnGrantOrRevoke = options.forceSaveOnGrantOrRevoke or false
+	achievements.generateGrantedFromShared = options.generateGrantedFromShared or false
 
 	validate_gamedata(gamedata, prevent_debug)
 	achievements.gameData = gamedata
 
-	load_granted_data()
+	if achievements.generateGrantedFromShared then
+		generate_granted_data(gamedata.gameID)
+	else
+		load_granted_data()
+	end
 
 	achievements.keyedAchievements = {}
 	for _, ach in ipairs(gamedata.achievements) do
@@ -550,11 +610,15 @@ end
 --- Serializes the current game data to JSON and writes it to the data folder.
 function achievements.save()
 	export_data()
-	local save_table = {
-		grantedAt = achievements.granted,
-		progress = achievements.progress,
-	}
-	json.encodeToFile(achievement_file_name, false, save_table)
+
+	if not achievements.generateGrantedFromShared then
+		local save_table = {
+			grantedAt = achievements.granted,
+			progress = achievements.progress,
+		}
+
+		json.encodeToFile(achievement_file_name, false, save_table)
+	end
 end
 
 return achievements
