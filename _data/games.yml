@@ -208,3 +208,14 @@
   releaseDate: 2025-06-12
   lastAddedDate: 2025-07-18
   description: Join Tomie and Otto on an interstellar rhythm-action adventure!
+
+- title: Advanced Lawnmower Simulator
+  author: Digific Ltd
+  url: https://digific.itch.io/advanced-lawnmower-simulator-pd
+  image: ./assets/images/games/advanced-lawnmower-simulator.png
+  color: "#00d400"
+  achievementCount: 35
+  releaseDate: 2025-05-05
+  lastAddedDate: 2025-06-29
+  description: A powerful and accurate lawn mowing simulation for the Playdate.
+
