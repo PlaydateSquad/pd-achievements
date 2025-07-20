@@ -189,4 +189,13 @@
   releaseDate: 2023-10-10
   lastAddedDate: 2025-06-17
   description: Henry is running late for school. Again.
+  
+- title: Backbeat
+  author: Scenic Route Software
+  url: https://play.date/games/backbeat
+  image: ./assets/images/games/backbeat.png
+  color: "#f1bb5b"
+  achievementCount: 20
+  releaseDate: 2025-07-22
+  description: Needs more cowbell.
 
