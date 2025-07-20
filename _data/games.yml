@@ -169,7 +169,7 @@
   achievementCount: 5
   releaseDate: 2025-06-10
   description: Rotate your way to victory!
-  
+
 - title: Generations
   author: Scenic Route Software
   url: https://play.date/games/generations
@@ -179,7 +179,7 @@
   releaseDate: 2023-05-23
   lastAddedDate: 2025-06-17
   description: Too many kids in this family!
-  
+
 - title: You're Gonna Miss the Bus!
   author: Scenic Route Software
   url: https://play.date/games/ygmtb
@@ -199,3 +199,12 @@
   releaseDate: 2025-07-22
   description: Needs more cowbell.
 
+- title: Otto’s Galactic Groove!!
+  author: Team Otto
+  url: https://play.date/games/ottos-galactic-groove/
+  image: ./assets/images/games/ottos-galactic-groove.png
+  color: "#e755ad"
+  achievementCount: 16
+  releaseDate: 2025-06-12
+  lastAddedDate: 2025-07-18
+  description: Join Tomie and Otto on an interstellar rhythm-action adventure!
