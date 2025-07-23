@@ -32,9 +32,10 @@
   url: https://play.date/games/cranky-cove/
   image: ./assets/images/games/cranky-cove.png
   color: "#6BC2E4"
-  achievementCount: 29
+  achievementCount: 30
   releaseDate: 2025-02-25
-  description:
+  lastAddedDate: 2025-07-25
+  description: Spin, match, craft, and meet demands, before the townsfolk get too cranky!
 
 - title: First in… Line?
   author: Rae
