@@ -32,9 +32,10 @@
   url: https://play.date/games/cranky-cove/
   image: ./assets/images/games/cranky-cove.png
   color: "#6BC2E4"
-  achievementCount: 29
+  achievementCount: 30
   releaseDate: 2025-02-25
-  description:
+  lastAddedDate: 2025-07-23
+  description: Spin, match, craft, and meet demands, before the townsfolk get too cranky!
 
 - title: First in… Line?
   author: Rae
@@ -160,3 +161,62 @@
   achievementCount: 35
   releaseDate: 2025-05-18
   description: Use the Moon's gravitational pull to divert meteors away from the Earth.
+
+- title: Rotata
+  author: Trigonated
+  url: https://trigonated.itch.io/rotata
+  image: ./assets/images/games/rotata.png
+  color: "#8977FF"
+  achievementCount: 5
+  releaseDate: 2025-06-10
+  description: Rotate your way to victory!
+
+- title: Generations
+  author: Scenic Route Software
+  url: https://play.date/games/generations
+  image: ./assets/images/games/generations.png
+  color: "#7fb76f"
+  achievementCount: 50
+  releaseDate: 2023-05-23
+  lastAddedDate: 2025-06-17
+  description: Too many kids in this family!
+
+- title: You're Gonna Miss the Bus!
+  author: Scenic Route Software
+  url: https://play.date/games/ygmtb
+  image: ./assets/images/games/ygmtb.png
+  color: "#f6ab19"
+  achievementCount: 30
+  releaseDate: 2023-10-10
+  lastAddedDate: 2025-06-17
+  description: Henry is running late for school. Again.
+  
+- title: Backbeat
+  author: Scenic Route Software
+  url: https://play.date/games/backbeat
+  image: ./assets/images/games/backbeat.png
+  color: "#f1bb5b"
+  achievementCount: 20
+  releaseDate: 2025-07-22
+  description: Needs more cowbell.
+
+- title: Otto’s Galactic Groove!!
+  author: Team Otto
+  url: https://play.date/games/ottos-galactic-groove/
+  image: ./assets/images/games/ottos-galactic-groove.png
+  color: "#e755ad"
+  achievementCount: 16
+  releaseDate: 2025-06-12
+  lastAddedDate: 2025-07-18
+  description: Join Tomie and Otto on an interstellar rhythm-action adventure!
+
+- title: Advanced Lawnmower Simulator
+  author: Digific Ltd
+  url: https://digific.itch.io/advanced-lawnmower-simulator-pd
+  image: ./assets/images/games/advanced-lawnmower-simulator.png
+  color: "#00d400"
+  achievementCount: 35
+  releaseDate: 2025-05-05
+  lastAddedDate: 2025-06-29
+  description: A powerful and accurate lawn mowing simulation for the Playdate.
+

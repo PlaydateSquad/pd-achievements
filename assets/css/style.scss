@@ -224,7 +224,7 @@ body {
     margin: 2em 0;
     display: grid;
     gap: 48px;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     @media screen and (max-width: $tablet) {
       grid-template-columns: auto;
@@ -236,6 +236,11 @@ body {
     .game {
       display: inline-block;
       line-height: 1.5em;
+      max-width: min(
+        100%,
+        calc(var(--game-banner-width) + var(--game-banner-border-weight) * 2)
+      );
+      min-width: 0;
 
       img {
         display: block;
@@ -246,9 +251,8 @@ body {
         border-radius: var(--game-banner-border-radius);
         box-sizing: border-box;
         margin-bottom: 0.5em;
-        width: calc(
-          var(--game-banner-width) + var(--game-banner-border-weight) * 2
-        );
+        width: 100%;
+        max-width: 100%;
         height: auto;
       }
       a,
@@ -256,6 +260,7 @@ body {
       a:active,
       a:visited {
         display: inline-block;
+        max-width: 100%;
         color: var(--font-color);
         text-decoration: none;
         img {
@@ -292,12 +297,14 @@ body {
       .title {
         color: var(--font-color);
         font-weight: bold;
+        font-size: 0.9em;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
       }
       .author {
         color: var(--dimmed-font-color);
+        font-size: 0.9em;
         margin-top: -0.2em;
         text-overflow: ellipsis;
         overflow: hidden;
