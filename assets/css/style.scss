@@ -304,8 +304,8 @@ body {
       }
       .author {
         color: var(--dimmed-font-color);
-        line-height: 1em;
         font-size: 0.9em;
+        margin-top: -0.2em;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
