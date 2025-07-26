@@ -15,7 +15,7 @@
   color: "#FFE7DE"
   achievementCount: 9
   releaseDate: 2025-01-28
-  description:
+  description: Turns out the afterlife's not as bad as they say! Well, except for all the terrifying monsters, at least.
 
 - title: RowBot Rally
   author: Rae
@@ -25,7 +25,7 @@
   achievementCount: 16
   releaseDate: 2024-12-17
   lastAddedDate: 2025-12-31
-  description:
+  description: Team up with a mechanical pal and row for the gold in the annual Fish Bowl!
 
 - title: Cranky Cove
   author: Jon Simantov
@@ -44,7 +44,7 @@
   color: "#FF005C"
   achievementCount: 10
   releaseDate: 2024-06-18
-  description:
+  description: "It's opening night, and our lead star dropped out! Can you memorize these lines REALLY quickly?"
 
 - title: HEXA
   author: Rae
@@ -53,17 +53,17 @@
   color: "#8977FF"
   achievementCount: 17
   releaseDate: 2024-07-30
-  lastAddedDate: 2025-12-31
-  description:
+  lastAddedDate: 2025-07-30
+  description: Board the helm of Starship HEXA, and conquer the universe the only way you know how: shapes.
 
-- title: Mission Lunatrix
+- title: Mission LunaTrix
   author: Rae
-  url: #https://play.date/games/mission-lunatrix
+  url: https://play.date/games/mission-lunatrix
   image: ./assets/images/games/mission-lunatrix.png
   color: "#B189C0"
-  achievementCount: 21
+  achievementCount: 22
   releaseDate: 2025-06-24
-  description:
+  description: One small ollie for man, one giant kickflip for mankind.
 
 - title: Traffic Jam
   author: Rae
@@ -72,7 +72,7 @@
   color: "#F8C300"
   releaseDate: 2025-04-08
   achievementCount: 13
-  description:
+  description: Guide the traffic to the beat, don't get swept up off your feet.
 
 - title: Vexbox
   author: ocean & Vex
