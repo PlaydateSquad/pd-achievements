@@ -57,6 +57,9 @@ achievements = {
 	--- Optionally generate the 'granted' data from shared data to avoid the need to save to the game's data folder
 	generateGrantedFromShared = false,
 
+	--- Whether to suppress debug output. Defaults to false.
+	preventDebug = false,
+
 	paths = {},
 }
 
@@ -336,10 +339,9 @@ local function donothing(...) end
 --- Validates the values of the supplied game data.
 --- 
 --- @param ach_root game_data The game data to validate.
---- @param prevent_debug boolean Whether to suppress debug output. Defaults to false.
 --- @throws If any fields are invalid or if any non-optional fields are missing.
-local function validate_gamedata(ach_root, prevent_debug)
-	local print = (prevent_debug and donothing) or print
+local function validate_gamedata(ach_root)
+	local print = (achievements.preventDebug and donothing) or print
 
 	for _, field in ipairs{ "name", "author", "description", "version", } do
 		if ach_root[field] == nil then
@@ -441,16 +443,17 @@ end
 --- @param options initialize_options Any option to set when initializing.
 --- @throws If the supplied data is invalid.
 function achievements.initialize(gamedata, options)
-	local prevent_debug = options.preventDebug or false
-	local print = (prevent_debug and donothing) or print
+	achievements.preventDebug = options.preventDebug or false
+	achievements.forceSaveOnGrantOrRevoke = options.forceSaveOnGrantOrRevoke or false
+	achievements.generateGrantedFromShared = options.generateGrantedFromShared or false
+
+	local print = (achievements.preventDebug and donothing) or print
 
 	print("------")
 	print("Initializing achievements...")
 
-	achievements.forceSaveOnGrantOrRevoke = options.forceSaveOnGrantOrRevoke or false
-	achievements.generateGrantedFromShared = options.generateGrantedFromShared or false
 
-	validate_gamedata(gamedata, prevent_debug)
+	validate_gamedata(gamedata)
 	achievements.gameData = gamedata
 
 	if achievements.generateGrantedFromShared then
