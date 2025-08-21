@@ -190,7 +190,7 @@
   releaseDate: 2023-10-10
   lastAddedDate: 2025-06-17
   description: Henry is running late for school. Again.
-  
+
 - title: Backbeat
   author: Scenic Route Software
   url: https://play.date/games/backbeat
@@ -220,3 +220,12 @@
   lastAddedDate: 2025-06-29
   description: A powerful and accurate lawn mowing simulation for the Playdate.
 
+- title: Match-o-3000
+  author: YangMann
+  url: https://play.date/games/match-o-3000/
+  image: ./assets/images/games/match-o-3000.png
+  color: "#ffb134"
+  achievementCount: 27
+  releaseDate: 2025-03-25
+  lastAddedDate: 2025-08-20
+  description: Join the Wizard-Scientist on an epic match-3 roguelike adventure!
