@@ -229,3 +229,13 @@
   releaseDate: 2025-03-25
   lastAddedDate: 2025-08-20
   description: Join the Wizard-Scientist on an epic match-3 roguelike adventure!
+
+- title: Poker Poker Magic
+  author: Raphael Calabro
+  url: https://play.date/games/poker-poker-magic/
+  image: ./assets/images/games/poker-poker-magic.png
+  color: "#6E3BA2"
+  achievementCount: 23
+  releaseDate: 2024-07-12
+  lastAddedDate: 2025-08-21
+  description: Join Caroline as she turns poker hands into magic tricks in this Puyo Puyo-style puzzle game!
