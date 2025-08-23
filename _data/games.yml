@@ -239,3 +239,14 @@
   releaseDate: 2024-07-12
   lastAddedDate: 2025-08-21
   description: Join Caroline as she turns poker hands into magic tricks in this Puyo Puyo-style puzzle game!
+
+- title: Suddenly Bird
+  author: Fev Games
+  url: https://play.date/games/suddenly-bird/
+  image: ./assets/images/games/suddenly-bird.png
+  color: "#1A2F59"
+  achievementCount: 22
+  releaseDate: 2025-08-19
+  lastAddedDate: 2025-08-19
+  description: Suddenly Bird is a platformer game following a day in the life of our main character, Stanley. Stanley works for Corvid Express delivering packages. Recently though, he has been having trouble delivering packages on time due to the strangest issue... He suddenly turns into a bird!!!
+ 
