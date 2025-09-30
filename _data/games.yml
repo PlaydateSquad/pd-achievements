@@ -249,4 +249,13 @@
   releaseDate: 2025-08-19
   lastAddedDate: 2025-08-19
   description: Suddenly Bird is a platformer game following a day in the life of our main character, Stanley. Stanley works for Corvid Express delivering packages. Recently though, he has been having trouble delivering packages on time due to the strangest issue... He suddenly turns into a bird!!!
- 
+
+- title: The Long Arc
+  author: Elephant Star Balloon
+  url: https://play.date/games/the-long-arc/
+  image: ./assets/images/games/the-long-arc.png
+  color: "#000000"
+  achievementCount: 26
+  releaseDate: 2025-09-29
+  lastAddedDate: 2025-09-29
+  description: Use the crank as your bow -- play as an archer in a tower, fending off waves of enemies
