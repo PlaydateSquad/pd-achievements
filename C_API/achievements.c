@@ -250,6 +250,8 @@ void achievements_write() {
 	memset(&encoder, 0, sizeof(encoder));
 	e = &encoder;
 
+	achievements_copy_images();
+
 	SDFile* file = achievements_open_outfile();
 
 	pdapi->json->initEncoder(&encoder, writefile, file, 1);
@@ -296,7 +298,7 @@ static struct achievement_t* achievements_find(union achievement_id id) {
 	return NULL;
 }
 
-static enum achievement_status achivements_grant_internal(struct achievement_t* a) {
+static enum achievement_status achievements_grant_internal(struct achievement_t* a) {
 	if (a->granted_at == 0) {
 		a->granted_at = pdapi->system->getSecondsSinceEpoch(NULL);
 		pdapi->system->logToConsole("Achievement granted: %s : %s", a->id->str7, a->name);
@@ -318,7 +320,7 @@ enum achievement_status achievements_set_progress(union achievement_id id, int v
 				a->progress = a->progress_max;
 			}
 			if (a->progress >= a->progress_max ) {
-				return achivements_grant_internal(a);
+				return achievements_grant_internal(a);
 			}
 			return achievement_in_progress;
 		}
@@ -332,7 +334,7 @@ enum achievement_status achievements_set_progress(union achievement_id id, int v
 enum achievement_status achievements_grant(union achievement_id id) {
 	struct achievement_t* a = achievements_find(id);
 	if (a != NULL) {
-		return achivements_grant_internal(a);		
+		return achievements_grant_internal(a);		
 	}
 	return achievement_error;
 }

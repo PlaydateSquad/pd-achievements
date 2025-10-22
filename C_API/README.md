@@ -24,37 +24,37 @@ const union achievement_id id_monsters_100 = { "kill100" };
 
 // define your achievement structure
 struct achievements_t achievements = {
-    .game_id = {"com.example.mygame"},
-    .name =	{"My lovely game"},
-    .author = {"MyGameco"},
-    .description ={"Really is a lovely game"},
-    .version = {"1.0"},
-    .icon_path = {"icon"},  // a 32x32 pdi image - usually your launcher asset image
-    .card_path = {"ac-card"}, // a 380x90 banner image
+    .game_id = "com.example.mygame",
+    .name = "My lovely game",
+    .author = "MyGameco",
+    .description ={"Really is a lovely game",
+    .version = "1.0",
+    .icon_path = "icon",  // a 32x32 pdi image - usually your launcher asset image
+    .card_path = "ac-card", // a 380x90 banner image
 
     .achievements = {
         {
             .id = &id_world_1,
-            .name = {"First world complete"},
-            .description = {"Did the thing"},
-            .description_locked = {"Do the thing"},
-            .icon = {"ac-icon-banana"}, // 32x32 icon for the unlocked achievement
-            .icon_locked = {"ac-icon-locked"}, // 32x32 icon for the locked achievement
+            .name = "First world complete",
+            .description = "Did the thing",
+            .description_locked = "Do the thing",
+            .icon = "ac-icon-banana", // 32x32 icon for the unlocked achievement
+            .icon_locked = "ac-icon-locked", // 32x32 icon for the locked achievement
         },
 
         {
             .id = &id_items_20,
-            .name = {"Twenty things"},
-            .description = {"Collected 20 items"},
-            .description_locked = {"Get collecting!"},
-            .icon = {"ac-icon"},
-            .icon_locked = {"ac-icon-locked"},
+            .name = "Twenty things",
+            .description = "Collected 20 items",
+            .description_locked = "Get collecting!",
+            .icon = "ac-icon",
+            .icon_locked = "ac-icon-locked",
             .progress_max = 20,
         }	
     };
 }
 
-// At the start of play
+// When initialising
 void init(void) {
     // pd is your PlaydateAPI* pointer
     // "imagefolder" is where your achievement images are stored within your game bundle
@@ -62,7 +62,7 @@ void init(void) {
 }
 
 // Then when you need to unlock some achievements
-void during_gameplay() {
+void during_gameplay(void) {
 
     if (myAchievementCondition == true ) {
        achievements_grant(id_world_1);
