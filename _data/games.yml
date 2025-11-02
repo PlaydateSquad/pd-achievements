@@ -259,3 +259,13 @@
   releaseDate: 2025-09-29
   lastAddedDate: 2025-09-29
   description: Use the crank as your bow -- play as an archer in a tower, fending off waves of enemies
+
+- title: Crankstone
+  author: Lugludum
+  url: https://play.date/games/crankstone
+  image: ./assets/images/games/crankstone.png
+  color: "#743D22"
+  achievementCount: 17
+  releaseDate: 2025-08-19
+  lastAddedDate: 2025-10-31
+  description: Protect Crankstone from outlaws in this gallery shooter spiced up with mini games inspired by the Wild West. 
