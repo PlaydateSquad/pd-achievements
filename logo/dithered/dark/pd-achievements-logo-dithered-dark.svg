@@ -1,0 +1,886 @@
+<svg width="150" height="130" viewBox="0 0 150 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="32.5" y="2.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="2.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="2.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="2.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="2.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="2.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="2.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="2.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="32.5" y="12.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="12.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="12.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="12.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="12.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="12.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="12.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="12.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="2.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="12.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="22.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="32.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="112.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="122.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="132.5" y="22.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="2.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="32.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="132.5" y="32.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="2.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="12.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="32.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="122.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="132.5" y="42.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="12.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="22.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="32.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="112.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="122.5" y="52.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="22.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="32.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="112.5" y="62.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="32.5" y="72.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="72.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="72.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="72.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="72.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="72.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="72.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="72.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="82.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="82.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="82.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="82.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="92.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="92.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="102.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="102.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="102.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="102.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="102.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="102.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="32.5" y="112.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="42.5" y="112.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="52.5" y="112.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="62.5" y="112.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="72.5" y="112.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="82.5" y="112.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="92.5" y="112.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="102.5" y="112.5" width="15" height="15" fill="white" stroke="white" stroke-width="5"/>
+<rect x="35" y="5" width="10" height="10" fill="black"/>
+<rect x="45" y="5" width="10" height="10" fill="black"/>
+<rect x="55" y="5" width="10" height="10" fill="black"/>
+<rect x="65" y="5" width="10" height="10" fill="black"/>
+<rect x="75" y="5" width="10" height="10" fill="black"/>
+<rect x="85" y="5" width="10" height="10" fill="black"/>
+<g clip-path="url(#clip0_149_79598)">
+<rect x="95" y="5" width="10" height="10" fill="white"/>
+<rect x="95" y="5" width="1" height="1" fill="black"/>
+<rect x="96" y="6" width="1" height="1" fill="black"/>
+<rect x="95" y="7" width="1" height="1" fill="black"/>
+<rect x="96" y="8" width="1" height="1" fill="black"/>
+<rect x="95" y="9" width="1" height="1" fill="black"/>
+<rect x="96" y="10" width="1" height="1" fill="black"/>
+<rect x="95" y="11" width="1" height="1" fill="black"/>
+<rect x="96" y="12" width="1" height="1" fill="black"/>
+<rect x="95" y="13" width="1" height="1" fill="black"/>
+<rect x="96" y="14" width="1" height="1" fill="black"/>
+<rect x="97" y="5" width="1" height="1" fill="black"/>
+<rect x="98" y="6" width="1" height="1" fill="black"/>
+<rect x="97" y="7" width="1" height="1" fill="black"/>
+<rect x="98" y="8" width="1" height="1" fill="black"/>
+<rect x="97" y="9" width="1" height="1" fill="black"/>
+<rect x="98" y="10" width="1" height="1" fill="black"/>
+<rect x="97" y="11" width="1" height="1" fill="black"/>
+<rect x="98" y="12" width="1" height="1" fill="black"/>
+<rect x="97" y="13" width="1" height="1" fill="black"/>
+<rect x="98" y="14" width="1" height="1" fill="black"/>
+<rect x="99" y="5" width="1" height="1" fill="black"/>
+<rect x="100" y="6" width="1" height="1" fill="black"/>
+<rect x="99" y="7" width="1" height="1" fill="black"/>
+<rect x="100" y="8" width="1" height="1" fill="black"/>
+<rect x="99" y="9" width="1" height="1" fill="black"/>
+<rect x="100" y="10" width="1" height="1" fill="black"/>
+<rect x="99" y="11" width="1" height="1" fill="black"/>
+<rect x="100" y="12" width="1" height="1" fill="black"/>
+<rect x="99" y="13" width="1" height="1" fill="black"/>
+<rect x="100" y="14" width="1" height="1" fill="black"/>
+<rect x="101" y="5" width="1" height="1" fill="black"/>
+<rect x="102" y="6" width="1" height="1" fill="black"/>
+<rect x="101" y="7" width="1" height="1" fill="black"/>
+<rect x="102" y="8" width="1" height="1" fill="black"/>
+<rect x="101" y="9" width="1" height="1" fill="black"/>
+<rect x="102" y="10" width="1" height="1" fill="black"/>
+<rect x="101" y="11" width="1" height="1" fill="black"/>
+<rect x="102" y="12" width="1" height="1" fill="black"/>
+<rect x="101" y="13" width="1" height="1" fill="black"/>
+<rect x="102" y="14" width="1" height="1" fill="black"/>
+<rect x="103" y="5" width="1" height="1" fill="black"/>
+<rect x="104" y="6" width="1" height="1" fill="black"/>
+<rect x="103" y="7" width="1" height="1" fill="black"/>
+<rect x="104" y="8" width="1" height="1" fill="black"/>
+<rect x="103" y="9" width="1" height="1" fill="black"/>
+<rect x="104" y="10" width="1" height="1" fill="black"/>
+<rect x="103" y="11" width="1" height="1" fill="black"/>
+<rect x="104" y="12" width="1" height="1" fill="black"/>
+<rect x="103" y="13" width="1" height="1" fill="black"/>
+<rect x="104" y="14" width="1" height="1" fill="black"/>
+</g>
+<g clip-path="url(#clip1_149_79598)">
+<rect x="105" y="5" width="10" height="10" fill="white"/>
+<rect x="105" y="5" width="1" height="1" fill="black"/>
+<rect x="106" y="6" width="1" height="1" fill="black"/>
+<rect x="105" y="7" width="1" height="1" fill="black"/>
+<rect x="106" y="8" width="1" height="1" fill="black"/>
+<rect x="105" y="9" width="1" height="1" fill="black"/>
+<rect x="106" y="10" width="1" height="1" fill="black"/>
+<rect x="105" y="11" width="1" height="1" fill="black"/>
+<rect x="106" y="12" width="1" height="1" fill="black"/>
+<rect x="105" y="13" width="1" height="1" fill="black"/>
+<rect x="106" y="14" width="1" height="1" fill="black"/>
+<rect x="107" y="5" width="1" height="1" fill="black"/>
+<rect x="108" y="6" width="1" height="1" fill="black"/>
+<rect x="107" y="7" width="1" height="1" fill="black"/>
+<rect x="108" y="8" width="1" height="1" fill="black"/>
+<rect x="107" y="9" width="1" height="1" fill="black"/>
+<rect x="108" y="10" width="1" height="1" fill="black"/>
+<rect x="107" y="11" width="1" height="1" fill="black"/>
+<rect x="108" y="12" width="1" height="1" fill="black"/>
+<rect x="107" y="13" width="1" height="1" fill="black"/>
+<rect x="108" y="14" width="1" height="1" fill="black"/>
+<rect x="109" y="5" width="1" height="1" fill="black"/>
+<rect x="110" y="6" width="1" height="1" fill="black"/>
+<rect x="109" y="7" width="1" height="1" fill="black"/>
+<rect x="110" y="8" width="1" height="1" fill="black"/>
+<rect x="109" y="9" width="1" height="1" fill="black"/>
+<rect x="110" y="10" width="1" height="1" fill="black"/>
+<rect x="109" y="11" width="1" height="1" fill="black"/>
+<rect x="110" y="12" width="1" height="1" fill="black"/>
+<rect x="109" y="13" width="1" height="1" fill="black"/>
+<rect x="110" y="14" width="1" height="1" fill="black"/>
+<rect x="111" y="5" width="1" height="1" fill="black"/>
+<rect x="112" y="6" width="1" height="1" fill="black"/>
+<rect x="111" y="7" width="1" height="1" fill="black"/>
+<rect x="112" y="8" width="1" height="1" fill="black"/>
+<rect x="111" y="9" width="1" height="1" fill="black"/>
+<rect x="112" y="10" width="1" height="1" fill="black"/>
+<rect x="111" y="11" width="1" height="1" fill="black"/>
+<rect x="112" y="12" width="1" height="1" fill="black"/>
+<rect x="111" y="13" width="1" height="1" fill="black"/>
+<rect x="112" y="14" width="1" height="1" fill="black"/>
+<rect x="113" y="5" width="1" height="1" fill="black"/>
+<rect x="114" y="6" width="1" height="1" fill="black"/>
+<rect x="113" y="7" width="1" height="1" fill="black"/>
+<rect x="114" y="8" width="1" height="1" fill="black"/>
+<rect x="113" y="9" width="1" height="1" fill="black"/>
+<rect x="114" y="10" width="1" height="1" fill="black"/>
+<rect x="113" y="11" width="1" height="1" fill="black"/>
+<rect x="114" y="12" width="1" height="1" fill="black"/>
+<rect x="113" y="13" width="1" height="1" fill="black"/>
+<rect x="114" y="14" width="1" height="1" fill="black"/>
+</g>
+<rect x="35" y="14.9999" width="10" height="10" fill="black"/>
+<rect x="45" y="14.9999" width="10" height="10" fill="white"/>
+<rect x="55" y="14.9999" width="10" height="10" fill="white"/>
+<rect x="65" y="14.9999" width="10" height="10" fill="white"/>
+<rect x="75" y="14.9999" width="10" height="10" fill="white"/>
+<rect x="85" y="14.9999" width="10" height="10" fill="white"/>
+<rect x="95" y="14.9999" width="10" height="10" fill="white"/>
+<g clip-path="url(#clip2_149_79598)">
+<rect x="105" y="14.9999" width="10" height="10" fill="white"/>
+<rect x="105" y="14.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="15.9999" width="1" height="1" fill="black"/>
+<rect x="105" y="16.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="17.9999" width="1" height="1" fill="black"/>
+<rect x="105" y="18.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="19.9999" width="1" height="1" fill="black"/>
+<rect x="105" y="20.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="21.9999" width="1" height="1" fill="black"/>
+<rect x="105" y="22.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="23.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="14.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="15.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="16.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="17.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="18.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="19.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="20.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="21.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="22.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="23.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="14.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="15.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="16.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="17.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="18.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="19.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="20.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="21.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="22.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="23.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="14.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="15.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="16.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="17.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="18.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="19.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="20.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="21.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="22.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="23.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="14.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="15.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="16.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="17.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="18.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="19.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="20.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="21.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="22.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="23.9999" width="1" height="1" fill="black"/>
+</g>
+<rect x="5" y="25.0001" width="10" height="10" fill="black"/>
+<g clip-path="url(#clip3_149_79598)">
+<rect x="15" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="15" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="16" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="15" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="16" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="15" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="16" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="15" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="16" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="15" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="16" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="17" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="18" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="17" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="18" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="17" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="18" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="17" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="18" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="17" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="18" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="19" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="20" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="19" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="20" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="19" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="20" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="19" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="20" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="19" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="20" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="21" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="22" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="21" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="22" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="21" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="22" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="21" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="22" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="21" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="22" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="23" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="24" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="23" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="24" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="23" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="24" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="23" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="24" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="23" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="24" y="34.0001" width="1" height="1" fill="black"/>
+</g>
+<g clip-path="url(#clip4_149_79598)">
+<rect x="25" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="25" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="26" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="25" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="26" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="25" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="26" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="25" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="26" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="25" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="26" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="27" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="28" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="27" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="28" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="27" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="28" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="27" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="28" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="27" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="28" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="29" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="30" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="29" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="30" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="29" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="30" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="29" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="30" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="29" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="30" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="31" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="32" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="31" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="32" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="31" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="32" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="31" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="32" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="31" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="32" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="33" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="34" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="33" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="34" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="33" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="34" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="33" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="34" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="33" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="34" y="34.0001" width="1" height="1" fill="black"/>
+</g>
+<rect x="35" y="25.0001" width="10" height="10" fill="black"/>
+<rect x="45" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="55" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="65" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="75" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="85" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="95" y="25.0001" width="10" height="10" fill="white"/>
+<g clip-path="url(#clip5_149_79598)">
+<rect x="105" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="105" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="106" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="105" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="106" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="105" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="106" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="105" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="106" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="105" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="106" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="107" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="108" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="107" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="108" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="107" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="108" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="107" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="108" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="107" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="108" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="109" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="110" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="109" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="110" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="109" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="110" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="109" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="110" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="109" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="110" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="111" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="112" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="111" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="112" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="111" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="112" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="111" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="112" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="111" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="112" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="113" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="114" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="113" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="114" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="113" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="114" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="113" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="114" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="113" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="114" y="34.0001" width="1" height="1" fill="black"/>
+</g>
+<rect x="115" y="25.0001" width="10" height="10" fill="black"/>
+<g clip-path="url(#clip6_149_79598)">
+<rect x="125" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="125" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="126" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="125" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="126" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="125" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="126" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="125" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="126" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="125" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="126" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="127" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="128" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="127" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="128" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="127" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="128" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="127" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="128" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="127" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="128" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="129" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="130" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="129" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="130" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="129" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="130" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="129" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="130" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="129" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="130" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="131" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="132" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="131" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="132" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="131" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="132" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="131" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="132" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="131" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="132" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="133" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="134" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="133" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="134" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="133" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="134" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="133" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="134" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="133" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="134" y="34.0001" width="1" height="1" fill="black"/>
+</g>
+<g clip-path="url(#clip7_149_79598)">
+<rect x="135" y="25.0001" width="10" height="10" fill="white"/>
+<rect x="135" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="136" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="135" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="136" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="135" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="136" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="135" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="136" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="135" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="136" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="137" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="138" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="137" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="138" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="137" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="138" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="137" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="138" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="137" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="138" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="139" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="140" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="139" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="140" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="139" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="140" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="139" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="140" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="139" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="140" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="141" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="142" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="141" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="142" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="141" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="142" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="141" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="142" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="141" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="142" y="34.0001" width="1" height="1" fill="black"/>
+<rect x="143" y="25.0001" width="1" height="1" fill="black"/>
+<rect x="144" y="26.0001" width="1" height="1" fill="black"/>
+<rect x="143" y="27.0001" width="1" height="1" fill="black"/>
+<rect x="144" y="28.0001" width="1" height="1" fill="black"/>
+<rect x="143" y="29.0001" width="1" height="1" fill="black"/>
+<rect x="144" y="30.0001" width="1" height="1" fill="black"/>
+<rect x="143" y="31.0001" width="1" height="1" fill="black"/>
+<rect x="144" y="32.0001" width="1" height="1" fill="black"/>
+<rect x="143" y="33.0001" width="1" height="1" fill="black"/>
+<rect x="144" y="34.0001" width="1" height="1" fill="black"/>
+</g>
+<rect x="5" y="34.9999" width="10" height="10" fill="black"/>
+<rect x="35" y="34.9999" width="10" height="10" fill="black"/>
+<rect x="45" y="34.9999" width="10" height="10" fill="white"/>
+<rect x="55" y="34.9999" width="10" height="10" fill="white"/>
+<rect x="65" y="34.9999" width="10" height="10" fill="white"/>
+<rect x="75" y="34.9999" width="10" height="10" fill="white"/>
+<rect x="85" y="34.9999" width="10" height="10" fill="white"/>
+<rect x="95" y="34.9999" width="10" height="10" fill="white"/>
+<g clip-path="url(#clip8_149_79598)">
+<rect x="105" y="34.9999" width="10" height="10" fill="white"/>
+<rect x="105" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="105" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="105" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="105" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="105" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="106" y="43.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="107" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="108" y="43.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="109" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="110" y="43.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="111" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="112" y="43.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="113" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="114" y="43.9999" width="1" height="1" fill="black"/>
+</g>
+<g clip-path="url(#clip9_149_79598)">
+<rect x="135" y="34.9999" width="10" height="10" fill="white"/>
+<rect x="135" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="136" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="135" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="136" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="135" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="136" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="135" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="136" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="135" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="136" y="43.9999" width="1" height="1" fill="black"/>
+<rect x="137" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="138" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="137" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="138" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="137" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="138" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="137" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="138" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="137" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="138" y="43.9999" width="1" height="1" fill="black"/>
+<rect x="139" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="140" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="139" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="140" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="139" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="140" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="139" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="140" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="139" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="140" y="43.9999" width="1" height="1" fill="black"/>
+<rect x="141" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="142" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="141" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="142" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="141" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="142" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="141" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="142" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="141" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="142" y="43.9999" width="1" height="1" fill="black"/>
+<rect x="143" y="34.9999" width="1" height="1" fill="black"/>
+<rect x="144" y="35.9999" width="1" height="1" fill="black"/>
+<rect x="143" y="36.9999" width="1" height="1" fill="black"/>
+<rect x="144" y="37.9999" width="1" height="1" fill="black"/>
+<rect x="143" y="38.9999" width="1" height="1" fill="black"/>
+<rect x="144" y="39.9999" width="1" height="1" fill="black"/>
+<rect x="143" y="40.9999" width="1" height="1" fill="black"/>
+<rect x="144" y="41.9999" width="1" height="1" fill="black"/>
+<rect x="143" y="42.9999" width="1" height="1" fill="black"/>
+<rect x="144" y="43.9999" width="1" height="1" fill="black"/>
+</g>
+<rect x="5" y="45.0001" width="10" height="10" fill="black"/>
+<rect x="15" y="45.0002" width="10" height="10" fill="black"/>
+<rect x="35" y="45.0002" width="10" height="10" fill="black"/>
+<rect x="45" y="45.0002" width="10" height="10" fill="white"/>
+<rect x="55" y="45.0002" width="10" height="10" fill="white"/>
+<rect x="65" y="45.0002" width="10" height="10" fill="white"/>
+<rect x="75" y="45.0002" width="10" height="10" fill="white"/>
+<rect x="85" y="45.0002" width="10" height="10" fill="white"/>
+<rect x="95" y="45.0002" width="10" height="10" fill="white"/>
+<rect x="105" y="45.0002" width="10" height="10" fill="black"/>
+<rect x="125" y="45.0002" width="10" height="10" fill="black"/>
+<rect x="135" y="45.0002" width="10" height="10" fill="black"/>
+<rect x="15" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="25" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="35" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="45" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="55" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="65" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="75" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="85" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="95" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="105" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="115" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="125" y="54.9996" width="10" height="10" fill="black"/>
+<rect x="25" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="35" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="45" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="55" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="65" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="75" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="85" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="95" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="105" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="115" y="65.0001" width="10" height="10" fill="black"/>
+<rect x="35" y="75.0004" width="10" height="10" fill="black"/>
+<rect x="45" y="75.0004" width="10" height="10" fill="black"/>
+<rect x="55" y="75.0004" width="10" height="10" fill="black"/>
+<rect x="65" y="75.0004" width="10" height="10" fill="black"/>
+<rect x="75" y="75.0004" width="10" height="10" fill="black"/>
+<rect x="85" y="75.0004" width="10" height="10" fill="black"/>
+<rect x="95" y="75.0004" width="10" height="10" fill="black"/>
+<rect x="105" y="75.0004" width="10" height="10" fill="black"/>
+<rect x="55" y="84.9999" width="10" height="10" fill="black"/>
+<rect x="65" y="84.9999" width="10" height="10" fill="black"/>
+<rect x="75" y="84.9999" width="10" height="10" fill="black"/>
+<rect x="85" y="84.9999" width="10" height="10" fill="black"/>
+<rect x="65" y="95.0003" width="10" height="10" fill="black"/>
+<rect x="75" y="95.0003" width="10" height="10" fill="black"/>
+<rect x="45" y="105" width="10" height="10" fill="black"/>
+<rect x="55" y="105" width="10" height="10" fill="black"/>
+<rect x="65" y="105" width="10" height="10" fill="black"/>
+<rect x="75" y="105" width="10" height="10" fill="black"/>
+<rect x="85" y="105" width="10" height="10" fill="black"/>
+<g clip-path="url(#clip10_149_79598)">
+<rect x="95" y="105" width="10" height="10" fill="white"/>
+<rect x="95" y="105" width="1" height="1" fill="black"/>
+<rect x="96" y="106" width="1" height="1" fill="black"/>
+<rect x="95" y="107" width="1" height="1" fill="black"/>
+<rect x="96" y="108" width="1" height="1" fill="black"/>
+<rect x="95" y="109" width="1" height="1" fill="black"/>
+<rect x="96" y="110" width="1" height="1" fill="black"/>
+<rect x="95" y="111" width="1" height="1" fill="black"/>
+<rect x="96" y="112" width="1" height="1" fill="black"/>
+<rect x="95" y="113" width="1" height="1" fill="black"/>
+<rect x="96" y="114" width="1" height="1" fill="black"/>
+<rect x="97" y="105" width="1" height="1" fill="black"/>
+<rect x="98" y="106" width="1" height="1" fill="black"/>
+<rect x="97" y="107" width="1" height="1" fill="black"/>
+<rect x="98" y="108" width="1" height="1" fill="black"/>
+<rect x="97" y="109" width="1" height="1" fill="black"/>
+<rect x="98" y="110" width="1" height="1" fill="black"/>
+<rect x="97" y="111" width="1" height="1" fill="black"/>
+<rect x="98" y="112" width="1" height="1" fill="black"/>
+<rect x="97" y="113" width="1" height="1" fill="black"/>
+<rect x="98" y="114" width="1" height="1" fill="black"/>
+<rect x="99" y="105" width="1" height="1" fill="black"/>
+<rect x="100" y="106" width="1" height="1" fill="black"/>
+<rect x="99" y="107" width="1" height="1" fill="black"/>
+<rect x="100" y="108" width="1" height="1" fill="black"/>
+<rect x="99" y="109" width="1" height="1" fill="black"/>
+<rect x="100" y="110" width="1" height="1" fill="black"/>
+<rect x="99" y="111" width="1" height="1" fill="black"/>
+<rect x="100" y="112" width="1" height="1" fill="black"/>
+<rect x="99" y="113" width="1" height="1" fill="black"/>
+<rect x="100" y="114" width="1" height="1" fill="black"/>
+<rect x="101" y="105" width="1" height="1" fill="black"/>
+<rect x="102" y="106" width="1" height="1" fill="black"/>
+<rect x="101" y="107" width="1" height="1" fill="black"/>
+<rect x="102" y="108" width="1" height="1" fill="black"/>
+<rect x="101" y="109" width="1" height="1" fill="black"/>
+<rect x="102" y="110" width="1" height="1" fill="black"/>
+<rect x="101" y="111" width="1" height="1" fill="black"/>
+<rect x="102" y="112" width="1" height="1" fill="black"/>
+<rect x="101" y="113" width="1" height="1" fill="black"/>
+<rect x="102" y="114" width="1" height="1" fill="black"/>
+<rect x="103" y="105" width="1" height="1" fill="black"/>
+<rect x="104" y="106" width="1" height="1" fill="black"/>
+<rect x="103" y="107" width="1" height="1" fill="black"/>
+<rect x="104" y="108" width="1" height="1" fill="black"/>
+<rect x="103" y="109" width="1" height="1" fill="black"/>
+<rect x="104" y="110" width="1" height="1" fill="black"/>
+<rect x="103" y="111" width="1" height="1" fill="black"/>
+<rect x="104" y="112" width="1" height="1" fill="black"/>
+<rect x="103" y="113" width="1" height="1" fill="black"/>
+<rect x="104" y="114" width="1" height="1" fill="black"/>
+</g>
+<rect x="35" y="115" width="10" height="10" fill="black"/>
+<rect x="45" y="115" width="10" height="10" fill="black"/>
+<rect x="55" y="115" width="10" height="10" fill="black"/>
+<rect x="65" y="115" width="10" height="10" fill="black"/>
+<rect x="75" y="115" width="10" height="10" fill="black"/>
+<rect x="85" y="115" width="10" height="10" fill="black"/>
+<rect x="95" y="115" width="10" height="10" fill="black"/>
+<g clip-path="url(#clip11_149_79598)">
+<rect x="105" y="115" width="10" height="10" fill="white"/>
+<rect x="105" y="115" width="1" height="1" fill="black"/>
+<rect x="106" y="116" width="1" height="1" fill="black"/>
+<rect x="105" y="117" width="1" height="1" fill="black"/>
+<rect x="106" y="118" width="1" height="1" fill="black"/>
+<rect x="105" y="119" width="1" height="1" fill="black"/>
+<rect x="106" y="120" width="1" height="1" fill="black"/>
+<rect x="105" y="121" width="1" height="1" fill="black"/>
+<rect x="106" y="122" width="1" height="1" fill="black"/>
+<rect x="105" y="123" width="1" height="1" fill="black"/>
+<rect x="106" y="124" width="1" height="1" fill="black"/>
+<rect x="107" y="115" width="1" height="1" fill="black"/>
+<rect x="108" y="116" width="1" height="1" fill="black"/>
+<rect x="107" y="117" width="1" height="1" fill="black"/>
+<rect x="108" y="118" width="1" height="1" fill="black"/>
+<rect x="107" y="119" width="1" height="1" fill="black"/>
+<rect x="108" y="120" width="1" height="1" fill="black"/>
+<rect x="107" y="121" width="1" height="1" fill="black"/>
+<rect x="108" y="122" width="1" height="1" fill="black"/>
+<rect x="107" y="123" width="1" height="1" fill="black"/>
+<rect x="108" y="124" width="1" height="1" fill="black"/>
+<rect x="109" y="115" width="1" height="1" fill="black"/>
+<rect x="110" y="116" width="1" height="1" fill="black"/>
+<rect x="109" y="117" width="1" height="1" fill="black"/>
+<rect x="110" y="118" width="1" height="1" fill="black"/>
+<rect x="109" y="119" width="1" height="1" fill="black"/>
+<rect x="110" y="120" width="1" height="1" fill="black"/>
+<rect x="109" y="121" width="1" height="1" fill="black"/>
+<rect x="110" y="122" width="1" height="1" fill="black"/>
+<rect x="109" y="123" width="1" height="1" fill="black"/>
+<rect x="110" y="124" width="1" height="1" fill="black"/>
+<rect x="111" y="115" width="1" height="1" fill="black"/>
+<rect x="112" y="116" width="1" height="1" fill="black"/>
+<rect x="111" y="117" width="1" height="1" fill="black"/>
+<rect x="112" y="118" width="1" height="1" fill="black"/>
+<rect x="111" y="119" width="1" height="1" fill="black"/>
+<rect x="112" y="120" width="1" height="1" fill="black"/>
+<rect x="111" y="121" width="1" height="1" fill="black"/>
+<rect x="112" y="122" width="1" height="1" fill="black"/>
+<rect x="111" y="123" width="1" height="1" fill="black"/>
+<rect x="112" y="124" width="1" height="1" fill="black"/>
+<rect x="113" y="115" width="1" height="1" fill="black"/>
+<rect x="114" y="116" width="1" height="1" fill="black"/>
+<rect x="113" y="117" width="1" height="1" fill="black"/>
+<rect x="114" y="118" width="1" height="1" fill="black"/>
+<rect x="113" y="119" width="1" height="1" fill="black"/>
+<rect x="114" y="120" width="1" height="1" fill="black"/>
+<rect x="113" y="121" width="1" height="1" fill="black"/>
+<rect x="114" y="122" width="1" height="1" fill="black"/>
+<rect x="113" y="123" width="1" height="1" fill="black"/>
+<rect x="114" y="124" width="1" height="1" fill="black"/>
+</g>
+<rect x="59.9998" y="25" width="5" height="5" fill="black"/>
+<rect x="80.0002" y="25" width="5" height="5" fill="black"/>
+<rect x="59.9998" y="30" width="5" height="5" fill="black"/>
+<rect x="79.9998" y="30" width="5" height="5" fill="black"/>
+<rect x="59.9998" y="34.9995" width="5" height="5" fill="black"/>
+<rect x="80.0002" y="34.9995" width="5" height="5" fill="black"/>
+<rect x="64.9998" y="34.9995" width="5" height="5" fill="black"/>
+<rect x="85.0007" y="40" width="5" height="5" fill="black"/>
+<rect x="69.9998" y="30" width="5" height="5" fill="black"/>
+<rect x="90.0002" y="30" width="5" height="5" fill="black"/>
+<rect x="90.0002" y="34.9995" width="5" height="5" fill="black"/>
+<rect x="59.9998" y="40" width="5" height="5" fill="black"/>
+<rect x="80.0002" y="40" width="5" height="5" fill="black"/>
+<rect x="65.0002" y="25" width="5" height="5" fill="black"/>
+<rect x="85.0002" y="25" width="5" height="5" fill="black"/>
+<rect x="95.0356" y="65.061" width="5" height="5" fill="white"/>
+<rect x="85.0356" y="65.0612" width="5" height="5" fill="white"/>
+<path d="M60 65V60H55V65H50V70H55V75H60V70H65V65H60Z" fill="white"/>
+<defs>
+<clipPath id="clip0_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(95 5)"/>
+</clipPath>
+<clipPath id="clip1_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(105 5)"/>
+</clipPath>
+<clipPath id="clip2_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(105 14.9999)"/>
+</clipPath>
+<clipPath id="clip3_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(15 25.0001)"/>
+</clipPath>
+<clipPath id="clip4_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(25 25.0001)"/>
+</clipPath>
+<clipPath id="clip5_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(105 25.0001)"/>
+</clipPath>
+<clipPath id="clip6_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(125 25.0001)"/>
+</clipPath>
+<clipPath id="clip7_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(135 25.0001)"/>
+</clipPath>
+<clipPath id="clip8_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(105 34.9999)"/>
+</clipPath>
+<clipPath id="clip9_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(135 34.9999)"/>
+</clipPath>
+<clipPath id="clip10_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(95 105)"/>
+</clipPath>
+<clipPath id="clip11_149_79598">
+<rect width="10" height="10" fill="white" transform="translate(105 115)"/>
+</clipPath>
+</defs>
+</svg>
