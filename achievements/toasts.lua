@@ -1021,5 +1021,7 @@ achievements.toasts = {
 
    manualUpdate = at.updateToast,
 
+   --version number of this module
+   versionNumber = "1.0.0",
    getCache = function() return persistentCache end,
 }
