@@ -16,6 +16,8 @@ This repository provides two things:
 
 > [!NOTE]
 > If your game is not written in Lua you can still support Playdate Achievements. However, you’ll need to reference the [schema](achievements.schema.json) and write your achievement data directly to the `/Shared` folder at the path `/Shared/Achievements/[gameID]/Achievements.json`, where `gameID` matches the one specified in `achievements.json`.
+>
+> C Users can try the experimental [C API](C_API/README.md)
 
 ## Documentation
 
