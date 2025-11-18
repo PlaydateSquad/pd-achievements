@@ -155,11 +155,12 @@
 
 - title: The Moon is our Friend
   author: Paige Ruten
-  url: https://paigeruten.itch.io/moon-is-friend
+  url: https://play.date/games/the-moon-is-our-friend/
   image: ./assets/images/games/the-moon-is-our-friend.png
   color: "#ffcefa"
-  achievementCount: 35
+  achievementCount: 40
   releaseDate: 2025-05-18
+  lastAddedDate: 2025-11-18
   description: Use the Moon's gravitational pull to divert meteors away from the Earth.
 
 - title: Rotata
