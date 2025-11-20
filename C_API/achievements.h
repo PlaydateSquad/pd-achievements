@@ -6,11 +6,7 @@
 // Increase if your game needs more
 #define MAX_ACHIEVEMENTS 10
 
-#ifdef _WINDLL
-#define SHARED_ROOT_PATH "../../Shared"
-#else
 #define SHARED_ROOT_PATH "/Shared"
-#endif
 
 union achievement_id {
 	const char str7[8];
@@ -93,6 +89,6 @@ struct achievements_t {
 void achievements_init(PlaydateAPI* pd, struct achievements_t* root, const char* app_image_root);
 enum achievement_status achievements_grant(union achievement_id id);
 enum achievement_status achievements_set_progress(union achievement_id id, int value);
-void achievements_write();
+void achievements_write(void);
 
 #endif 

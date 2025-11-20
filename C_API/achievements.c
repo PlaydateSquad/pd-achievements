@@ -148,7 +148,7 @@ void achievements_init(PlaydateAPI* playdate_api, struct achievements_t* root, c
 	}
 }
 
-static void achievements_store_internal() {
+static void achievements_store_internal(void) {
 	struct achievement_private_t store[MAX_ACHIEVEMENTS];
 	memset(&store, 0, sizeof(store));
 
@@ -168,7 +168,7 @@ static void achievements_store_internal() {
 	}
 }
 
-static SDFile* achievements_open_outfile() {
+static SDFile* achievements_open_outfile(void) {
 	char* buffer;
 	pdapi->system->formatString(&buffer, "%s/Achievements", SHARED_ROOT_PATH);
 	pdapi->file->mkdir(buffer);
@@ -190,7 +190,7 @@ static SDFile* achievements_open_outfile() {
 	return file;
 }
 
-static void achievements_copy_images() {
+static void achievements_copy_images(void) {
 	copy_image(ac_root->game_id, ac_root->card_path, NULL);
 	copy_image(ac_root->game_id, ac_root->icon_path, NULL);
 
@@ -205,7 +205,7 @@ static void achievements_copy_images() {
 	}
 }
 
-static void achievements_write_header() {
+static void achievements_write_header(void) {
 	add_string_property("gameID", ac_root->game_id);
 	add_string_property("name", ac_root->name);
 	add_string_property("author", ac_root->author);
@@ -240,7 +240,7 @@ static void achievements_write_entry(struct achievement_t* a) {
 	}
 }
 
-void achievements_write() {
+void achievements_write(void) {
 
 	if (!achievements_dirty) return;
 
