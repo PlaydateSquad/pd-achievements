@@ -270,3 +270,13 @@
   releaseDate: 2025-08-19
   lastAddedDate: 2025-10-31
   description: Protect Crankstone from outlaws in this gallery shooter spiced up with mini games inspired by the Wild West. 
+
+- title: Pongerground
+  author: Matheus Nicolas
+  url: https://mechars.itch.io/pongerground
+  image: ./assets/images/games/pongerground.png
+  color: "#7C81BA"
+  achievementCount: 18
+  releaseDate: 2025-11-27
+  lastAddedDate: 2025-11-27
+  description: In this adventure, you play as Sunset, who, after being challenged, enters the Pongerground to face a mysterious villain and soon discovers unexpected twists along the way.
