@@ -745,6 +745,7 @@ function av.drawCard(achievementId, x, y, width, height)
       local iconImgGranted = m.icons[achievementId].granted
       local iconImgLocked = m.icons[achievementId].locked
 
+      gfx.setImageDrawMode(gfx.kDrawModeCopy)
       gfx.setColor(gfx.kColorWhite)
       gfx.fillRoundRect(0, 0, width, height, CARD_CORNER)
 
@@ -1127,6 +1128,7 @@ function av.animateOutUpdate()
 end
 
 function av.mainUpdate()
+   gfx.setImageDrawMode(gfx.kDrawModeCopy)
    m.userUpdate(1)
    if m.fadedBackdropImage then
       m.fadedBackdropImage:draw(0, 0)
