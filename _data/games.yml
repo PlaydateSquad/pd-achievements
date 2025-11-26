@@ -280,3 +280,13 @@
   releaseDate: 2025-11-27
   lastAddedDate: 2025-11-27
   description: In this adventure, you play as Sunset, who, after being challenged, enters the Pongerground to face a mysterious villain and soon discovers unexpected twists along the way.
+
+- title: helloyellow
+  author: Jon Simantov
+  url: https://helloyellow.app/get
+  image: ./assets/images/games/helloyellow.png
+  color: "#ffc500"
+  achievementCount: 6
+  releaseDate: 2025-11-25
+  lastAddedDate: 2025-11-25
+  description: Voice chat for Playdate. Also allows you to share achievements!
