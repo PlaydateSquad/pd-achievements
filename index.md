@@ -38,7 +38,7 @@ Playdate Achievements is a community project establishing an open standard for a
 
 <img src="./assets/images/viewers/trophy-case-pd.png" class="centered highDPI" alt="Trophy Case"/>
 
-Of course, games may also present their earned achievements themselves. Additionally, the open standard makes it possible for others to create dedicated achievement viewer apps in the future.
+Of course, games may also present their earned achievements themselves. Additionally, the open standard makes it possible for others to create dedicated achievement viewer apps in the future. For example, the [**Hello Yellow**](https://helloyellow.app) app showcases achievements earned by your friends, and also awards custom emoji for use in chats based on the other games you've played.
 
 </div> <!-- trophy case section -->
 
