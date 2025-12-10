@@ -290,3 +290,13 @@
   releaseDate: 2025-11-25
   lastAddedDate: 2025-11-25
   description: Voice chat for Playdate. Also allows you to share achievements!
+
+  - title: Crank Blaster
+  author: Derek Dumas
+  url: https://derekdumas.itch.io/crank-blaster
+  image: ./assets/images/games/crankblaster.png
+  color: "#ffc500"
+  achievementCount: 19
+  releaseDate: 2025-12-10
+  lastAddedDate: 2025-12-10
+  description: Use the crank to shoot your gun.  Defend your people from the horde of monsters!
