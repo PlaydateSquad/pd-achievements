@@ -115,7 +115,7 @@
 
 - title: AAoyue I
   author: Desmu
-  url: https://play.date/games/aaoyue-i/
+  url: https://www.desmu.fr/playdate/#aaoyue-i
   image: ./assets/images/games/aaoyue-i.png
   color: "#0077C7"
   achievementCount: 7
@@ -300,3 +300,13 @@
   releaseDate: 2025-12-10
   lastAddedDate: 2025-12-10
   description: Use the crank to shoot your gun.  Defend your people from the horde of monsters!
+  
+- title: Les Trucs qui Tombent
+  author: Desmu
+  url: https://www.desmu.fr/playdate/#les-trucs-qui-tombent
+  image: ./assets/images/games/les-trucs-qui-tombent.png
+  color: "#ffc833"
+  achievementCount: 9
+  releaseDate: 2025-12-12
+  lastAddedDate: 2025-12-12
+  description: Arcade visual novel with Georges the Sausage dodging things that fall from the screen and talking to them.
