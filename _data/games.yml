@@ -300,3 +300,13 @@
   releaseDate: 2025-12-10
   lastAddedDate: 2025-12-10
   description: Use the crank to shoot your gun.  Defend your people from the horde of monsters!
+
+- title: sing-song ding-dong
+  author: Grapefruitopia Industries
+  url: https://play.date/games/sing-song-ding-dong/
+  image: ./assets/images/games/singsong.png
+  color: "#7DACA2"
+  achievementCount: 12
+  releaseDate: 2025-12-09
+  lastAddedDate: 2025-12-09
+  description: In a long ago place, in a far away time, The villagers cast out one whose song didn't rhyme... 
