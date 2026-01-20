@@ -9,10 +9,10 @@
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
 - title: SpinShot
-  author: Elegand Phrase
+  author: Elegant Phrase
   url: https://play.date/games/spinshot/
   image: ./assets/images/games/spinshot.png
-  color: "#0042A8"
+  color: "#007BFF"
   achievementCount: 26
   releaseDate: 2025-01-20
   description: An arcade block-breaker score-chaser with a spin.
