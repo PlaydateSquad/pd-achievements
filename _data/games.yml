@@ -14,7 +14,7 @@
   image: ./assets/images/games/spinshot.png
   color: "#007BFF"
   achievementCount: 26
-  releaseDate: 2025-01-20
+  releaseDate: 2026-01-20
   description: An arcade block-breaker score-chaser with a spin.
 
 - title: Bona Fido
