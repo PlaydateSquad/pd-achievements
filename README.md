@@ -39,9 +39,6 @@ We also kindly ask that you abide by [best practices](https://gurtt.dev/trophy-c
 
 Follow the instructions below to submit your game for display on the [Playdate Achievements page](https://playdatesquad.github.io/pd-achievements/).
 
-> [!NOTE]
-> You can open a pull request directly _in this repo_ by [editing `_data/games.yml` with the GitHub file editor](https://github.com/PlaydateSquad/pd-achievements/edit/gh-pages/_data/games.yml), allowing you to skip step 1. However, with this approach you won’t have the chance to preview the resulting page before creating your pull request.
-
 1. [Fork this repository](https://github.com/PlaydateSquad/pd-achievements/fork) and _uncheck_ the **Copy the `main` branch only** checkbox—you’ll need the `gh-pages` branch to make your change. Optionally create a new branch from the `gh-pages` branch with the name of your game to work on.
 
 2. Edit `_data/games.yml`, copying the commented template and supplying the requisite information for your game. You’ll need to supply the following (**fields are required unless otherwise indicated**):
