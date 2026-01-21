@@ -8,6 +8,16 @@
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: Suborbital Salvage
+  author: Games Right Meow
+  url: https://play.date/games/suborbital-salvage/
+  image: ./assets/images/games/suborbital-salvage.png
+  color: "#553B5E"
+  achievementCount: 15
+  releaseDate: 2025-02-11
+  lastAddedDate: 2026-02-11
+  description: Test your piloting skills in this endless runner set in a dystopian corporate future!
+
 - title: SpinShot
   author: Elegant Phrase
   url: https://play.date/games/spinshot/
