@@ -18,6 +18,15 @@
   lastAddedDate: 2026-02-11
   description: Test your piloting skills in this endless runner set in a dystopian corporate future!
 
+- title: Fauna
+  author: Cadin Batrack
+  url: https://play.date/games/fauna/
+  image: ./assets/images/games/fauna.png
+  color: "#FB6800"
+  achievementCount: 20
+  releaseDate: 2026-01-20
+  description: A branching choose-your-own-adventure comic.
+
 - title: SpinShot
   author: Elegant Phrase
   url: https://play.date/games/spinshot/
@@ -339,3 +348,14 @@
   releaseDate: 2025-12-12
   lastAddedDate: 2025-12-12
   description: Arcade visual novel with Georges the Sausage dodging things that fall from the screen and talking to them.
+
+
+- title: Shatterd Wilds
+  author: Powerdive Games
+  url: https://play.date/games/shattered-wilds/
+  image: ./assets/images/games/shattered-wilds.png
+  color: "#676ba4"
+  achievementCount: 29
+  releaseDate: 2026-01-20
+  lastAddedDate: 2026-01-20
+  description: Mine, craft, and build your way through a sandbox building game that fits in your pocket.
