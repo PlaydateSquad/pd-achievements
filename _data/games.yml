@@ -8,6 +8,16 @@
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: Platform 10
+  author: Dr Gabe O'Reilly
+  url: https://play.date/games/platform-10/
+  image: ./assets/images/games/platform_10.png
+  color: "ff7500"
+  achievementCount: 24
+  releaseDate: 2023-10-10
+  lastAddedDate: 2026-03-05
+  description: A train based math-puzzle game!
+  
 - title: Piña Rollada
   author: Flywheel Games
   url: https://play.date/games/pina-rollada/
