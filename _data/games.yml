@@ -8,6 +8,16 @@
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: RollerBlade
+  author: qwack!
+  url: https://play.date/games/rollerblade
+  image: ./assets/images/games/rollerblade.png
+  color: "#00042d"
+  achievementCount: 56
+  releaseDate: 2026-04-28
+  lastAddedDate: 2026-02-15
+  description: Tiny Wings on steroids!
+
 - title: Platform 10
   author: Dr Gabe O'Reilly
   url: https://play.date/games/platform-10/
