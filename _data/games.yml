@@ -388,3 +388,13 @@
   releaseDate: 2026-01-20
   lastAddedDate: 2026-01-20
   description: Mine, craft, and build your way through a sandbox building game that fits in your pocket.
+
+- title: DockerMaster
+  author: Oxey405
+  url: https://play.date/games/dockermaster
+  image: ./assets/images/games/dockermaster.png
+  color: "#f8af00"
+  achievementCount: 7
+  releaseDate: 2026-03-24
+  lastAddedDate: 2026-03-24
+  description: "Frantically pick and place and ship containers in a race against time! Place them carefully or you might get fired from your job."
