@@ -398,3 +398,13 @@
   releaseDate: 2026-03-24
   lastAddedDate: 2026-03-24
   description: "Frantically pick and place and ship containers in a race against time! Place them carefully or you might get fired from your job."
+
+- title: SwitchBoard Shuffle
+  author: Raphael Calabro
+  url: https://play.date/games/switchboard-shuffle/
+  image: ./assets/images/games/switchboard-shuffle.png
+  color: "#45b1b3"
+  achievementCount: 14
+  releaseDate: 2026-04-14
+  lastAddedDate: 2026-04-13
+  description: Connect phone calls and avoid mixing cables in this falling block game!
