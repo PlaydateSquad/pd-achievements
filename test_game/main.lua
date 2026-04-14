@@ -80,6 +80,7 @@ end
 
 import "CoreLibs/ui"
 import "generate_data"
+import "generate_slots"
 local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
 -- Set numDescriptionLines to 2 (or 3) if you have longer achievement
@@ -100,6 +101,9 @@ local main_screen = playdate.ui.gridview.new(0, 20)
 local options = {
     {"GENERATE RANDOM DATA", function() 
         CHANGE_SCENE("GENERATE_DATA")
+    end},
+    {"TEST SLOTS AGGREGATION", function()
+        CHANGE_SCENE("GENERATE_SLOTS")
     end},
     {"LAUNCH VIEWER", function()
 	achievements.viewer.launch{gameData = achievements.gameData}
