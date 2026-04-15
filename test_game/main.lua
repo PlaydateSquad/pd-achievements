@@ -2,6 +2,9 @@ local gfx = playdate.graphics
 
 import "achievements/all"
 
+achievements.forceSaveOnGrantOrRevoke = true
+achievements.saveSlots = 3
+
 -- Copied from the comments in the other file...
 ---@type game_data
 local achievementData = {
@@ -117,6 +120,15 @@ local options = {
     end},
     {"set to mini toasts", function()
 	achievements.toasts.initialize({ miniMode = true })
+    end},
+    {"slot 1", function()
+        achievements.loadSlot(1)
+    end},
+    {"slot 2", function()
+        achievements.loadSlot(2)
+    end},
+    {"slot 3", function()
+        achievements.loadSlot(3)
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then

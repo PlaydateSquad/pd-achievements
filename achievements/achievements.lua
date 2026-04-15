@@ -39,6 +39,9 @@ local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
 local shared_images_updated_file <const> = "_last_seen_version.txt"
+local function achievement_slot_path(slotnum)
+	return "AchievementsSlot" .. slotnum .. ".json"
+end
 
 ---@diagnostic disable-next-line: lowercase-global
 achievements = {
@@ -49,6 +52,14 @@ achievements = {
 	--- Whether to save game data immediately when granting or revoking an achievement.
 	forceSaveOnGrantOrRevoke = false,
 	paths = {},
+
+	--- For games with multiple core save slots.
+	--- saveSlots is the max number of slots to use.
+	--- activeSlot is the slot to load at initialization, and later the current slot.
+	--- Slot 0 is the "global" aggregated data, which is what is exported.
+	saveSlots = 1,
+	activeSlot = 1,
+	slots = {}
 }
 
 achievements.paths.shared_data_root = shared_achievement_folder
@@ -111,24 +122,77 @@ end
 
 --- Loads progression data.
 local function load_granted_data()
-	local data = json.decodeFile(achievement_file_name)
-	if not data then
-		data = {}
+	achievements.slots[0] = json.decodeFile(achievement_file_name) or { grantedAt = {}, progress = {} }
+	
+	if not playdate.file.exists(achievement_slot_path(1)) then
+		-- Either first run ever or first run after update. Migration likely necessary.
+		-- We simply copy slot 0 (the contents of Achivements.json) to AchievementsSlot1.
+		json.encodeToFile(achievement_slot_path(1), false, achievements.slots[0])
 	end
+
+	for i = 1, achievements.saveSlots do
+		achievements.slots[i] = json.decodeFile(achievement_slot_path(i)) or { grantedAt = {}, progress = {} }
+	end
+
+	local data = achievements.slots[achievements.activeSlot]
 	achievements.granted = data.grantedAt or {}
 	achievements.progress = data.progress or {}
+end
+
+function achievements.loadSlot(slotnum)
+	if type(slotnum) ~= "number" then
+		error(("expected argument of type 'number', got '%s'"):format(type(slotnum)))
+	elseif slotnum < 1 or slotnum > achievements.saveSlots then
+		error("slot number must be between 1 and " .. achievements.saveSlots)
+	elseif slotnum == achievements.activeSlot then
+		-- Nothing to do, early return.
+		return
+	end
+
+	local active = achievements.slots[achievements.activeSlot]
+	active.grantedAt = achievements.granted
+	active.progress = achievements.progress
+
+	local data = achievements.slots[slotnum]
+	achievements.granted = data.grantedAt or {}
+	achievements.progress = data.progress or {}
+	achievements.activeSlot = slotnum
+
+	for _, ach in ipairs(achievements.gameData.achievements) do
+		ach.grantedAt = achievements.granted[ach.id]
+		if ach.progressMax then
+			ach.progress = achievements.progress[ach.id]
+		end
+		-- validate_achievement(ach)
+	end
 end
 
 --- Serializes the current game data to JSON and writes it to the shared data folder.
 ---
 --- @param force_minimize boolean Whether to minimize the output by excluding fields with default values. Defaults to false.
 local function export_data(force_minimize)
-	local data = achievements.gameData
+	local data
+	if achievements.saveSlots == 1 then
+		data = achievements.gameData
+	else
+		-- Force data to align with slot 0.
+		data = table.deepcopy(achievements.gameData)
+		local s0 = achievements.slots[0]
+		for _, ach in ipairs(data.achievements) do
+			ach.grantedAt = s0.grantedAt[ach.id]
+			if ach.progressMax then
+				ach.progress = s0.progress[ach.id]
+			end
+		end
+	end
+
 	-- This shouldn't actually be necessary unless the developer starts adding redundant optional fields.
 	-- I put it here temporarily and can't be bothered to remove it in case it ever becomes relevant.
 	-- (Forcing correct output regardless of user error at the cost of extra time spent, perhaps?)
 	if force_minimize then
-		data = table.deepcopy(data)
+		if achievements.saveSlots > 1 then
+			data = table.deepcopy(data)
+		end
 		for _, ach in ipairs(data.achievements) do
 			if ach.grantedAt == false then ach.grantedAt = nil end
 			if ach.progress == 0 then ach.progress = nil end
@@ -166,7 +230,7 @@ end
 local function crawlImagePaths(...)
 	local filepaths = {}
 	local desired_fields = {...}
-	for _, fieldname in ipairs(desired_fields) do
+	for _, fieldname in iipairs(desired_fields) do
 		for _, achievement_data in pairs(achievements.keyedAchievements) do
 			if achievement_data[fieldname] ~= nil then
 				 -- Images are always compiled to .pdi, so we need the real runtime filename for copy.
@@ -454,6 +518,12 @@ achievements.grant = function(achievement_id)
 	end
 	achievements.granted[achievement_id] = ( time )
 	ach.grantedAt = time
+	local s0 = achievements.slots[0].grantedAt
+	if achievements.saveSlots > 1 then
+		s0[achievement_id] = math.min(s0[achievement_id] or math.huge, time)
+	else
+		s0[achievement_id] = ( time )
+	end
 
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
@@ -474,6 +544,18 @@ achievements.revoke = function(achievement_id)
 	end
 	ach.grantedAt = nil
 	achievements.granted[achievement_id] = nil
+	local s0, m = achievements.slots[0].grantedAt
+	if achievements.saveSlots > 1 then
+		for i = 1, #achievements.slots do
+			if i ~= achievements.activeSlot then
+				local sc = achievements.slots[i].grantedAt[achievement_id]
+				if sc and sc < (m or math.huge) then m = sc end
+			end
+		end
+		s0[achievement_id] = m
+	else
+		s0[achievement_id] = nil
+	end
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
 	end
@@ -504,7 +586,25 @@ achievements.advanceTo = function(achievement_id, advance_to)
 	end
 	if progress == 0 then progress = nil end
 	achievements.progress[achievement_id] = progress
+	local orig_progress = ach.progress or -math.huge
 	ach.progress = progress
+	if achievements.saveSlots > 1 then
+		if progress or -math.huge > orig_progress then
+			local s0 = achievements.slots[0].progress
+			s0[achievement_id] = math.max(s0[achievement_id] or -math.huge, progress)
+		else
+			local s0, m = achievements.slots[0].progress
+			for i = 1, #achievements.slots do
+				if i ~= achievements.activeSlot then
+					local sc = achievements.slots[i].progress[achievement_id]
+					if sc and sc > (m or -math.huge) then m = sc end
+				end
+			end
+			s0[achievement_id] = m
+		end
+	else
+		s0[achievement_id] = progress
+	end
 	return true
 end
 
@@ -550,11 +650,17 @@ end
 --- Serializes the current game data to JSON and writes it to the data folder.
 function achievements.save()
 	export_data()
-	local save_table = {
-		grantedAt = achievements.granted,
-		progress = achievements.progress,
-	}
-	json.encodeToFile(achievement_file_name, false, save_table)
+
+	for i = 1, achievements.saveSlots do
+		json.encodeToFile(achievement_slot_path(i), false, achievements.slots[i])
+	end
+	json.encodeToFile(achievement_file_name, false, achievements.slots[0])
+
+	-- local save_table = {
+	-- 	grantedAt = achievements.granted,
+	-- 	progress = achievements.progress,
+	-- }
+	-- json.encodeToFile(achievement_file_name, false, save_table)
 end
 
 return achievements
