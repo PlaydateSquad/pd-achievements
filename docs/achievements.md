@@ -130,7 +130,11 @@ The number of unique save slots this game should use to store achievements. All 
 
 #### `number` achievements.activeSlot
 
-The save slot number to load at initialization, should you feel the need to change it. Defaults to `1`.
+The save slot number to load at initialization, should you feel the need to change it. 
+
+Post-initialization, stores the value of the currently active save slot.
+
+Defaults to `1`.
 
 #### `{ id: achievement }`: achievements.keyedAchievements
 
