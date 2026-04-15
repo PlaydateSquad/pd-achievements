@@ -3,7 +3,7 @@ local gfx = playdate.graphics
 import "achievements/all"
 
 achievements.forceSaveOnGrantOrRevoke = true
--- achievements.saveSlots = 3
+achievements.saveSlots = 3
 
 -- Copied from the comments in the other file...
 ---@type game_data
@@ -110,6 +110,9 @@ local options = {
     end},
     {"LAUNCH VIEWER", function()
 	achievements.viewer.launch{gameData = achievements.gameData}
+    end},
+    {"LAUNCH VIEWER COMBINED", function()
+        achievements.viewer.launchCombined()
     end},
     {"launch viewer test1" , function()
         local gamedata = achievements.crossgame.getData("com.example.achievementtest_generated_1")

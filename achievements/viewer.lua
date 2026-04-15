@@ -1296,6 +1296,21 @@ function av.clearCaches()
    m.titleImageCache = nil
 end
 
+function av.launchCombined(config)
+   config = config or {}
+   -- Force data to align with slot 0.
+   data = table.deepcopy(achievements.gameData)
+   local s0 = achievements.slots[0]
+   for _, ach in ipairs(data.achievements) do
+      ach.grantedAt = s0.grantedAt[ach.id]
+      if ach.progressMax then
+         ach.progress = s0.progress[ach.id]
+      end
+   end
+   config.gameData = data
+   av.launch(config)
+end
+
 function av.launch(config)
    config = av.setupDefaults(config)
    if not m then
@@ -1362,6 +1377,7 @@ end
 achievements.viewer = {
    initialize = av.initialize,
    launch = av.launch,
+   launchCombined = av.launchCombined,
    forceExit = av.forceExit,
    hasLaunched = av.hasLaunched,
    setVolume = av.setVolume,
