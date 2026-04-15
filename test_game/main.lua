@@ -3,7 +3,7 @@ local gfx = playdate.graphics
 import "achievements/all"
 
 achievements.forceSaveOnGrantOrRevoke = true
-achievements.saveSlots = 3
+-- achievements.saveSlots = 3
 
 -- Copied from the comments in the other file...
 ---@type game_data

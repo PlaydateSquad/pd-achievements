@@ -124,17 +124,22 @@ end
 local function load_granted_data()
 	achievements.slots[0] = json.decodeFile(achievement_file_name) or { grantedAt = {}, progress = {} }
 	
-	if not playdate.file.exists(achievement_slot_path(1)) then
-		-- Either first run ever or first run after update. Migration likely necessary.
-		-- We simply copy slot 0 (the contents of Achivements.json) to AchievementsSlot1.
-		json.encodeToFile(achievement_slot_path(1), false, achievements.slots[0])
-	end
+	local data
+	if achievements.saveSlots > 1 then
+		if not playdate.file.exists(achievement_slot_path(1)) then
+			-- Either first run ever or first run after update. Migration likely necessary.
+			-- We simply copy slot 0 (the contents of Achivements.json) to AchievementsSlot1.
+			json.encodeToFile(achievement_slot_path(1), false, achievements.slots[0])
+		end
 
-	for i = 1, achievements.saveSlots do
-		achievements.slots[i] = json.decodeFile(achievement_slot_path(i)) or { grantedAt = {}, progress = {} }
-	end
+		for i = 1, achievements.saveSlots do
+			achievements.slots[i] = json.decodeFile(achievement_slot_path(i)) or { grantedAt = {}, progress = {} }
+		end
 
-	local data = achievements.slots[achievements.activeSlot]
+		data = achievements.slots[achievements.activeSlot]
+	else
+		data = achievements.slots[0]
+	end
 	achievements.granted = data.grantedAt or {}
 	achievements.progress = data.progress or {}
 end
@@ -651,8 +656,10 @@ end
 function achievements.save()
 	export_data()
 
-	for i = 1, achievements.saveSlots do
-		json.encodeToFile(achievement_slot_path(i), false, achievements.slots[i])
+	if achievements.saveSlots > 1 then
+		for i = 1, achievements.saveSlots do
+			json.encodeToFile(achievement_slot_path(i), false, achievements.slots[i])
+		end
 	end
 	json.encodeToFile(achievement_file_name, false, achievements.slots[0])
 
