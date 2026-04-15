@@ -1308,7 +1308,7 @@ function av.launchCombined(config)
       end
    end
    config.gameData = data
-   av.launch(config)
+   return av.launch(config)
 end
 
 function av.launch(config)
