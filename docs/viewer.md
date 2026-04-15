@@ -88,6 +88,10 @@ Returns `true` if the viewer was successfully launched, or `false` otherwise.
 
 > NOTE: **System Menu:** Launching the viewer does not affect the Playdate system menu, so any menu items you’ve configured will remain available to the player while the viewer is displayed. You can change the menu items available before launching the viewer and restore them in your `returnToGameFunction`. Call `achievements.viewer.forceExit` to dismiss the viewer as needed when the player selects an item from the system menu.
 
+#### achievements.viewer.launchCombined(`table?`: _config_)
+
+Displays the achievements viewer using the total combined data from all of the game's save slots. Otherwise identical in use to `achievements.viewer.launch()`.
+
 #### achievements.viewer.forceExit()
 
 Forcibly dismisses the viewer, which will fade out and return execution to your game. Call this function when some other interrupt occurs, such as when the player selects an item from the system menu. Calling when the viewer is not displayed has no effect.

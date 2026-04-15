@@ -35,6 +35,13 @@
 ---@field progressIsPercentage boolean? A reader hint indicating whether the achievement's progress should be displayed as a percentage instead of a fraction. Defaults to false.
 ---@field scoreValue number? A reader hint indicating the relative importance of the achievement. This also influences the value returned by `achievements.completionPercentage`, where each achievement grants scoreValue/(total scores)% completion. Defaults to 1.
 
+---@class achievementroot
+---@field specVersion string The version of the specification this library follows.
+---@field flag_is_playdatesquad_api boolean Internal flag that might be used for self-ID.
+---@field forceSaveOnGrantOrRevoke boolean Whether to save game data immediately when granting or revoking an achievement. Default: false
+---@field saveSlots number The configured number of save slots this game uses. Default: 1
+---@field activeSlot number The save slot to load at initialization. Default: 1
+
 local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"
 local shared_images_subfolder <const> = "AchievementImages/"
@@ -144,6 +151,9 @@ local function load_granted_data()
 	achievements.progress = data.progress or {}
 end
 
+--- Changes the currently active achievement save slot.
+--- Does nothing when attempting to load the current slot.
+---@param slotnum number The number of the slot to load.
 function achievements.loadSlot(slotnum)
 	if type(slotnum) ~= "number" then
 		error(("expected argument of type 'number', got '%s'"):format(type(slotnum)))
