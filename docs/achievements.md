@@ -140,6 +140,12 @@ Defaults to `1`.
 
 A table containing all defined achievements indexed by their achievement ID string.
 
+### `[ saveData ]`: achievements.slots
+
+An array containing the achievement data of all save slots, as tables containing `grantedAt` and `progress` fields keyed by achievement ID string.
+
+Index `[0]` contains the table for the combined total save information.
+
 ### Functions
 
 #### achievements.initialize(`table`: _achievement_data_, `bool?`: _silent_)
