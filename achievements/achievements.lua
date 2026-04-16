@@ -51,6 +51,7 @@ local function achievement_slot_path(slotnum)
 end
 
 ---@diagnostic disable-next-line: lowercase-global
+---@type achievementroot
 achievements = {
 	--- The version of the specification this library follows.
 	specVersion = "1.0.0",
@@ -245,7 +246,7 @@ end
 local function crawlImagePaths(...)
 	local filepaths = {}
 	local desired_fields = {...}
-	for _, fieldname in iipairs(desired_fields) do
+	for _, fieldname in ipairs(desired_fields) do
 		for _, achievement_data in pairs(achievements.keyedAchievements) do
 			if achievement_data[fieldname] ~= nil then
 				 -- Images are always compiled to .pdi, so we need the real runtime filename for copy.
