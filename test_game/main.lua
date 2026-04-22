@@ -88,8 +88,8 @@ local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
 -- Set numDescriptionLines to 2 (or 3) if you have longer achievement
 -- descriptions.
-achievements.viewer.initialize({ enableAboutScreen = true,
-				 numDescriptionLines = 1 }) 
+-- achievements.viewer.initialize({ enableAboutScreen = false,
+-- 				 numDescriptionLines = 1 }) 
 
 achievements.toasts.initialize({ miniMode = false,
 				 invert = false,  -- set to true to try dark toasts
@@ -112,7 +112,7 @@ local options = {
 	achievements.viewer.launch{gameData = achievements.gameData}
     end},
     {"LAUNCH VIEWER COMBINED", function()
-        achievements.viewer.launchCombined()
+        achievements.viewer.launch{showSlot = "combined"}
     end},
     {"launch viewer test1" , function()
         local gamedata = achievements.crossgame.getData("com.example.achievementtest_generated_1")

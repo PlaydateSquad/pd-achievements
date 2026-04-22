@@ -131,6 +131,18 @@ local defaultConfig = {
    -- the gameData using the crossgame module and pass it in here.
    gameData = nil,
 
+   -- Which save slot to show the current data from. Normally you will set this
+   -- to nil to have it show achievements granted in the current save slot, but
+   -- if you want to display a different slot's data you can do so here.
+   -- 
+   --  - [any number 1 <= X <= achievements.saveSlots] - Load the data from the
+   --    given save slot.
+   -- 
+   --  - "combined" - Load the data from achievements.combinedSlot
+   -- 
+   -- This settting is mutually exclusive with the gameData setting.
+   showSlot = nil,
+
    -- This will be called every frame when the viewer is blocking the screen,
    -- prior to drawing the viewer. The parameter passed in will range from 0 to
    -- 1 as the viewer fades in, stay 1 while the viewer is being displayed, then
@@ -297,6 +309,9 @@ function av.initialize(config)
 
    config = av.setupDefaults(config)
 
+   if not av.fixSlotData(config) then
+      return false
+   end
    gameData = config.gameData
    assetPath = config.assetPath
 
@@ -1296,19 +1311,47 @@ function av.clearCaches()
    m.titleImageCache = nil
 end
 
-function av.launchCombined(config)
-   config = config or {}
-   -- Force data to align with slot 0.
-   data = table.deepcopy(achievements.gameData)
-   local cs = achievements.combinedSlot
+-- Force data to align with given slot.
+function av.fixSlotData(config)
+   if not config.showSlot then
+      return true
+   end
+   if config.gameData then
+      print("ERROR: achievement_viewer: can't set both 'gameData' and 'showSlot' configuration settings simultaneously")
+      return false
+   end
+
+   local ss = config.showSlot
+   local pass = true
+   if type(ss) == "number" then
+      if ss < 1 or ss > achievements.saveSlots then
+         pass = false
+      else
+         ss = achievements.slots[ss]
+      end
+   elseif type(ss) == "string" then
+      if ss == "combined" then
+         ss = achievements.combinedSlot
+      else
+         pass = false
+      end
+   else
+      pass = false
+   end
+   if pass == false then
+      print("ERROR: invalid save slot: '" .. ss .. "'")
+      return false
+   end
+
+   local data = table.deepcopy(achievements.gameData)
    for _, ach in ipairs(data.achievements) do
-      ach.grantedAt = cs.grantedAt[ach.id]
+      ach.grantedAt = ss.grantedAt[ach.id]
       if ach.progressMax then
-         ach.progress = cs.progress[ach.id]
+         ach.progress = ss.progress[ach.id]
       end
    end
    config.gameData = data
-   return av.launch(config)
+   return true
 end
 
 function av.launch(config)
