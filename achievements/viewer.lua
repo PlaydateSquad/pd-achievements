@@ -1300,11 +1300,11 @@ function av.launchCombined(config)
    config = config or {}
    -- Force data to align with slot 0.
    data = table.deepcopy(achievements.gameData)
-   local s0 = achievements.slots[0]
+   local cs = achievements.combinedSlot
    for _, ach in ipairs(data.achievements) do
-      ach.grantedAt = s0.grantedAt[ach.id]
+      ach.grantedAt = cs.grantedAt[ach.id]
       if ach.progressMax then
-         ach.progress = s0.progress[ach.id]
+         ach.progress = cs.progress[ach.id]
       end
    end
    config.gameData = data

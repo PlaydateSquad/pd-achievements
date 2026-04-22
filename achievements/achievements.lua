@@ -41,6 +41,8 @@
 ---@field forceSaveOnGrantOrRevoke boolean Whether to save game data immediately when granting or revoking an achievement. Default: false
 ---@field saveSlots number The configured number of save slots this game uses. Default: 1
 ---@field activeSlot number The save slot to load at initialization. Default: 1
+---@field slots table An internal table containing each save slot's data.
+---@field combinedSlot table An internal table containing the combined data from each save slot.
 
 local shared_achievement_folder <const> = "/Shared/Achievements/"
 local achievement_file_name <const> = "Achievements.json"
@@ -64,10 +66,11 @@ achievements = {
 	--- For games with multiple core save slots.
 	--- saveSlots is the max number of slots to use.
 	--- activeSlot is the slot to load at initialization, and later the current slot.
-	--- Slot 0 is the "global" aggregated data, which is what is exported.
+	--- combinedSlot is the "global" aggregated data, which is what is exported.
 	saveSlots = 1,
 	activeSlot = 1,
-	slots = {}
+	slots = {},
+	combinedSlot = nil
 }
 
 achievements.paths.shared_data_root = shared_achievement_folder
@@ -130,14 +133,14 @@ end
 
 --- Loads progression data.
 local function load_granted_data()
-	achievements.slots[0] = json.decodeFile(achievement_file_name) or { grantedAt = {}, progress = {} }
+	achievements.combinedSlot = json.decodeFile(achievement_file_name) or { grantedAt = {}, progress = {} }
 	
 	local data
 	if achievements.saveSlots > 1 then
 		if not playdate.file.exists(achievement_slot_path(1)) then
 			-- Either first run ever or first run after update. Migration likely necessary.
 			-- We simply copy slot 0 (the contents of Achivements.json) to AchievementsSlot1.
-			json.encodeToFile(achievement_slot_path(1), false, achievements.slots[0])
+			json.encodeToFile(achievement_slot_path(1), false, achievements.combinedSlot)
 		end
 
 		for i = 1, achievements.saveSlots do
@@ -146,7 +149,7 @@ local function load_granted_data()
 
 		data = achievements.slots[achievements.activeSlot]
 	else
-		data = achievements.slots[0]
+		data = achievements.combinedSlot
 	end
 	achievements.granted = data.grantedAt or {}
 	achievements.progress = data.progress or {}
@@ -193,11 +196,11 @@ local function export_data(force_minimize)
 	else
 		-- Force data to align with slot 0.
 		data = table.deepcopy(achievements.gameData)
-		local s0 = achievements.slots[0]
+		local cs = achievements.combinedSlot
 		for _, ach in ipairs(data.achievements) do
-			ach.grantedAt = s0.grantedAt[ach.id]
+			ach.grantedAt = cs.grantedAt[ach.id]
 			if ach.progressMax then
-				ach.progress = s0.progress[ach.id]
+				ach.progress = cs.progress[ach.id]
 			end
 		end
 	end
@@ -534,11 +537,11 @@ achievements.grant = function(achievement_id)
 	end
 	achievements.granted[achievement_id] = ( time )
 	ach.grantedAt = time
-	local s0 = achievements.slots[0].grantedAt
+	local cs = achievements.combinedSlot.grantedAt
 	if achievements.saveSlots > 1 then
-		s0[achievement_id] = math.min(s0[achievement_id] or math.huge, time)
+		cs[achievement_id] = math.min(cs[achievement_id] or math.huge, time)
 	else
-		s0[achievement_id] = ( time )
+		cs[achievement_id] = ( time )
 	end
 
 	if achievements.forceSaveOnGrantOrRevoke then
@@ -560,7 +563,7 @@ achievements.revoke = function(achievement_id)
 	end
 	ach.grantedAt = nil
 	achievements.granted[achievement_id] = nil
-	local s0, m = achievements.slots[0].grantedAt
+	local cs, m = achievements.combinedSlot.grantedAt
 	if achievements.saveSlots > 1 then
 		for i = 1, #achievements.slots do
 			if i ~= achievements.activeSlot then
@@ -568,9 +571,9 @@ achievements.revoke = function(achievement_id)
 				if sc and sc < (m or math.huge) then m = sc end
 			end
 		end
-		s0[achievement_id] = m
+		cs[achievement_id] = m
 	else
-		s0[achievement_id] = nil
+		cs[achievement_id] = nil
 	end
 	if achievements.forceSaveOnGrantOrRevoke then
 		achievements.save()
@@ -606,20 +609,20 @@ achievements.advanceTo = function(achievement_id, advance_to)
 	ach.progress = progress
 	if achievements.saveSlots > 1 then
 		if progress or -math.huge > orig_progress then
-			local s0 = achievements.slots[0].progress
-			s0[achievement_id] = math.max(s0[achievement_id] or -math.huge, progress)
+			local cs = achievements.combinedSlot.progress
+			cs[achievement_id] = math.max(cs[achievement_id] or -math.huge, progress)
 		else
-			local s0, m = achievements.slots[0].progress
+			local cs, m = achievements.combinedSlot.progress
 			for i = 1, #achievements.slots do
 				if i ~= achievements.activeSlot then
 					local sc = achievements.slots[i].progress[achievement_id]
 					if sc and sc > (m or -math.huge) then m = sc end
 				end
 			end
-			s0[achievement_id] = m
+			cs[achievement_id] = m
 		end
 	else
-		s0[achievement_id] = progress
+		cs[achievement_id] = progress
 	end
 	return true
 end
@@ -672,7 +675,7 @@ function achievements.save()
 			json.encodeToFile(achievement_slot_path(i), false, achievements.slots[i])
 		end
 	end
-	json.encodeToFile(achievement_file_name, false, achievements.slots[0])
+	json.encodeToFile(achievement_file_name, false, achievements.combinedSlot)
 
 	-- local save_table = {
 	-- 	grantedAt = achievements.granted,
