@@ -144,7 +144,9 @@ A table containing all defined achievements indexed by their achievement ID stri
 
 An array containing the achievement data of all save slots, as tables containing `grantedAt` and `progress` fields keyed by achievement ID string.
 
-Index `[0]` contains the table for the combined total save information.
+### `{ saveData }`: achievements.combinedSlot
+
+Contains the combined total information of all save slots as a single table.
 
 ### Functions
 
