@@ -1361,7 +1361,7 @@ function av.fixSlotData(config)
 end
 
 function av.launch(config)
-   if config.showSlot then
+   if config.showSlot ~= nil then
       if m and m.config and m.config.showSlot ~= config.showSlot then
          m = nil
       end
