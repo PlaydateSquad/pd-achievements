@@ -454,7 +454,7 @@ function av.reinitialize(config)
          m.completionScore += achScore
          m.numCompleted += 1
       elseif data.progressMax and data2.progress then
-	 m.completionScore += achScore * (data2.progress / data.progressMax)
+         m.completionScore += achScore * (data2.progress / data.progressMax)
       end
       m.card[i] = {
          x = SCREEN_WIDTH / 2 - CARD_WIDTH / 2,
@@ -1363,7 +1363,7 @@ end
 function av.launch(config)
    if config.showSlot then
       if m and m.config and m.config.showSlot ~= config.showSlot then
-	 m = nil
+         m = nil
       end
    end
    config = av.setupDefaults(config)
