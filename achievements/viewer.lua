@@ -135,12 +135,14 @@ local defaultConfig = {
    -- to nil to have it show achievements granted in the current save slot, but
    -- if you want to display a different slot's data you can do so here.
    -- 
-   --  - [any number 1 <= X <= achievements.saveSlots] - Load the data from the
-   --    given save slot.
+   --  - number from 1..achievements.saveSlots: Load the data from the given
+   --                                           save slot.
    -- 
-   --  - "combined" - Load the data from achievements.combinedSlot
+   --  - "combined": Load the data from achievements.combinedSlot.
+   --
+   --  - false: Remove the previously-set value.
    -- 
-   -- This settting is mutually exclusive with the gameData setting.
+   -- This setting overrides the gameData setting.
    showSlot = nil,
 
    -- This will be called every frame when the viewer is blocking the screen,
@@ -1314,12 +1316,16 @@ end
 -- Force data to align with given slot.
 function av.fixSlotData(config)
    if not config.showSlot then
+      config.showSlot = nil  -- in case it was false
       return true
    end
+
+
    if config.gameData then
-      print("ERROR: achievement_viewer: can't set both 'gameData' and 'showSlot' configuration settings simultaneously")
-      return false
+      print("WARNING: achievement_viewer: can't set both 'gameData' and 'showSlot' configuration settings simultaneously, preferring 'showslot'")
+      config.gameData = nil  -- forcibly remove this
    end
+
 
    local ss = config.showSlot
    local pass = true
@@ -1355,6 +1361,11 @@ function av.fixSlotData(config)
 end
 
 function av.launch(config)
+   if config.showSlot then
+      if m and m.config and m.config.showSlot ~= config.showSlot then
+	 m = nil
+      end
+   end
    config = av.setupDefaults(config)
    if not m then
       if not av.initialize(config) then
@@ -1420,7 +1431,6 @@ end
 achievements.viewer = {
    initialize = av.initialize,
    launch = av.launch,
-   launchCombined = av.launchCombined,
    forceExit = av.forceExit,
    hasLaunched = av.hasLaunched,
    setVolume = av.setVolume,
