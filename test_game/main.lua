@@ -2,6 +2,9 @@ local gfx = playdate.graphics
 
 import "achievements/all"
 
+achievements.forceSaveOnGrantOrRevoke = true
+achievements.saveSlots = 3
+
 -- Copied from the comments in the other file...
 ---@type game_data
 local achievementData = {
@@ -80,12 +83,13 @@ end
 
 import "CoreLibs/ui"
 import "generate_data"
+import "generate_slots"
 local TOAST_MODE = "auto"  -- can also use "sprite" or "manual", for testing
 
 -- Set numDescriptionLines to 2 (or 3) if you have longer achievement
 -- descriptions.
-achievements.viewer.initialize({ enableAboutScreen = true,
-				 numDescriptionLines = 1 }) 
+-- achievements.viewer.initialize({ enableAboutScreen = false,
+-- 				 numDescriptionLines = 1 }) 
 
 achievements.toasts.initialize({ miniMode = false,
 				 invert = false,  -- set to true to try dark toasts
@@ -101,8 +105,14 @@ local options = {
     {"GENERATE RANDOM DATA", function() 
         CHANGE_SCENE("GENERATE_DATA")
     end},
+    {"TEST SLOTS AGGREGATION", function()
+        CHANGE_SCENE("GENERATE_SLOTS")
+    end},
     {"LAUNCH VIEWER", function()
 	achievements.viewer.launch{gameData = achievements.gameData}
+    end},
+    {"LAUNCH VIEWER COMBINED", function()
+        achievements.viewer.launch{showSlot = "combined"}
     end},
     {"launch viewer test1" , function()
         local gamedata = achievements.crossgame.getData("com.example.achievementtest_generated_1")
@@ -113,6 +123,15 @@ local options = {
     end},
     {"set to mini toasts", function()
 	achievements.toasts.initialize({ miniMode = true })
+    end},
+    {"slot 1", function()
+        achievements.loadSlot(1)
+    end},
+    {"slot 2", function()
+        achievements.loadSlot(2)
+    end},
+    {"slot 3", function()
+        achievements.loadSlot(3)
     end},
     {"grant/revoke 1", function() 
         if achievements.isGranted("test_achievement") then

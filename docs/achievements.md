@@ -121,9 +121,32 @@ achievements.forceSaveOnGrantOrRevoke = true -- Defaults to false. Only set if y
 
 If this flag is set to `true` then achievements will be saved to disk every time an achievement is newly granted or revoked. Defaults to `false`.
 
+#### `number` achievements.saveSlots
+
+The number of unique save slots this game should use to store achievements. All slots are concatenated in the exported data. Defaults to `1`.
+
+> **Note:**
+> If your game has existing achievement save data and the number of slots is later increased above 1, the existing save data will be moved into slot 1.
+
+#### `number` achievements.activeSlot
+
+The save slot number to load at initialization, should you feel the need to change it. 
+
+Post-initialization, stores the value of the currently active save slot.
+
+Defaults to `1`.
+
 #### `{ id: achievement }`: achievements.keyedAchievements
 
 A table containing all defined achievements indexed by their achievement ID string.
+
+### `[ saveData ]`: achievements.slots
+
+An array containing the achievement data of all save slots, as tables containing `grantedAt` and `progress` fields keyed by achievement ID string.
+
+### `{ saveData }`: achievements.combinedSlot
+
+Contains the combined total information of all save slots as a single table.
 
 ### Functions
 
@@ -170,3 +193,7 @@ Returns `true` if the achievement has been earned by the player, or `false` othe
 #### achievements.getInfo(`string`: _achievement_id_)
 
 Returns a `table` containing metadata associated with the achievement in the format specified in the [`achievementData` schema](#achievementdata) above.
+
+#### achievements.loadSlot(`number`: _slotnum_)
+
+Changes the currently active achievement save slot. Does nothing when attempting to load the current slot.

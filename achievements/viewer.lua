@@ -131,6 +131,20 @@ local defaultConfig = {
    -- the gameData using the crossgame module and pass it in here.
    gameData = nil,
 
+   -- Which save slot to show the current data from. Normally you will set this
+   -- to nil to have it show achievements granted in the current save slot, but
+   -- if you want to display a different slot's data you can do so here.
+   -- 
+   --  - number from 1..achievements.saveSlots: Load the data from the given
+   --                                           save slot.
+   -- 
+   --  - "combined": Load the data from achievements.combinedSlot.
+   --
+   --  - false: Remove the previously-set value.
+   -- 
+   -- This setting overrides the gameData setting.
+   showSlot = nil,
+
    -- This will be called every frame when the viewer is blocking the screen,
    -- prior to drawing the viewer. The parameter passed in will range from 0 to
    -- 1 as the viewer fades in, stay 1 while the viewer is being displayed, then
@@ -297,6 +311,9 @@ function av.initialize(config)
 
    config = av.setupDefaults(config)
 
+   if not av.fixSlotData(config) then
+      return false
+   end
    gameData = config.gameData
    assetPath = config.assetPath
 
@@ -437,7 +454,7 @@ function av.reinitialize(config)
          m.completionScore += achScore
          m.numCompleted += 1
       elseif data.progressMax and data2.progress then
-	 m.completionScore += achScore * (data2.progress / data.progressMax)
+         m.completionScore += achScore * (data2.progress / data.progressMax)
       end
       m.card[i] = {
          x = SCREEN_WIDTH / 2 - CARD_WIDTH / 2,
@@ -1296,7 +1313,59 @@ function av.clearCaches()
    m.titleImageCache = nil
 end
 
+-- Force data to align with given slot.
+function av.fixSlotData(config)
+   if not config.showSlot then
+      config.showSlot = nil  -- in case it was false
+      return true
+   end
+
+
+   if config.gameData then
+      print("WARNING: achievement_viewer: can't set both 'gameData' and 'showSlot' configuration settings simultaneously, preferring 'showslot'")
+      config.gameData = nil  -- forcibly remove this
+   end
+
+
+   local ss = config.showSlot
+   local pass = true
+   if type(ss) == "number" then
+      if ss < 1 or ss > achievements.saveSlots then
+         pass = false
+      else
+         ss = achievements.slots[ss]
+      end
+   elseif type(ss) == "string" then
+      if ss == "combined" then
+         ss = achievements.combinedSlot
+      else
+         pass = false
+      end
+   else
+      pass = false
+   end
+   if pass == false then
+      print("ERROR: invalid save slot: '" .. ss .. "'")
+      return false
+   end
+
+   local data = table.deepcopy(achievements.gameData)
+   for _, ach in ipairs(data.achievements) do
+      ach.grantedAt = ss.grantedAt[ach.id]
+      if ach.progressMax then
+         ach.progress = ss.progress[ach.id]
+      end
+   end
+   config.gameData = data
+   return true
+end
+
 function av.launch(config)
+   if config.showSlot ~= nil then
+      if m and m.config and m.config.showSlot ~= config.showSlot then
+         m = nil
+      end
+   end
    config = av.setupDefaults(config)
    if not m then
       if not av.initialize(config) then
