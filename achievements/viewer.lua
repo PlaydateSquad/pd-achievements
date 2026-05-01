@@ -284,7 +284,7 @@ end
 
 function av.setConstants(config)
    config = config or m.config
-   local numLines = config.numDescriptionLines
+   local numLines = config.numDescriptionLines + .5 -- gives extra space for description to draw when title takes two lines
    m.c = {}
    m.c.CARD_HEIGHT = math.max(CARD_HEIGHT_MIN, CARD_HEIGHT_BASE + numLines * CARD_HEIGHT_PER_LINE)
    m.c.CARD_SPACING_ANIM = SCREEN_HEIGHT - m.c.CARD_HEIGHT
@@ -338,7 +338,9 @@ function av.initialize(config)
 
    m.fonts.name = {}
    m.fonts.name.locked = av.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Medium")
+   m.fonts.name.locked:setLeading(-4)
    m.fonts.name.granted = av.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Bold")
+   m.fonts.name.granted:setLeading(-4)
    m.fonts.description = {}
    m.fonts.description.locked = av.loadFile(gfx.font.new, assetPath .. "/Nontendo-Light")
    m.fonts.description.locked:setLeading(3)
@@ -606,17 +608,19 @@ function av.drawTitle(x, y)
       image = gfx.image.new(width, height)
 
       gfx.pushContext(image)
+      local offsetX, offsetY = gfx.getDrawOffset()
+      local drawX, drawY = -offsetX, -offsetY
       local font = m.fonts.title
 
       gfx.setColor(gfx.kColorWhite)
-      gfx.fillRoundRect(0, 0, width, height, TITLE_CORNER)
+      gfx.fillRoundRect(drawX, drawY, width, height, TITLE_CORNER)
 
       local margin = 1
       gfx.setColor(gfx.kColorBlack)
-      gfx.fillRoundRect(0+margin, 0+margin, width-2*margin, height-2*margin, TITLE_CORNER)
+      gfx.fillRoundRect(drawX+margin, drawY+margin, width-2*margin, height-2*margin, TITLE_CORNER)
 
       gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
-      font:drawTextAligned("Achievements", width/2, height/2 - math.floor(font:getHeight()/2) + TITLE_TWEAK_Y, kTextAlignment.center)
+      font:drawTextAligned("Achievements", drawX + width/2, drawY + height/2 - math.floor(font:getHeight()/2) + TITLE_TWEAK_Y, kTextAlignment.center)
 
       font = m.fonts.status
       gfx.setFont(font)
@@ -636,8 +640,8 @@ function av.drawTitle(x, y)
                                         TITLE_WIDTH, TITLE_HEIGHT)
       end
       if summaryImg then
-         summaryImg:draw(LAYOUT_MARGIN,
-                         height - TITLE_HELP_TEXT_MARGIN - summaryImg.height)
+         summaryImg:draw(drawX + LAYOUT_MARGIN,
+                         drawY + height - TITLE_HELP_TEXT_MARGIN - summaryImg.height)
       end
 
       gfx.popContext()
@@ -647,6 +651,8 @@ function av.drawTitle(x, y)
       end
    end
    gfx.pushContext(image)
+   local offsetX, offsetY = gfx.getDrawOffset()
+   local drawX, drawY = -offsetX, -offsetY
    font = m.fonts.status
    gfx.setFont(font)
    gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
@@ -654,33 +660,34 @@ function av.drawTitle(x, y)
    local sortImg2 = gfx.imageWithText(tostring(m.sortOrder), TITLE_WIDTH, TITLE_HEIGHT)
    gfx.setImageDrawMode(gfx.kDrawModeCopy)
    gfx.setColor(gfx.kColorBlack)
-   gfx.fillRect(width / 2, height - TITLE_HELP_TEXT_MARGIN - sortImg.height - 2,
+   gfx.fillRect(drawX + width / 2, drawY + height - TITLE_HELP_TEXT_MARGIN - sortImg.height - 2,
                 width / 2 - LAYOUT_MARGIN, sortImg.height + 4)
-   sortImg2:draw(width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth + (
+   sortImg2:draw(drawX + width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth + (
                     m.maxSortTextWidth / 2 - sortImg2.width/2),
-                 height - TITLE_HELP_TEXT_MARGIN - sortImg2.height)
+                 drawY + height - TITLE_HELP_TEXT_MARGIN - sortImg2.height)
 
-   sortImg:draw(width - LAYOUT_MARGIN - sortImg.width - 2 * TITLE_ARROW_X_MARGIN - m.maxSortTextWidth,
-                height - TITLE_HELP_TEXT_MARGIN - sortImg.height)
+   sortImg:draw(drawX + width - LAYOUT_MARGIN - sortImg.width - 2 * TITLE_ARROW_X_MARGIN - m.maxSortTextWidth,
+                drawY + height - TITLE_HELP_TEXT_MARGIN - sortImg.height)
    gfx.setColor(gfx.kColorWhite)
    gfx.setLineWidth(1)
    local arrowAnim = math.sin(TITLE_ARROW_SPEED * m.continuousAnimFrame) * TITLE_ARROW_MAG
 
-   local triX = width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN/2 + arrowAnim
-   local triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
+   local triX = drawX + width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN/2 + arrowAnim
+   local triY = drawY + height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
 
    gfx.fillPolygon(triX - TITLE_ARROW_WIDTH/2, triY - TITLE_ARROW_HEIGHT/2,
                    triX + TITLE_ARROW_WIDTH/2, triY,
                    triX - TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
-   triX = width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth - TITLE_ARROW_X_MARGIN/2 - arrowAnim
-   triY = height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
+   triX = drawX + width - LAYOUT_MARGIN - TITLE_ARROW_X_MARGIN - m.maxSortTextWidth - TITLE_ARROW_X_MARGIN/2 - arrowAnim
+   triY = drawY + height - TITLE_ARROW_Y_MARGIN - sortImg.height/2
 
    gfx.fillPolygon(triX + TITLE_ARROW_WIDTH/2, triY - TITLE_ARROW_HEIGHT/2,
                    triX - TITLE_ARROW_WIDTH/2, triY,
                    triX + TITLE_ARROW_WIDTH/2, triY + TITLE_ARROW_HEIGHT/2)
    gfx.popContext()
 
-   m.titleImageCache:draw(x, y)
+   local offsetX, offsetY = gfx.getDrawOffset()
+   m.titleImageCache:draw(x - offsetX, y - offsetY)
 end
 
 function av.formatDate(timestamp)
@@ -699,22 +706,24 @@ function av.drawSecretAchievementSummary(x, y, width, height)
       image = gfx.image.new(wantWidth, wantHeight)
 
       gfx.pushContext(image)
+      local offsetX, offsetY = gfx.getDrawOffset()
+      local drawX, drawY = -offsetX, -offsetY
 
       local margin = 1
 
       gfx.setColor(gfx.kColorWhite)
-      gfx.fillRoundRect(0, 0, width, height, CARD_CORNER)
+      gfx.fillRoundRect(drawX, drawY, width, height, CARD_CORNER)
 
       gfx.setStrokeLocation(gfx.kStrokeInside)
       gfx.setLineWidth(CARD_OUTLINE)
       gfx.setColor(gfx.kColorBlack)
 
-      gfx.drawRoundRect(margin, margin, width-2*margin, height-2*margin, CARD_CORNER)
+      gfx.drawRoundRect(drawX + margin, drawY + margin, width-2*margin, height-2*margin, CARD_CORNER)
 
       local font = m.fonts.name.locked
       local summaryText = string.format(NUM_HIDDEN_ACHIEVEMENTS_TEXT, m.numHiddenCards, m.numHiddenCards == 1 and "" or "s")
 
-      font:drawTextAligned(summaryText, width/2, height/2 - math.floor(font:getHeight()/2) + SUMMARY_TWEAK_Y, kTextAlignment.center)
+      font:drawTextAligned(summaryText, drawX + width/2, drawY + height/2 - math.floor(font:getHeight()/2) + SUMMARY_TWEAK_Y, kTextAlignment.center)
 
       gfx.popContext()
 
@@ -723,7 +732,8 @@ function av.drawSecretAchievementSummary(x, y, width, height)
          m.secretAchievementSummaryCache:setInverted(true)
       end
    end
-   m.secretAchievementSummaryCache:draw(x, y)
+   local offsetX, offsetY = gfx.getDrawOffset()
+   m.secretAchievementSummaryCache:draw(x - offsetX, y - offsetY)
 end
 
 function av.drawCard(achievementId, x, y, width, height)
@@ -737,6 +747,8 @@ function av.drawCard(achievementId, x, y, width, height)
       image = gfx.image.new(wantWidth, wantHeight)
 
       gfx.pushContext(image)
+      local offsetX, offsetY = gfx.getDrawOffset()
+      local drawX, drawY = -offsetX, -offsetY
       local margin = 1
 
       local info = m.achievementData[achievementId]
@@ -746,13 +758,13 @@ function av.drawCard(achievementId, x, y, width, height)
       local iconImgLocked = m.icons[achievementId].locked
 
       gfx.setColor(gfx.kColorWhite)
-      gfx.fillRoundRect(0, 0, width, height, CARD_CORNER)
+      gfx.fillRoundRect(drawX, drawY, width, height, CARD_CORNER)
 
       gfx.setStrokeLocation(gfx.kStrokeInside)
       gfx.setLineWidth(CARD_OUTLINE)
       gfx.setColor(gfx.kColorBlack)
 
-      gfx.drawRoundRect(margin, margin, width-2*margin, height-2*margin, CARD_CORNER)
+      gfx.drawRoundRect(drawX + margin, drawY + margin, width-2*margin, height-2*margin, CARD_CORNER)
 
       local granted = not not m.additionalAchievementData[achievementId].grantedAt
       local iconSize = LAYOUT_ICON_SIZE
@@ -764,7 +776,7 @@ function av.drawCard(achievementId, x, y, width, height)
       end
       if iconImg then
          iconSize = math.min(iconSize, iconImg.width)
-         iconImg:draw(width - imageMargin - iconImg.width, imageMargin)
+         iconImg:draw(drawX + width - imageMargin - iconImg.width, drawY + imageMargin)
       else
          iconSize = 0
       end
@@ -792,15 +804,15 @@ function av.drawCard(achievementId, x, y, width, height)
                                      heightRemaining)
       end
 
-      nameImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN)
+      nameImg:draw(drawX + LAYOUT_MARGIN, drawY + LAYOUT_MARGIN)
       if descImg then
-         descImg:draw(LAYOUT_MARGIN, LAYOUT_MARGIN + nameImg.height + LAYOUT_SPACING)
+         descImg:draw(drawX + LAYOUT_MARGIN, drawY + LAYOUT_MARGIN + nameImg.height + LAYOUT_SPACING)
       end
 
       if granted then
-         m.checkBox.granted:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
+         m.checkBox.granted:draw(drawX + LAYOUT_MARGIN, drawY + height - CHECKBOX_SIZE - LAYOUT_MARGIN)
       else
-         m.checkBox.locked:draw(LAYOUT_MARGIN, height - CHECKBOX_SIZE - LAYOUT_MARGIN)
+         m.checkBox.locked:draw(drawX + LAYOUT_MARGIN, drawY + height - CHECKBOX_SIZE - LAYOUT_MARGIN)
       end
 
       local progressMax = info.progress_max or info.progressMax
@@ -820,8 +832,8 @@ function av.drawCard(achievementId, x, y, width, height)
       statusImg = gfx.imageWithText(statusText, width - 2*LAYOUT_MARGIN - LAYOUT_SPACING - CHECKBOX_SIZE,
                                     height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
       if statusImg then
-         statusImg:draw(width - LAYOUT_MARGIN - statusImg.width,
-                        height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
+         statusImg:draw(drawX + width - LAYOUT_MARGIN - statusImg.width,
+                        drawY + height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
          statusImgWidth = statusImg.width
       end
 
@@ -852,9 +864,9 @@ function av.drawCard(achievementId, x, y, width, height)
          local progressMargin = LAYOUT_MARGIN
          local progressTextImg = gfx.imageWithText(progressText, progressTextWidth, progressTextHeight)
 
-         progressTextImg:draw(width - progressMargin - statusImgWidth -
+         progressTextImg:draw(drawX + width - progressMargin - statusImgWidth -
                               progressSpacing - progressTextImg.width,
-                              height - progressMargin - progressTextImg.height + LAYOUT_STATUS_TWEAK_Y)
+                              drawY + height - progressMargin - progressTextImg.height + LAYOUT_STATUS_TWEAK_Y)
 
          local progressBarWidth =
             width - 2*LAYOUT_MARGIN -
@@ -865,14 +877,14 @@ function av.drawCard(achievementId, x, y, width, height)
          gfx.setColor(gfx.kColorBlack)
          gfx.pushContext()
          gfx.setDitherPattern(.5, gfx.image.kDitherTypeBayer8x8)
-         gfx.fillRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
-                           height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
+         gfx.fillRoundRect(drawX + progressMargin + CHECKBOX_SIZE + progressSpacing,
+                           drawY + height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
                            frac * progressBarWidth,
                            PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
          gfx.popContext()
          gfx.setLineWidth(PROGRESS_BAR_OUTLINE)
-         gfx.drawRoundRect(progressMargin + CHECKBOX_SIZE + progressSpacing,
-                           height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
+         gfx.drawRoundRect(drawX + progressMargin + CHECKBOX_SIZE + progressSpacing,
+                           drawY + height - progressMargin - CHECKBOX_SIZE/2 - PROGRESS_BAR_HEIGHT/2 + progressBarTweakY,
                            progressBarWidth, PROGRESS_BAR_HEIGHT, PROGRESS_BAR_CORNER)
       end
       if granted and (info.isSecret or info.scoreValue == 0) then
@@ -888,8 +900,8 @@ function av.drawCard(achievementId, x, y, width, height)
                                          height - LAYOUT_MARGIN - iconSize - LAYOUT_ICON_SPACING)
          end
          if extraImg then
-            extraImg:draw(LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
-                          height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
+            extraImg:draw(drawX + LAYOUT_MARGIN + CHECKBOX_SIZE + LAYOUT_SPACING,
+                          drawY + height - LAYOUT_MARGIN - statusImg.height + LAYOUT_STATUS_TWEAK_Y)
          end
       end
       gfx.popContext()
@@ -899,11 +911,16 @@ function av.drawCard(achievementId, x, y, width, height)
          m.cardImageCache[achievementId] = image
       end
    end
-   m.cardImageCache[achievementId]:draw(x, y)
+   local offsetX, offsetY = gfx.getDrawOffset()
+   m.cardImageCache[achievementId]:draw(x - offsetX, y - offsetY)
 end
 
 function av.drawScrollbar(x, y)
    if m.maxScroll == nil or m.maxScroll <= CARD_SPACING then return end
+
+   local offsetX, offsetY = gfx.getDrawOffset()
+   local drawX = x - offsetX
+   local drawY = y - offsetY
 
    local barPageFrac = SCREEN_HEIGHT / (m.maxScroll+SCREEN_HEIGHT)
    barPageFrac = math.max(barPageFrac, 0.25)
@@ -916,10 +933,10 @@ function av.drawScrollbar(x, y)
       scrollbarYLimit = ABOUT_BUTTON_Y+4
    end
 
-   gfx.fillRoundRect(x, SCROLLBAR_Y_BUFFER, SCROLLBAR_WIDTH, scrollbarYLimit - 2*SCROLLBAR_Y_BUFFER, SCROLLBAR_CORNER)
+   gfx.fillRoundRect(drawX, drawY + SCROLLBAR_Y_BUFFER, SCROLLBAR_WIDTH, scrollbarYLimit - 2*SCROLLBAR_Y_BUFFER, SCROLLBAR_CORNER)
    local margin = 1
    gfx.setColor(gfx.kColorBlack)
-   gfx.drawRoundRect(x+margin, SCROLLBAR_Y_BUFFER+margin,
+   gfx.drawRoundRect(drawX+margin, drawY + SCROLLBAR_Y_BUFFER+margin,
                      SCROLLBAR_WIDTH-2*margin, scrollbarYLimit - 2*SCROLLBAR_Y_BUFFER-2*margin,
                      SCROLLBAR_CORNER)
    local totalHeight = scrollbarYLimit - 2*SCROLLBAR_Y_BUFFER
@@ -927,12 +944,12 @@ function av.drawScrollbar(x, y)
    local barPagePixels = barPageFrac * totalHeight
    local startPos = (totalHeight - barPagePixels) * barPosFrac
    gfx.setColor(gfx.kColorWhite)
-   gfx.fillRoundRect(x + SCROLLBAR_WIDTH/2 - SCROLLBAR_PAGE_WIDTH/2,
-                     startPos + SCROLLBAR_Y_BUFFER,
+   gfx.fillRoundRect(drawX + SCROLLBAR_WIDTH/2 - SCROLLBAR_PAGE_WIDTH/2,
+                     drawY + startPos + SCROLLBAR_Y_BUFFER,
                      SCROLLBAR_PAGE_WIDTH, barPagePixels, SCROLLBAR_CORNER)
    gfx.setColor(gfx.kColorBlack)
-   gfx.drawRoundRect(x + SCROLLBAR_WIDTH/2 - SCROLLBAR_PAGE_WIDTH/2 + margin,
-                     margin + startPos + SCROLLBAR_Y_BUFFER,
+   gfx.drawRoundRect(drawX + SCROLLBAR_WIDTH/2 - SCROLLBAR_PAGE_WIDTH/2 + margin,
+                     drawY + margin + startPos + SCROLLBAR_Y_BUFFER,
                      SCROLLBAR_PAGE_WIDTH - 2*margin, barPagePixels - 2*margin, SCROLLBAR_CORNER)
 
    gfx.popContext()
@@ -941,6 +958,8 @@ end
 function av.drawCards(x, y, animating)
    local x = (x or 0)
    local y = (y or 0) - m.scroll + CARD_SPACING
+   local topLimit = 0
+   local bottomLimit = SCREEN_HEIGHT
 
 
    local scrollBarX = x + m.title.x + math.max(TITLE_WIDTH, CARD_WIDTH) + SCROLLBAR_SPACING
@@ -958,7 +977,7 @@ function av.drawCards(x, y, animating)
    local count = 0
    local titleY = y + m.title.y
    if not m.title.hidden then
-      if titleY + TITLE_HEIGHT > 0 and titleY < SCREEN_HEIGHT then
+      if titleY + TITLE_HEIGHT > topLimit and titleY < bottomLimit then
          m.title.isVisible = true
          count = count + 1
       else
@@ -978,7 +997,7 @@ function av.drawCards(x, y, animating)
          card.drawY = m.card[i].y + count*extraSpacing
          if not isHidden then
             count = count + 1
-            if y + card.drawY + m.c.CARD_HEIGHT > 0 and y + card.drawY < SCREEN_HEIGHT then
+            if y + card.drawY + m.c.CARD_HEIGHT > topLimit and y + card.drawY < bottomLimit then
                av.drawCard(id,
                            x + card.x,
                            y + card.drawY,
@@ -991,7 +1010,7 @@ function av.drawCards(x, y, animating)
             if not showedSummary and m.numHiddenCards > 0 then
                showedSummary = true
                count = count + 1
-               if y + card.drawY + SUMMARY_CARD_HEIGHT > 0 and y + card.drawY < SCREEN_HEIGHT then
+               if y + card.drawY + SUMMARY_CARD_HEIGHT > topLimit and y + card.drawY < bottomLimit then
                   av.drawSecretAchievementSummary(x + card.x,
                                                   y + card.drawY,
                                                   CARD_WIDTH, SUMMARY_CARD_HEIGHT)
@@ -1012,13 +1031,14 @@ end
 
 
 function av.animateInUpdate()
+   local offsetX, offsetY = gfx.getDrawOffset()
    m.fadeAmount = m.fadeAmount + (FADE_AMOUNT / FADE_FRAMES)
    if m.fadeAmount >= FADE_AMOUNT then
       m.fadeAmount = FADE_AMOUNT
    end
    m.userUpdate(m.fadeAmount / FADE_AMOUNT)
    if m.backdropImage then
-      m.backdropImage:draw(0, 0)
+      m.backdropImage:draw(-offsetX, -offsetY)
    end
    m.continuousAnimFrame = m.continuousAnimFrame + 1
 
@@ -1036,7 +1056,7 @@ function av.animateInUpdate()
       gfx.pushContext()
       gfx.setColor(m.config.fadeColor)
       gfx.setDitherPattern(1-m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
-      gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight())
+      gfx.fillRect(-offsetX, -offsetY, playdate.display.getWidth(), playdate.display.getHeight())
       gfx.popContext()
    end
 
@@ -1057,13 +1077,13 @@ function av.animateInUpdate()
    local backButtonAnimFrac = BACK_BUTTON_EASING_IN(m.rawAnimFrac, 0, 1, 1)
    local backButtonX = BACK_BUTTON_X * backButtonAnimFrac + BACK_BUTTON_START_X * (1-backButtonAnimFrac)
    local backButtonY = BACK_BUTTON_Y * backButtonAnimFrac + BACK_BUTTON_START_Y * (1-backButtonAnimFrac)
-   m.backButtonImg:draw(backButtonX, backButtonY)
+   m.backButtonImg:draw(backButtonX - offsetX, backButtonY - offsetY)
 
    if m.config.enableAboutScreen then
       local aboutButtonAnimFrac = ABOUT_BUTTON_EASING_IN(m.rawAnimFrac, 0, 1, 1)
       local aboutButtonX = ABOUT_BUTTON_X * aboutButtonAnimFrac + ABOUT_BUTTON_START_X * (1-aboutButtonAnimFrac)
       local aboutButtonY = ABOUT_BUTTON_Y * aboutButtonAnimFrac + ABOUT_BUTTON_START_Y * (1-aboutButtonAnimFrac)
-      m.aboutButtonImg:draw(aboutButtonX, aboutButtonY)
+      m.aboutButtonImg:draw(aboutButtonX - offsetX, aboutButtonY - offsetY)
    end
 
    if m.fadeAmount >= FADE_AMOUNT and m.animFrame > ANIM_FRAMES then
@@ -1074,6 +1094,7 @@ function av.animateInUpdate()
 end
 
 function av.animateOutUpdate()
+   local offsetX, offsetY = gfx.getDrawOffset()
    m.continuousAnimFrame = m.continuousAnimFrame + 1
    m.fadeAmount = m.fadeAmount + (FADE_AMOUNT / FADE_FRAMES)
    if m.fadeAmount >= FADE_AMOUNT then
@@ -1081,13 +1102,13 @@ function av.animateOutUpdate()
    end
    m.userUpdate(1-m.fadeAmount / FADE_AMOUNT)
    if m.backdropImage then
-      m.backdropImage:draw(0, 0)
+      m.backdropImage:draw(-offsetX, -offsetY)
    end
    if m.config.fadeColor ~= gfx.kColorClear and not m.config.disableBackground then
       gfx.pushContext()
       gfx.setColor(m.config.fadeColor)
       gfx.setDitherPattern(FADE_AMOUNT + m.fadeAmount, gfx.image.kDitherTypeBayer8x8)
-      gfx.fillRect(0, 0, playdate.display.getWidth(), playdate.display.getHeight())
+      gfx.fillRect(-offsetX, -offsetY, playdate.display.getWidth(), playdate.display.getHeight())
       gfx.popContext()
    end
 
@@ -1105,18 +1126,18 @@ function av.animateOutUpdate()
    local backButtonAnimFrac = BACK_BUTTON_EASING_OUT(m.rawAnimFrac, 0, 1, 1)
    local backButtonX = BACK_BUTTON_X * backButtonAnimFrac + BACK_BUTTON_START_X * (1-backButtonAnimFrac)
    local backButtonY = BACK_BUTTON_Y * backButtonAnimFrac + BACK_BUTTON_START_Y * (1-backButtonAnimFrac)
-   m.backButtonImg:draw(backButtonX, backButtonY)
+   m.backButtonImg:draw(backButtonX - offsetX, backButtonY - offsetY)
 
    if m.config.enableAboutScreen then
       local aboutButtonAnimFrac = ABOUT_BUTTON_EASING_OUT(m.rawAnimFrac, 0, 1, 1)
       local aboutButtonX = ABOUT_BUTTON_X * aboutButtonAnimFrac + ABOUT_BUTTON_START_X * (1-aboutButtonAnimFrac)
       local aboutButtonY = ABOUT_BUTTON_Y * aboutButtonAnimFrac + ABOUT_BUTTON_START_Y * (1-aboutButtonAnimFrac)
-      m.aboutButtonImg:draw(aboutButtonX, aboutButtonY)
+      m.aboutButtonImg:draw(aboutButtonX - offsetX, aboutButtonY - offsetY)
    end
 
    if m.fadeAmount >= FADE_AMOUNT and m.animFrame > ANIM_FRAMES then
       if m.backdropImage then
-         m.backdropImage:drawScaled(0, 0, 1/m.backupDisplayScale, 1/m.backupDisplayScale)
+         m.backdropImage:drawScaled(-offsetX, -offsetY, 1/m.backupDisplayScale, 1/m.backupDisplayScale)
       end
       av.restoreUserSettings()
       playdate.getCrankTicks(1)
@@ -1127,9 +1148,10 @@ function av.animateOutUpdate()
 end
 
 function av.mainUpdate()
+   local offsetX, offsetY = gfx.getDrawOffset()
    m.userUpdate(1)
    if m.fadedBackdropImage then
-      m.fadedBackdropImage:draw(0, 0)
+      m.fadedBackdropImage:draw(-offsetX, -offsetY)
    end
 
    if m.aboutScreenAnim == nil then
@@ -1220,9 +1242,9 @@ function av.mainUpdate()
       end
    end
 
-   m.backButtonImg:draw(BACK_BUTTON_X, BACK_BUTTON_Y)
+   m.backButtonImg:draw(BACK_BUTTON_X - offsetX, BACK_BUTTON_Y - offsetY)
    if m.config.enableAboutScreen then
-      m.aboutButtonImg:draw(ABOUT_BUTTON_X, ABOUT_BUTTON_Y)
+      m.aboutButtonImg:draw(ABOUT_BUTTON_X - offsetX, ABOUT_BUTTON_Y - offsetY)
    end
 
    if playdate.buttonJustPressed(playdate.kButtonB) then
@@ -1250,10 +1272,10 @@ function av.mainUpdate()
          gfx.pushContext()
          gfx.setColor(m.config.fadeColor)
          gfx.setDitherPattern(0.5, gfx.image.kDitherTypeBayer8x8)
-         gfx.fillRect(0, 0, 400, 240)
+         gfx.fillRect(-offsetX, -offsetY, 400, 240)
          gfx.popContext()
-         m.aboutScreenImg:draw(math.floor(SCREEN_WIDTH/2 - m.aboutScreenImg.width/2),
-                               math.floor(SCREEN_HEIGHT/2 - m.aboutScreenImg.height/2))
+         m.aboutScreenImg:draw(math.floor(SCREEN_WIDTH/2 - m.aboutScreenImg.width/2) - offsetX,
+                               math.floor(SCREEN_HEIGHT/2 - m.aboutScreenImg.height/2) - offsetY)
       elseif m.aboutScreenAnimSpeed < 0 and m.aboutScreenAnim <= 0 then
          m.aboutScreenAnim = nil
          m.aboutScreenAnimSpeed = 0
@@ -1261,13 +1283,13 @@ function av.mainUpdate()
          gfx.pushContext()
          gfx.setColor(m.config.fadeColor)
          gfx.setDitherPattern(1 - (m.aboutScreenAnim / ABOUT_SCREEN_ANIM_FRAMES / 2), gfx.image.kDitherTypeBayer8x8)
-         gfx.fillRect(0, 0, 400, 240)
+         gfx.fillRect(-offsetX, -offsetY, 400, 240)
          gfx.popContext()
-         m.aboutScreenImg:drawFaded(math.floor(SCREEN_WIDTH/2 - m.aboutScreenImg.width/2),
-                                    math.floor(SCREEN_HEIGHT/2 - m.aboutScreenImg.height/2),
+         m.aboutScreenImg:drawFaded(math.floor(SCREEN_WIDTH/2 - m.aboutScreenImg.width/2) - offsetX,
+                                    math.floor(SCREEN_HEIGHT/2 - m.aboutScreenImg.height/2) - offsetY,
                                     m.aboutScreenAnim / ABOUT_SCREEN_ANIM_FRAMES, ABOUT_SCREEN_DITHER)
       end
-      m.backButtonImg:draw(BACK_BUTTON_X, BACK_BUTTON_Y)
+      m.backButtonImg:draw(BACK_BUTTON_X - offsetX, BACK_BUTTON_Y - offsetY)
    end
 end
 
@@ -1320,7 +1342,8 @@ function av.launch(config)
          -- scale the 2x or 4x or 8x background to 1x pixels
          m.backdropImage = gfx.image.new(SCREEN_WIDTH, SCREEN_HEIGHT)
          gfx.pushContext(m.backdropImage)
-         backdropImage:drawScaled(0, 0, displayScale, displayScale)
+         local offsetX, offsetY = gfx.getDrawOffset()
+         backdropImage:drawScaled(-offsetX, -offsetY, displayScale, displayScale)
          gfx.popContext()
       end
    end
