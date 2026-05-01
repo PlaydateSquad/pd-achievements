@@ -284,7 +284,7 @@ end
 
 function av.setConstants(config)
    config = config or m.config
-   local numLines = config.numDescriptionLines + .5 -- gives extra space for description to draw when title takes two lines
+   local numLines = config.numDescriptionLines
    m.c = {}
    m.c.CARD_HEIGHT = math.max(CARD_HEIGHT_MIN, CARD_HEIGHT_BASE + numLines * CARD_HEIGHT_PER_LINE)
    m.c.CARD_SPACING_ANIM = SCREEN_HEIGHT - m.c.CARD_HEIGHT
@@ -338,9 +338,7 @@ function av.initialize(config)
 
    m.fonts.name = {}
    m.fonts.name.locked = av.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Medium")
-   m.fonts.name.locked:setLeading(-4)
    m.fonts.name.granted = av.loadFile(gfx.font.new, fontPath .. "/Roobert-11-Bold")
-   m.fonts.name.granted:setLeading(-4)
    m.fonts.description = {}
    m.fonts.description.locked = av.loadFile(gfx.font.new, assetPath .. "/Nontendo-Light")
    m.fonts.description.locked:setLeading(3)
