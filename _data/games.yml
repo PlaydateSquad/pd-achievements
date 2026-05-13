@@ -8,6 +8,16 @@
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: SOLAR DESCENT
+  author: Quang Hoang
+  url: https://play.date/games/solar-descent/
+  image: ./assets/images/games/solar-descent.png
+  color: "#FFFFFF"
+  achievementCount: 36
+  releaseDate: 2025-05-24
+  lastAddedDate: 2026-05-24
+  description: An action adventure game made with Pulp
+
 - title: RollerBlade
   author: qwack!
   url: https://play.date/games/rollerblade
