@@ -8,6 +8,16 @@
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: Scope
+  author: Alexandre Fontoura
+  url: https://play.date/games/scope
+  image: ./assets/images/games/scope.png
+  color: "#ffac4d"
+  achievementCount: 21
+  releaseDate: 2026-05-26
+  lastAddedDate: 2026-05-26
+  description: A Logic Puzzle Game where you navigate a circular scope through increasingly complex levels.
+
 - title: RollerBlade
   author: qwack!
   url: https://play.date/games/rollerblade
