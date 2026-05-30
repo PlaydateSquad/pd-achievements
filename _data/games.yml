@@ -428,3 +428,13 @@
   releaseDate: 2026-04-14
   lastAddedDate: 2026-04-13
   description: Connect phone calls and avoid mixing cables in this falling block game!
+
+- title: Ortographobia
+  author: Socially Awkward
+  url: https://thesociallyawkward.itch.io/ortographobia-pd
+  image: ./assets/images/games/ortographobia.png
+  color: "#c31c18"
+  achievementCount: 9
+  releaseDate: 2026-05-30
+  lastAddedDate: 2026-05-30
+  description: Spelling bee for survival
