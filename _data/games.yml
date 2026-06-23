@@ -438,3 +438,13 @@
   releaseDate: 2026-05-30
   lastAddedDate: 2026-05-30
   description: Spelling bee for survival
+
+- title: Triston
+  author: Grapefruitopia Industries
+  url: https://play.date/games/triston/
+  image: ./assets/images/games/triston.png
+  color: "#DF4E4E"
+  achievementCount: 12
+  releaseDate: 2026-06-23
+  lastAddedDate: 2026-06-23
+  description: Part town builder, part match 3, part tetromino block rotation, part interactive soundscape.
