@@ -8,6 +8,16 @@
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: Super Toboggan 3D
+  author: Pikario
+  url: https://play.date/games/super-toboggan-3d/
+  image: ./assets/images/games/st3d.png
+  color: "#ff005a"
+  achievementCount: 15
+  releaseDate: 2026-07-07
+  lastAddedDate: 2026-07-07
+  description: Dodge obstacles in a 3D tunnel!
+
 - title: Scope
   author: Alexandre Fontoura
   url: https://play.date/games/scope/
