@@ -8,6 +8,16 @@
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: ROTOLLA MONO
+  author: Atelier Hongrois
+  url: https://play.date/games/rotolla-mono/
+  image: ./assets/images/games/rotolla-mono.png
+  color: "#FFC500"
+  achievementCount: 24
+  releaseDate: 2026-07-21
+  lastAddedDate: 2026-07-21
+  description: Rotate. Match. Survive the Hex.
+
 - title: Scope
   author: Alexandre Fontoura
   url: https://play.date/games/scope/
