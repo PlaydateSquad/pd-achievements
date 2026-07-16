@@ -8,6 +8,16 @@
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: Sugar Cookie Mountain
+  author: Cookiebunny Toys
+  url: https://play.date/games/sugar-cookie-mountain/
+  image: ./assets/images/games/sugar-cookie-mountain.png
+  color: "#967B7A"
+  achievementCount: 11
+  releaseDate: 2026-07-21
+  lastAddedDate: 2026-07-21
+  description: A simple block stacker inspired by the arcade!
+
 - title: ROTOLLA MONO
   author: Atelier Hongrois
   url: https://play.date/games/rotolla-mono/
