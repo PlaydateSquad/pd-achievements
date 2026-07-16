@@ -17,6 +17,16 @@
   releaseDate: 2026-07-07
   lastAddedDate: 2026-07-07
   description: Dodge obstacles in a 3D tunnel!
+  
+- title: ROTOLLA MONO
+  author: Atelier Hongrois
+  url: https://play.date/games/rotolla-mono/
+  image: ./assets/images/games/rotolla-mono.png
+  color: "#FFC500"
+  achievementCount: 24
+  releaseDate: 2026-07-21
+  lastAddedDate: 2026-07-21
+  description: Rotate. Match. Survive the Hex.
 
 - title: Scope
   author: Alexandre Fontoura
