@@ -7,6 +7,15 @@
 #   releaseDate: # The game release date in YYYY-MM-DD format. A future date may be provided for unreleased games.
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
+- title: 180 Connect
+  author: CyberNat2000
+  url: https://cybernat2000pl.itch.io/180-connect
+  image: ./assets/images/games/180connect.png
+  color: "#FFCB53"
+  achievementCount: 6
+  releaseDate: 2026-07-17
+  lastAddedDate: 2026-07-17
+  description: Cult Connect 4 game enhanced with crank board rotation mechanics.
 
 - title: Super Toboggan 3D
   author: Pikario
