@@ -7,7 +7,45 @@
   releaseDate: 2026-08-18
   lastAddedDate: 2026-07-18
   description: A fast-paced, Sega-inspired retro wave shooter for the Playdate platform.
+# - title: Your Game
+#   author: Your name or alias
+#   url: https://yourgame.com # The download page for your game on itch.io, catalog, or elsewhere
+#   image: ./assets/images/games/your-game.png # The path to 380x90px B/W banner image for your game
+#   color: "#FFFFFF" # A valid CSS color string to use as a highlight
+#   achievementCount: 0 # The number of Playdate Achievements in your game
+#   releaseDate: # The game release date in YYYY-MM-DD format. A future date may be provided for unreleased games.
+#   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
+#   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
+- title: 180 Connect
+  author: CyberNat2000
+  url: https://cybernat2000pl.itch.io/180-connect
+  image: ./assets/images/games/180connect.png
+  color: "#FFCB53"
+  achievementCount: 6
+  releaseDate: 2026-07-17
+  lastAddedDate: 2026-07-17
+  description: Cult Connect 4 game enhanced with crank board rotation mechanics.
 
+- title: Sugar Cookie Mountain
+  author: Cookiebunny Toys
+  url: https://play.date/games/sugar-cookie-mountain/
+  image: ./assets/images/games/sugar-cookie-mountain.png
+  color: "#967B7A"
+  achievementCount: 11
+  releaseDate: 2026-07-21
+  lastAddedDate: 2026-07-21
+  description: A simple block stacker inspired by the arcade!
+
+- title: Super Toboggan 3D
+  author: Pikario
+  url: https://play.date/games/super-toboggan-3d/
+  image: ./assets/images/games/st3d.png
+  color: "#ffdd8a"
+  achievementCount: 15
+  releaseDate: 2026-07-07
+  lastAddedDate: 2026-07-07
+  description: Dodge obstacles in a 3D tunnel!
+  
 - title: ROTOLLA MONO
   author: Atelier Hongrois
   url: https://play.date/games/rotolla-mono/
