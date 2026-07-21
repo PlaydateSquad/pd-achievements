@@ -1,12 +1,12 @@
-- title: "Gun Crank"
-  author: "noncorp"
-  url: "https://play.date/games/gun-crank/"
-  image: "./assets/images/games/guncrank.png"
+- title: Gun Crank
+  author: noncorp
+  url: https://play.date/games/gun-crank/
+  image: ./assets/images/games/guncrank.png
   color: "#000000"
   achievementCount: 18
   releaseDate: 2026-08-18
   lastAddedDate: 2026-07-18
-  description: "A fast-paced, Sega-inspired retro wave shooter for the Playdate platform."
+  description: A fast-paced, Sega-inspired retro wave shooter for the Playdate platform.
 
 - title: ROTOLLA MONO
   author: Atelier Hongrois
