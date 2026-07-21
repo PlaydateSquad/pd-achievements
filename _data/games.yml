@@ -18,6 +18,16 @@
   lastAddedDate: 2026-07-21
   description: A simple block stacker inspired by the arcade!
 
+- title: Super Toboggan 3D
+  author: Pikario
+  url: https://play.date/games/super-toboggan-3d/
+  image: ./assets/images/games/st3d.png
+  color: "#ffdd8a"
+  achievementCount: 15
+  releaseDate: 2026-07-07
+  lastAddedDate: 2026-07-07
+  description: Dodge obstacles in a 3D tunnel!
+  
 - title: ROTOLLA MONO
   author: Atelier Hongrois
   url: https://play.date/games/rotolla-mono/
