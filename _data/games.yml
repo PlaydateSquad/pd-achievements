@@ -1,12 +1,3 @@
-- title: GunCrank
-  author: NoncorporateRat
-  url: https://play.date/games/gun-crank/
-  image: ./assets/images/games/guncrank.png
-  color: "#000000"
-  achievementCount: 18
-  releaseDate: 2026-08-18
-  lastAddedDate: 2026-07-18
-  description: A fast-paced, Sega-inspired retro wave shooter for the Playdate platform.
 # - title: Your Game
 #   author: Your name or alias
 #   url: https://yourgame.com # The download page for your game on itch.io, catalog, or elsewhere
@@ -16,6 +7,17 @@
 #   releaseDate: # The game release date in YYYY-MM-DD format. A future date may be provided for unreleased games.
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
+
+- title: GunCrank
+  author: noncorp
+  url: https://play.date/games/gun-crank/
+  image: ./assets/images/games/guncrank.png
+  color: "#000000"
+  achievementCount: 18
+  releaseDate: 2026-08-18
+  lastAddedDate: 2026-08-18
+  description: A fast-paced, Sega-inspired retro wave shooter for the Playdate platform.
+  
 - title: 180 Connect
   author: CyberNat2000
   url: https://cybernat2000pl.itch.io/180-connect
