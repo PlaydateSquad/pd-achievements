@@ -7,6 +7,17 @@
 #   releaseDate: # The game release date in YYYY-MM-DD format. A future date may be provided for unreleased games.
 #   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
+
+- title: Agents of Groove
+  author: Synaptic Sugar
+  url: https://play.date/games/agents-of-groove/
+  image: ./assets/images/games/agents-of-groove.png
+  color: "#F2BC3B"
+  achievementCount: 24
+  releaseDate: 2026-01-06
+  lastAddedDate: 2026-07-31
+  description: A story-driven rhythm game. Help the undercover dancers of G.R.O.O.V.E. stop a sinister plot from a rival organization
+
 - title: 180 Connect
   author: CyberNat2000
   url: https://cybernat2000pl.itch.io/180-connect
