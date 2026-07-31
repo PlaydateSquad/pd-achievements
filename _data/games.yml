@@ -5,7 +5,8 @@
 #   color: "#FFFFFF" # A valid CSS color string to use as a highlight
 #   achievementCount: 0 # The number of Playdate Achievements in your game
 #   releaseDate: # The game release date in YYYY-MM-DD format. A future date may be provided for unreleased games.
-#   lastAddedDate: # The last time achievements were added, in YYYY-MM-DD format. A future date may be provided for released games that haven't yet added achievements.
+#   firstAddedDate: # Optional. The first time achievements were added, in YYYY-MM-DD format. Only needed if your game released before it supported achievements. A future date may be provided for released games that haven't yet added achievements.
+#   lastAddedDate: # Optional. The most recent time achievements were added, in YYYY-MM-DD format. Only needed if you've added achievements since they first appeared.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
 - title: GunCrank
@@ -18,6 +19,16 @@
   lastAddedDate: 2026-08-18
   description: A fast-paced, Sega-inspired retro wave shooter for the Playdate platform.
   
+- title: Agents of Groove
+  author: Synaptic Sugar
+  url: https://play.date/games/agents-of-groove/
+  image: ./assets/images/games/agents-of-groove.png
+  color: "#F2BC3B"
+  achievementCount: 24
+  releaseDate: 2026-01-06
+  firstAddedDate: 2026-07-31
+  description: A story-driven rhythm game. Help the undercover dancers of G.R.O.O.V.E. stop a sinister plot from a rival organization
+
 - title: 180 Connect
   author: CyberNat2000
   url: https://cybernat2000pl.itch.io/180-connect

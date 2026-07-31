@@ -4,6 +4,11 @@ const toggleButtonClass = "toggle"; // Class name applied to the sort direction 
 const defaultSort = "sortByBadge"; // The default sort option
 const defaultSortDirection = 1; // ascending
 
+// The date a game is sorted by, resolved from its release and added dates by badges.js
+const sortDate = function (node) {
+  return Number(node.dataset.sortDate) || 0;
+};
+
 let sort = {
   direction: defaultSortDirection,
   sortFn: defaultSort,
@@ -117,17 +122,7 @@ let sort = {
 
     [...list.children]
       .sort((a, b) =>
-        // sort by release date, or last added date if provided and more recent
-        Math.max(
-          new Date(a.dataset.releaseDate).getTime(),
-          new Date(a.dataset.lastAddedDate).getTime() || 0
-        ) >
-        Math.max(
-          new Date(b.dataset.releaseDate).getTime(),
-          new Date(b.dataset.lastAddedDate).getTime() || 0
-        )
-          ? sort.direction
-          : -sort.direction
+        sortDate(a) > sortDate(b) ? sort.direction : -sort.direction
       )
       .forEach((node) => list.appendChild(node));
   },
@@ -141,15 +136,9 @@ let sort = {
         const bBadgeGroup = b.dataset.badgeGroup || 0;
 
         if (aBadgeGroup == bBadgeGroup) {
-          const now = new Date();
-          const aReleaseDate = new Date(a.dataset.releaseDate);
-          const aLastAddedDate = new Date(a.dataset.lastAddedDate);
-          const bReleaseDate = new Date(b.dataset.releaseDate);
-          const bLastAddedDate = new Date(b.dataset.lastAddedDate);
-          const aCompareDate =
-            aLastAddedDate > aReleaseDate ? aLastAddedDate : aReleaseDate;
-          const bCompareDate =
-            bLastAddedDate > bReleaseDate ? bLastAddedDate : bReleaseDate;
+          const now = Date.now();
+          const aCompareDate = sortDate(a);
+          const bCompareDate = sortDate(b);
           const dateComparisonResult =
             aCompareDate > bCompareDate ? -sort.direction : sort.direction;
 
