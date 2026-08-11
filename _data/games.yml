@@ -19,6 +19,16 @@
   lastAddedDate: 2026-08-18
   description: A fast-paced, Sega-inspired retro wave shooter for the Playdate platform.
   
+- title: fathersave
+  author: Bedrock Forge
+  url: https://play.date/games/fathersave/
+  image: ./assets/images/games/fathersave.png
+  color: "#e9e8af"
+  achievementCount: 27
+  releaseDate: 2026-08-04
+  description: A nostalgic mining game inspired by classic digging adventures - dig deep, collect ores and artifacts, upgrade your rig, and reach the bottom.
+
+
 - title: Agents of Groove
   author: Synaptic Sugar
   url: https://play.date/games/agents-of-groove/
@@ -405,9 +415,9 @@
   url: https://play.date/games/crankstone
   image: ./assets/images/games/crankstone.png
   color: "#743D22"
-  achievementCount: 17
+  achievementCount: 46
   releaseDate: 2025-08-19
-  lastAddedDate: 2025-10-31
+  lastAddedDate: 2026-08-05
   description: Protect Crankstone from outlaws in this gallery shooter spiced up with mini games inspired by the Wild West.
 
 - title: Pongerground
