@@ -508,3 +508,14 @@
   releaseDate: 2026-06-23
   lastAddedDate: 2026-06-23
   description: Part town builder, part match 3, part tetromino block rotation, part interactive soundscape.
+
+- title: Sharp Pencil
+  author: Brian Muramatsu
+  url: https://btmura.itch.io/sharp-pencil
+  image: ./assets/images/games/sharp-pencil.png
+  color: "#E78495"
+  achievementCount: 7
+  releaseDate: 2026-06-27
+  firstAddedDate: 2026-08-15
+  lastAddedDate: 2026-08-15
+  description: A satisfying pencil sharpening experience — sharpen, grade, and unlock new pencils across timed and endless modes.
