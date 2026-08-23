@@ -9,6 +9,16 @@
 #   lastAddedDate: # Optional. The most recent time achievements were added, in YYYY-MM-DD format. Only needed if you've added achievements since they first appeared.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: GunCrank
+  author: noncorp
+  url: https://play.date/games/gun-crank/
+  image: ./assets/images/games/guncrank.png
+  color: "#000000"
+  achievementCount: 18
+  releaseDate: 2026-08-18
+  lastAddedDate: 2026-08-18
+  description: A fast-paced, Sega-inspired retro wave shooter for the Playdate platform.
+  
 - title: fathersave
   author: Bedrock Forge
   url: https://play.date/games/fathersave/
@@ -17,6 +27,7 @@
   achievementCount: 27
   releaseDate: 2026-08-04
   description: A nostalgic mining game inspired by classic digging adventures - dig deep, collect ores and artifacts, upgrade your rig, and reach the bottom.
+
 
 - title: Agents of Groove
   author: Synaptic Sugar
