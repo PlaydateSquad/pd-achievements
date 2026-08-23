@@ -519,3 +519,12 @@
   releaseDate: 2026-06-23
   lastAddedDate: 2026-06-23
   description: Part town builder, part match 3, part tetromino block rotation, part interactive soundscape.
+
+- title: Hahakigami Sweep
+  author: colby
+  url: https://play.date/games/hahakigami-sweep/
+  image: ./assets/images/games/hahakigami.png
+  color: "#00B0FF"
+  achievementCount: 6
+  releaseDate: 2026-07-21
+  description: Sweep life's troubles away!
