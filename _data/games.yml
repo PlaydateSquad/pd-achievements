@@ -558,3 +558,12 @@
   releaseDate: 2025-04-08
   firstAddedDate: 2026-07-31
   description: An incremental game about building your electricity empire.
+
+- title: Neo Trick!
+  author: Mirror Door Interactive
+  url: https://play.date/games/neotrick/
+  image: ./assets/images/games/neo-trick.png
+  color: "#D163CA"
+  achievementCount: 14
+  releaseDate: 2026-09-15
+  description: A rogue-like deck-builder game about destroying firewalls.
