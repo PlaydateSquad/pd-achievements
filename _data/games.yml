@@ -9,6 +9,15 @@
 #   lastAddedDate: # Optional. The most recent time achievements were added, in YYYY-MM-DD format. Only needed if you've added achievements since they first appeared.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: isolates
+  author: Ledbetter Games
+  url: https://play.date/games/isolates/
+  image: ./assets/images/games/isolates.png
+  color: "#ffffff"
+  achievementCount: 34
+  releaseDate: 2026-10-13
+  description: ISOLATES is a slow-math-arcade-horror game based on the concept of playing on a split-flap display.
+
 - title: GunCrank
   author: noncorp
   url: https://play.date/games/gun-crank/
