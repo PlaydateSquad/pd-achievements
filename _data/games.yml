@@ -567,3 +567,12 @@
   achievementCount: 14
   releaseDate: 2026-09-15
   description: A rogue-like deck-builder game about destroying firewalls.
+
+- title: Sixteen Frames
+  author: Antonio Stissi
+  url: https://conigliocattivo.itch.io/sixteen-frames
+  image: ./assets/images/games/sixteen-frames.png
+  color: "#000000"
+  achievementCount: 16
+  releaseDate: 2026-09-29
+  description: A hand-cranked projection booth sim. Nine films from the birth of cinema.
