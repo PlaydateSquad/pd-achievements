@@ -567,3 +567,13 @@
   achievementCount: 14
   releaseDate: 2026-09-15
   description: A rogue-like deck-builder game about destroying firewalls.
+
+- title: Inkmotes
+  author: Piotr Waszkiewicz
+  url: https://waszker.itch.io/inkmotes
+  image: ./assets/images/games/inkmotes.png
+  color: "#1F3A5F"
+  achievementCount: 23
+  releaseDate: 2026-10-03
+  firstAddedDate: 2026-10-04
+  description: Collect, train and battle abstract ink creatures.
