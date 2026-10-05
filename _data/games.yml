@@ -568,6 +568,15 @@
   releaseDate: 2026-09-15
   description: A rogue-like deck-builder game about destroying firewalls.
 
+- title: Hyper Vector
+  author: Tom White
+  url: https://play.date/games/hyper-vector/
+  image: ./assets/images/games/hyper-vector.png
+  color: "#00c500"
+  achievementCount: 17
+  releaseDate: 2026-04-20
+  description: Explore the galaxy, make allies, trade, and battle through this space trader.
+
 - title: Inkmotes
   author: Piotr Waszkiewicz
   url: https://waszker.itch.io/inkmotes
