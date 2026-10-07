@@ -576,3 +576,13 @@
   achievementCount: 17
   releaseDate: 2026-04-20
   description: Explore the galaxy, make allies, trade, and battle through this space trader.
+
+- title: Inkmotes
+  author: Piotr Waszkiewicz
+  url: https://waszker.itch.io/inkmotes
+  image: ./assets/images/games/inkmotes.png
+  color: "#1F3A5F"
+  achievementCount: 25
+  releaseDate: 2026-10-03
+  firstAddedDate: 2026-10-04
+  description: Collect, train and battle abstract ink creatures.
