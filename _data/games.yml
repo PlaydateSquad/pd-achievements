@@ -9,6 +9,15 @@
 #   lastAddedDate: # Optional. The most recent time achievements were added, in YYYY-MM-DD format. Only needed if you've added achievements since they first appeared.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: isolates
+  author: Ledbetter Games
+  url: https://play.date/games/isolates/
+  image: ./assets/images/games/isolates.png
+  color: "#ffffff"
+  achievementCount: 34
+  releaseDate: 2026-10-13
+  description: ISOLATES is a slow-math-arcade-horror game based on the concept of playing on a split-flap display.
+
 - title: GunCrank
   author: noncorp
   url: https://play.date/games/gun-crank/
@@ -27,7 +36,6 @@
   achievementCount: 27
   releaseDate: 2026-08-04
   description: A nostalgic mining game inspired by classic digging adventures - dig deep, collect ores and artifacts, upgrade your rig, and reach the bottom.
-
 
 - title: Agents of Groove
   author: Synaptic Sugar
@@ -576,3 +584,22 @@
   achievementCount: 16
   releaseDate: 2026-09-29
   description: A hand-cranked projection booth sim. Nine films from the birth of cinema.
+
+- title: Hyper Vector
+  author: Tom White
+  url: https://play.date/games/hyper-vector/
+  image: ./assets/images/games/hyper-vector.png
+  color: "#00c500"
+  achievementCount: 17
+  releaseDate: 2026-04-20
+  description: Explore the galaxy, make allies, trade, and battle through this space trader.
+
+- title: Inkmotes
+  author: Piotr Waszkiewicz
+  url: https://waszker.itch.io/inkmotes
+  image: ./assets/images/games/inkmotes.png
+  color: "#1F3A5F"
+  achievementCount: 25
+  releaseDate: 2026-10-03
+  firstAddedDate: 2026-10-04
+  description: Collect, train and battle abstract ink creatures.
