@@ -39,9 +39,6 @@ We also kindly ask that you abide by [best practices](https://gurtt.dev/trophy-c
 
 Follow the instructions below to submit your game for display on the [Playdate Achievements page](https://playdatesquad.github.io/pd-achievements/).
 
-> [!NOTE]
-> You can open a pull request directly _in this repo_ by [editing `_data/games.yml` with the GitHub file editor](https://github.com/PlaydateSquad/pd-achievements/edit/gh-pages/_data/games.yml), allowing you to skip step 1. However, with this approach you won’t have the chance to preview the resulting page before creating your pull request.
-
 1. [Fork this repository](https://github.com/PlaydateSquad/pd-achievements/fork) and _uncheck_ the **Copy the `main` branch only** checkbox—you’ll need the `gh-pages` branch to make your change. Optionally create a new branch from the `gh-pages` branch with the name of your game to work on.
 
 2. Edit `_data/games.yml`, copying the commented template and supplying the requisite information for your game. You’ll need to supply the following (**fields are required unless otherwise indicated**):
@@ -61,8 +58,22 @@ Follow the instructions below to submit your game for display on the [Playdate A
 
 3. Commit your changes and push them to your fork. Include the name of your game in your commit message.
 
-4. Navigate to the **Settings** tab and select **Pages** in the left sidebar. Ensure your **Build and Deployment** settings are set to deploy from the root of the branch you just pushed your changes to, then click **Save**. The link in the callout at the top contains the URL of your live site where you can preview your changes. It will build automatically after saving the deployment branch setting—check the **Actions** tab to observe progress or view any errors.
+4. Navigate to the **Settings** tab and select **Pages** in the left sidebar. Ensure your **Build and Deployment** settings are set to deploy from the root of the branch you just pushed your changes to, then click **Save**. The link in the callout at the top contains the URL of your live site where you can preview your changes. It will build automatically after saving the deployment branch setting—check the **Actions** tab to observe progress or view any errors. Alternatively, you can [test with a local build](#test-with-a-local-build).
 
 5. When ready, [open a pull request](https://github.com/PlaydateSquad/pd-achievements/compare/gh-pages...gh-pages) from your fork to this repo and a member of the community will review and merge your change. Be sure to select the `gh-pages` branch as your target in the base repository. To expedite your request, feel free to drop into the [Playdate Achievements Discord channel](https://discord.com/channels/675983554655551509/1213250459851292713), introduce yourself, and share a link to your PR!
 
 We look forward to featuring your game!
+
+## Test with a local build
+You can also test your changes locally by:
+
+1. Install [Ruby](https://www.ruby-lang.org/en/documentation/installation/).
+2. Add a new filed named `Gemfile` to the root of the project with the following contents:
+    ```ruby
+    source "https://rubygems.org"
+
+    gem 'github-pages', group: :jekyll_plugins
+    ```
+3. Run `gem install bundler` to make sure you have [bundler](https://bundler.io/) installed.
+4. Run `bundle install` to install all the required gems.
+5. Run `bundle exec jekyll serve` to serve a local version of your site. Check the logs for the URL.
