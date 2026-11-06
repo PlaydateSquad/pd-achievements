@@ -9,6 +9,15 @@
 #   lastAddedDate: # Optional. The most recent time achievements were added, in YYYY-MM-DD format. Only needed if you've added achievements since they first appeared.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: Retro Fight Club
+  author: NoncorporateRat
+  url: https://play.date/games/retro-fight-club/
+  image: ./assets/images/games/retro-fight-club.png
+  color: "#FFC500"
+  achievementCount: 49
+  releaseDate: 2026-10-27
+  description: A fast-paced reaction-based fighting roguelike featuring challenging bosses, powerful upgrades, collectible fighter cards, and online leaderboards.
+
 - title: isolates
   author: Ledbetter Games
   url: https://play.date/games/isolates/
