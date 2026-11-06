@@ -9,6 +9,15 @@
 #   lastAddedDate: # Optional. The most recent time achievements were added, in YYYY-MM-DD format. Only needed if you've added achievements since they first appeared.
 #   description: A brief, one sentence description of your game. # (Not currently shown, but may be in the future)
 
+- title: Cranky Miner
+  author: wiedo
+  url: https://wiedo.itch.io/cranky-miner
+  image: ./assets/images/games/cranky-miner.png
+  color: "#8B32B9"
+  achievementCount: 19
+  releaseDate: 2026-11-19
+  description: Reel in as much valuables as possible in this retro-styled arcade game
+
 - title: isolates
   author: Ledbetter Games
   url: https://play.date/games/isolates/
@@ -27,7 +36,7 @@
   releaseDate: 2026-08-18
   lastAddedDate: 2026-08-18
   description: A fast-paced, Sega-inspired retro wave shooter for the Playdate platform.
-  
+
 - title: fathersave
   author: Bedrock Forge
   url: https://play.date/games/fathersave/
@@ -76,7 +85,7 @@
   releaseDate: 2026-07-07
   lastAddedDate: 2026-07-07
   description: Dodge obstacles in a 3D tunnel!
-  
+
 - title: ROTOLLA MONO
   author: Atelier Hongrois
   url: https://play.date/games/rotolla-mono/
@@ -126,7 +135,7 @@
   releaseDate: 2023-10-10
   lastAddedDate: 2026-03-05
   description: A train based math-puzzle game!
-  
+
 - title: Piña Rollada
   author: Flywheel Games
   url: https://play.date/games/pina-rollada/
